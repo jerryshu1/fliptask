@@ -41,11 +41,9 @@
     </q-header>
 
     <q-drawer
+      class="asidemenu"
       v-model="leftDrawerOpen"
-      :width="200"
-      :breakpoint="500"
       bordered
-      class="bg-grey-3"
     >
       <q-list>
         <menu-link
@@ -120,7 +118,6 @@ export default {
   },
   methods: {
     test(){
-
       store.commit("clearnewadddata");
     }
   },
@@ -148,4 +145,26 @@ export default {
 
 <style lang="scss">
 @import "../styles/app.scss";
+
+.q-toolbar{
+  height: 100px;
+  background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
+}
+
+.q-toolbar__title{
+  font-weight: 800;
+  font-size: calc(100vw * 23 / 1920);
+}
+
+.q-icon{
+  font-weight: 800;
+}
+
+.asidemenu{
+  width: 15%;
+	background-image: linear-gradient(173deg, rgb(10, 38, 69), rgb(96, 122, 224));
+  color: white;
+}
+
+
 </style>

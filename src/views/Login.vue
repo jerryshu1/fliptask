@@ -1,13 +1,18 @@
 <template>
   <q-layout view="hHh lpR fFf">
     <q-page-container>
-      <q-page class="fullscreen bg-grey-7 flex flex-center">
-        <q-card square class="my-card shadow-24 bg-white text-white">
-          <q-card-section class="bg-primary">
-            <div class="text-h5 q-my-md">登录</div>
+      <q-page class="fullscreen flex flex-center">
+        <q-card square class="my-card shadow-24">
+          <q-card-section class="firstline">
+            <div class="q-my-md">倒闸操作风险预控卡</div>
           </q-card-section>
-          <q-card-section class="bg-white">
-            <q-form class="q-gutter-md" @submit="onSubmit">
+          
+          <q-card-section class="loginbox">
+            <div class="line">
+              <div class="circle">
+              </div>
+            </div>
+            <q-form class="loginform" @submit="onSubmit">
               <q-input v-model="id" label="User ID">
                 <template #prepend>
                   <q-icon name="email" />
@@ -22,10 +27,10 @@
 
               <q-card-actions class="q-px-lg q-mt-md q-mb-xl">
                 <q-btn
+                
                   unelevated
                   size="lg"
-                  class="full-width"
-                  color="primary"
+                  class="btn"
                   type="submit"
                   label="Sign In"
                   :loading="submitting"
@@ -46,8 +51,8 @@ import { useQuasar } from "quasar";
 import { Buffer } from "buffer";
 import { useRouter } from "vue-router";
 // import authapi from "../services/auth";
-import {getcompanyname, postlogin} from "../api/getComponents";
-import {ElMessage} from "element-plus";
+import { getcompanyname, postlogin } from "../api/getComponents";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "PageLogin",
@@ -80,7 +85,7 @@ export default defineComponent({
           if (res) {
             creds.token = res.token;
             store.commit("savetoken", creds);
-            store.dispatch('getuserMessage', creds.id)
+            store.dispatch("getuserMessage", creds.id);
             router.replace({ path: "/published" });
           } else {
             $q.notify({
@@ -109,8 +114,76 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-.my-card {
-  width: 300px;
+<style scoped>
+.firstline{
+    height: 150px;
+    width: 100%;
+    background:rgba(21, 39, 141, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
+.my-card {
+  width:80%;
+  color: white;
+  background-color: transparent;
+}
+
+.q-my-md{
+  font-size: calc(100vw * 42 / 1920);
+  color: white;
+  font-weight: 700;
+  line-height: 60px;
+}
+
+.q-page{
+    background-image: url("../assets/loginbg.jpeg");
+    background-size: 100% 100%;
+    background-position: center center;
+    overflow: auto;
+    background-repeat: no-repeat;
+}
+
+.loginbox{
+    background-clip: padding-box;
+    width: 100%;
+    background-color:  rgba(255, 255, 255, 0.8);
+    padding-bottom: 5%;
+}
+
+.loginbox .line{
+    width: 80%;
+    margin: 0 auto;
+    padding: 30px;
+    border-bottom: 1px #0E37AC solid;
+    margin-bottom: 30px;
+}
+
+.loginbox .line .circle{
+    width: 30px;
+    height: 30px;
+}
+
+.q-form{
+  width: 40%;
+  margin: 0 auto;
+}
+
+.q-icon{
+  font-size: 25px;
+  color: #0E37AC;
+}
+.q-input{
+  margin-top: 5%;
+}
+
+.btn{
+  width: 30%;
+  background-color: rgba(21, 39, 141, 0.9);
+  margin: 0 auto;
+  margin-top: 10%;
+}
+
 </style>

@@ -614,4 +614,8 @@ export default defineComponent({
     }
   }
 }
+
+.q-table__title{
+  padding: 10px;
+}
 </style>
