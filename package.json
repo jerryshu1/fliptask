@@ -11,6 +11,7 @@
     "lint": "eslint --ext .js,.vue ./src/ && stylelint **/*.vue"
   },
   "dependencies": {
+    "@element-plus/icons": "^0.0.11",
     "@element-plus/icons-vue": "^1.1.4",
     "@quasar/extras": "^1.0.0",
     "apexcharts": "^3.33.2",

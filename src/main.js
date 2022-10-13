@@ -4,7 +4,7 @@ import VueApexCharts from "vue3-apexcharts";
 import ElementPlus from "element-plus";
 import 'element-plus/dist/index.css';
 
-
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // import quasarLang from "quasar/lang/zh-CN";
 // Import icon libraries
 import "@quasar/extras/roboto-font/roboto-font.css";
@@ -33,3 +33,5 @@ myApp.use(VueApexCharts);
 myApp.use(ElementPlus);
 // Assumes you have a <div id="app"></div> in your index.html
 myApp.use(store).use(router).mount("#app");
+
+

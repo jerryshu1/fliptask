@@ -1,6 +1,6 @@
 <template>
-  <div style="margin-top: 150px;margin-left: 37%">
-    <div style="width: 150px;height: 60px;font-size: 24px; margin-left: 170px">创建新用户</div>
+  <div  class="reg_container" style="margin-top: 10%;margin-left: 37%">
+    <div style="width: 150px;height: 60px;font-size: calc(100vw * 24 / 1920); margin-left: 170px">创建新用户</div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="工号" prop="id">
         <el-input v-model="ruleForm.id" style="width: 300px" placeholder="请输入登录工号"></el-input>
@@ -177,4 +177,15 @@ export default {
 </script>
 
 <style scoped>
+
+.reg_container {
+  width: 500px;
+  height: 450px;
+
+  border: 1px solid rgb(174, 174, 174);
+  box-shadow: 1px 1px 5px #888888;
+
+  margin: 0 auto;
+  padding: 30px;
+}
 </style>

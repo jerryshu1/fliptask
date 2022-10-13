@@ -84,6 +84,7 @@ export default defineComponent({
         postlogin(creds).then((res) => {
           if (res) {
             creds.token = res.token;
+            localStorage.setItem('token', res.token)
             store.commit("savetoken", creds);
             store.dispatch("getuserMessage", creds.id);
             router.replace({ path: "/published" });

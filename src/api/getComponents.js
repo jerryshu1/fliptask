@@ -88,9 +88,9 @@ export const getuser = (id, token) => userrequest({
     }
 });
 
-export const getallusers = (token) => userrequest({
+export const getallusers = () => userrequest({
     url: '/auth/users', method: 'get', headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 
@@ -114,7 +114,7 @@ export const adminchangepassword = (id, token, body) => userrequest({
 
 export const postnewuser = (body, token) => userrequest({
     url: '/auth/register', method: 'post', data: body, headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 //删除用户
