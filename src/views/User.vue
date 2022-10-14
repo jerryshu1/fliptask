@@ -7,7 +7,7 @@
       <p>用户中心</p>
     </div>
 
-    <el-table border :data="userlist" style="width: 85%;margin-left: 7%;margin-top: 1%" v-if="this.usermessage.role === 'superadmin'">
+    <el-table border :data="userlist" style="width: 85%;margin-left: 7%;margin-top: 1%" v-if="current_role === 'superadmin'">
       <el-table-column prop="id" label="ID" align='center' />
       <el-table-column prop="name" label="姓名" align='center' />
       <el-table-column prop="phone" label="电话号码" align='center' />
@@ -30,24 +30,24 @@
       <el-table-column label="操作" align='center'>
         <template #default="scope">
           <el-button @click="Deleteuser(scope.row)" type="text" size="small"
-            v-if="scope.row.role !== '管理员' && this.usermessage.role === 'admin'">删除用户
+            v-if="scope.row.role !== '管理员' && current_role === 'admin'">删除用户
           </el-button>
           <el-button @click="Changepassword(scope.row)" type="text" size="small">修改密码
           </el-button>
-          <el-button type="text" @click="xiugai(scope.row)" v-if="this.usermessage.role === 'admin'">修改用户信息</el-button>
+          <el-button type="text" @click="xiugai(scope.row)" v-if="current_role === 'admin'">修改用户信息</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-button class="homebutton1" @click="adduser" v-if="this.usermessage.role === 'admin'">
+    <el-button class="homebutton1" @click="adduser" v-if="current_role === 'admin'">
       新增用户
     </el-button>
     <el-button class="homebutton1" style="margin-left: 30%; margin-top: 40px" @click="adduser"
-      v-if="this.usermessage.role === 'superadmin'">
+      v-if="current_role === 'superadmin'">
       新增分公司
     </el-button>
     <el-button class="homebutton1" style="margin-left: 30%; margin-top: 40px" @click="deleteCompany"
-      v-if="this.usermessage.role === 'superadmin'">
+      v-if="current_role === 'superadmin'">
       删除分公司
     </el-button>
 
@@ -88,23 +88,23 @@
         <el-form-item label="姓名" prop="name">
           <el-input v-model="ruleForm.name" style="width: 300px" placeholder="请输入员工姓名"></el-input>
         </el-form-item>
-        <el-form-item label="所属分公司" prop="companyname" v-if="this.usermessage.role === 'superadmin'">
+        <el-form-item label="所属分公司" prop="companyname" v-if="current_role === 'superadmin'">
           <el-input v-model="ruleForm.companyname" style="width: 300px" placeholder="请输入所属分公司名称"></el-input>
         </el-form-item>
-        <el-form-item label="分公司id" prop="companyid" v-if="this.usermessage.role === 'superadmin'">
+        <el-form-item label="分公司id" prop="companyid" v-if="current_role === 'superadmin'">
           <el-input v-model="ruleForm.companyid" style="width: 300px" placeholder="请输入所属分公司id"></el-input>
         </el-form-item>
         <el-form-item label="联系方式" prop="phone">
           <el-input v-model="ruleForm.phone" style="width: 300px" placeholder="请输入员工联系电话"></el-input>
         </el-form-item>
-        <el-form-item label="员工权限" prop="role" v-if="this.usermessage.role === 'admin'">
+        <el-form-item label="员工权限" prop="role" v-if="current_role === 'admin'">
           <el-radio-group v-model="ruleForm.role">
             <el-radio label="管理员"></el-radio>
-            <el-radio label="普通用户" v-if="this.usermessage.role === 'admin'"></el-radio>
+            <el-radio label="普通用户" v-if="current_role === 'admin'"></el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm" v-if="this.usermessage.role === 'admin'">立即创建</el-button>
+          <el-button type="primary" @click="submitForm" v-if="current_role === 'admin'">立即创建</el-button>
           <el-button type="primary" @click="superadminsubmitForm" v-else>立即创建</el-button>
           <el-button @click="resetForm(ruleFormRef)">重置</el-button>
           <el-button @click="gousers">返回</el-button>
@@ -117,9 +117,7 @@
 
 <script>
 import { defineComponent, onMounted, ref, reactive } from "vue";
-import { mapState, useStore } from "vuex";
-import { useQuasar, date } from "quasar";
-import userService from "../services/user";
+import { useStore } from "vuex";
 import { List } from "@element-plus/icons";
 
 import {
@@ -136,33 +134,12 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 
 export default defineComponent({
   name: "PageUser",
-  data() {
-    return {
-      input: '',
-      dialogTableVisible: false,
-      // dialogTableVisible2: false,
-      id: '',
-    }
-  },
   components: {
     List
   },
-  computed: {
-    ...mapState({
-      usermessage: (state) => {
-        return state.user
-      },
-      token: (state) => {
-        return state.jwtToken
-      },
-      allusers: (state) => {
-        return state.allUsers
-      }
-    })
-  },
-
   setup() {
     const userlist = ref([])
+    const current_role = ref('')
     const id = ref('')
     const dialogTableVisible2 = ref(false)
     const dialogTableVisible = ref(false)
@@ -444,7 +421,7 @@ export default defineComponent({
           let body = {
             password: value
           }
-          if (this.usermessage.role === 'admin') {
+          if (store.state.role === 'admin') {
             adminchangepassword(prop.id, body).then((res) => {
               if (res) {
                 ElMessage({
@@ -473,6 +450,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      current_role.value = store.state.user.role
       if (store.state.user.role === 'admin') {
         getadminalluser()
       } else if (store.state.user.role === 'superadmin') {
@@ -492,6 +470,7 @@ export default defineComponent({
       rules1,
       rules,
       form,
+      current_role,
 
       getadminalluser,
       getsuperadminalluser,
