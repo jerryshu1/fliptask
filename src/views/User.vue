@@ -7,7 +7,8 @@
       <p>用户中心</p>
     </div>
 
-    <el-table border :data="userlist" style="width: 85%;margin-left: 7%;margin-top: 1%" v-if="current_role === 'superadmin'">
+    <el-table border :data="userlist" style="width: 85%;margin-left: 7%;margin-top: 1%"
+      v-if="current_role === 'superadmin'">
       <el-table-column prop="id" label="ID" align='center' />
       <el-table-column prop="name" label="姓名" align='center' />
       <el-table-column prop="phone" label="电话号码" align='center' />
@@ -128,7 +129,8 @@ import {
   getallusers,
   deleteuser,
   postnewuser,
-  postadminupdate
+  postadminupdate,
+  getoneusers
 } from "../api/getComponents";
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -239,6 +241,14 @@ export default defineComponent({
               userlist.value.push(res.users[i])
             }
           }
+        }
+      })
+    }
+    const getappuser = () => {
+      getoneusers().then((res) => {
+        userlist.value = []
+        if (res) {
+          userlist.value = res
         }
       })
     }
@@ -400,46 +410,58 @@ export default defineComponent({
         params.body.role = 'appuser'
       }
       postadminupdate(params.id, params.body).then((res) => {
-        getadminalluser()
-        ElMessage({
-          type: 'success',
-          message: '用户信息修改成功'
-        });
+        if (res) {
+          getadminalluser()
+          ElMessage({
+            type: 'success',
+            message: '用户信息修改成功'
+          });
+        } else {
+          ElMessage({
+            type: 'error',
+            message: '修改失败'
+          });
+        }
       })
     }
     const Changepassword = (prop) => {
       ElMessageBox.prompt('请输入新密码', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        inputPattern: /^(?=.*\d)[\s\S]{9,16}$/,
+        inputErrorMessage: '密码长度需大于8位',
       }).then(({ value }) => {
-        if (value.length <= 8) {
-          ElMessage({
-            type: 'error',
-            message: '密码位数需大于8位'
-          });
+        let body = {
+          password: value
+        }
+        if (store.state.role === 'admin') {
+          adminchangepassword(prop.id, body).then((res) => {
+            if (res) {
+              ElMessage({
+                type: 'success',
+                message: '修改成功'
+              })
+            } else {
+              ElMessage({
+                type: 'error',
+                message: '修改失败'
+              })
+            }
+          })
         } else {
-          let body = {
-            password: value
-          }
-          if (store.state.role === 'admin') {
-            adminchangepassword(prop.id, body).then((res) => {
-              if (res) {
-                ElMessage({
-                  type: 'success',
-                  message: '修改成功'
-                })
-              }
-            })
-          } else {
-            changepassword(prop.id, body).then((res) => {
-              if (res) {
-                ElMessage({
-                  type: 'success',
-                  message: '修改成功'
-                })
-              }
-            })
-          }
+          changepassword(prop.id, body).then((res) => {
+            if (res) {
+              ElMessage({
+                type: 'success',
+                message: '修改成功'
+              })
+            } else {
+              ElMessage({
+                type: 'error',
+                message: '修改失败'
+              })
+            }
+          })
         }
       }).catch(() => {
         ElMessage({
@@ -456,7 +478,7 @@ export default defineComponent({
       } else if (store.state.user.role === 'superadmin') {
         getsuperadminalluser()
       } else {
-        this.$store.dispatch('getoneusersMessage')
+        getappuser()
       }
     })
 
@@ -485,6 +507,7 @@ export default defineComponent({
       xiugai,
       adminupdate,
       Changepassword,
+      getappuser,
     };
   },
 });

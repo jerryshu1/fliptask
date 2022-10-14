@@ -94,9 +94,9 @@ export const getallusers = () => userrequest({
     }
 });
 
-export const getoneusers = (id, token) => userrequest({
+export const getoneusers = (id) => userrequest({
     url: '/auth/users/' + id, method: 'get', headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 
