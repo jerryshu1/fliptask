@@ -63,7 +63,6 @@ import { defineComponent, nextTick, ref } from "vue";
 import { date } from "quasar";
 import store from "../../store";
 
-import searchService from "../../services/search";
 import {firstsearch, getsearchtasklist} from "../../api/getComponents";
 
 export default defineComponent({
@@ -301,6 +300,7 @@ export default defineComponent({
       let params = {
         q: queryData.query
       }
+      console.log(params);
       getsearchtasklist(store.state.user.company_id, store.state.jwtToken, params)
           .then((res) => {
             if (res === null){

@@ -1,9 +1,9 @@
 <template>
   <div class="column">
     <div style="width: 66%; border-style: solid; border-color: #0000FF; margin-left: 17%;margin-top: 40px">
-      <div v-for="(data, index) in muti_componentsDatas">
+      <div v-for="(data, index) in muti_componentsDatas" :key="index">
         <div style="font-size: 24px">{{ muti_taskName[index] }}</div>
-        <div v-for="(taskdata, index1) in data">
+        <div v-for="(taskdata, index1) in data" :key="index1">
           <div style="margin-top: 5px; margin-left: 20px;">
             <div class="q-pa-md">
               <q-table
@@ -17,7 +17,7 @@
             存在的主要风险
           </div>
           <div class="q-pa-md">
-            <div class="q-gutter-sm" v-for="riskprevention in taskdata.risks">
+            <div class="q-gutter-sm" v-for="(riskprevention,index) in taskdata.risks" :key="index">
               <el-checkbox size="medium" v-model="check[index][index1].checkrisks" :label=riskprevention
                            :val="riskprevention"
                            checked="true"/>
@@ -27,7 +27,7 @@
             预控措施
           </div>
           <div class="q-pa-md">
-            <div class="q-gutter-sm" v-for="processcontrol in taskdata.measures">
+            <div class="q-gutter-sm" v-for="(processcontrol,index) in taskdata.measures" :key="index">
               <el-checkbox size="medium" v-model="check[index][index1].checkprocess" :label=processcontrol
                            :val="processcontrol"
                            checked="true"/>

@@ -2,15 +2,6 @@
   <div class="row justify-between">
     <div class="col row justify-between">
       <div class="col">
-<!--        <q-input-->
-<!--            v-model="searchName"-->
-<!--            placeholder="请输入回路名称"-->
-<!--            dense-->
-<!--            filled-->
-<!--            type="search"-->
-<!--            class="search-field"-->
-<!--            @change="searchData"-->
-<!--            @keycode.enter="searchData"></q-input>-->
         <q-input
             v-model="searchQuery"
             placeholder="请输入任务名称"

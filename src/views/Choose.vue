@@ -1,7 +1,7 @@
 <template>
   <div class="column">
     <div style="width: 66%; border-style: solid; border-color: #0000FF; margin-left: 17%;margin-top: 40px">
-      <div v-for="(data, index) in componentData">
+      <div v-for="(data, index) in componentData" :key="index">
         <div style="margin-top: 20px; margin-left: 20px;">
           <div class="q-pa-md">
             <q-table
@@ -15,7 +15,7 @@
           存在的主要风险
         </div>
         <div class="q-pa-md">
-          <div class="q-gutter-sm" v-for="riskprevention in data.measures">
+          <div class="q-gutter-sm" v-for="(riskprevention,index) in data.measures" :key="index">
             <el-checkbox size="medium" v-model="check[index].checkrisks" :label=riskprevention :val="riskprevention" checked="true"/>
           </div>
         </div>
@@ -23,7 +23,7 @@
           预控措施
         </div>
         <div class="q-pa-md">
-          <div class="q-gutter-sm" v-for="processcontrol in data.risks">
+          <div class="q-gutter-sm" v-for="(processcontrol,index) in data.risks" :key="index">
             <el-checkbox size="medium" v-model="check[index].checkprocess" :label=processcontrol :val="processcontrol" checked="true"/>
           </div>
         </div>
