@@ -1,163 +1,146 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="mt-4">
-      <el-input
-          v-model="input"
-          placeholder="请输入搜索内容"
-          class="input-with-select"
-          @change="enter"
-      >
+  <div>
+    <div class="title">
+      <el-icon>
+        <List />
+      </el-icon>
+      <p>已发布任务列表</p>
+    </div>
+    <div class="mt-4" style="width:85%; margin-left: 7%;margin-top: 1%">
+      <el-input v-model="input" placeholder="请输入搜索内容" class="input-with-select" @change="enter">
         <template #prepend>
-          <el-select v-model="select1" placeholder="Select" style="width: 110px">
-            <el-option label="任务名称" value="任务名称"/>
-            <el-option label="任务状态" value="任务状态"/>
+          <el-select v-model="select1" placeholder="Select">
+            <el-option label="任务名称" value="任务名称" />
+            <el-option label="任务状态" value="任务状态" />
           </el-select>
         </template>
       </el-input>
     </div>
-    <div class="column">
-      <div style="width: 86%; border-style: solid; border-color: #0000FF; margin-left: 7%;margin-top: 40px">
-        <div style="margin-top: 40px; margin-left: 20px;">
-          <el-table :data="this.publishedData" style="width: 100%" @select='select'>
-            <el-table-column type="selection" width="55px" align='center'>
-            </el-table-column>
-            <el-table-column type="index" width="55px" label="序号" align='center'>
-            </el-table-column>
-            <el-table-column prop="task_name" label="操作任务" width="200px" show-overflow-tooltip align='center'>
-            </el-table-column>
-            <el-table-column prop="assigner" label="编制人" width="100px" align='center'>
-            </el-table-column>
-            <el-table-column prop="reviewer" label="审核人" width="100px" align='center'>
-            </el-table-column>
-            <el-table-column prop="status" label="任务状态" width="100px" align='center'>
-            </el-table-column>
-            <el-table-column prop="publish_date" label="发布时间" width="170px" sortable align='center'>
-            </el-table-column>
-            <el-table-column prop="assign_date" label="任务派发时间" width="170px" align='center'>
-            </el-table-column>
-            <el-table-column prop="finish_date" label="任务完成时间" width="170px" align='center'>
-            </el-table-column>
-            <el-table-column label="操作" width="90px" align="center">
-              <template #default="scope">
-                <el-button type="text" @click="signalprint(scope.row)">打印</el-button>
-                <el-button type="text" @click="test(scope.row)">预览</el-button>
-                <el-button type="text" @click="gofinish(scope.row)" v-if="this.usermessage.role === 'admin'">确认完成
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <div>
+
+    <el-table border :data="this.publishedData" style="width:85%; margin-left: 7%;margin-top: 2%" @select='select'>
+      <el-table-column type="selection" align='center'>
+      </el-table-column>
+      <el-table-column type="index" label="序号" align='center'>
+      </el-table-column>
+      <el-table-column prop="task_name" label="操作任务" show-overflow-tooltip align='center'>
+      </el-table-column>
+      <el-table-column prop="assigner" label="编制人" align='center'>
+      </el-table-column>
+      <el-table-column prop="reviewer" label="审核人" align='center'>
+      </el-table-column>
+      <el-table-column prop="status" label="任务状态" align='center'>
+      </el-table-column>
+      <el-table-column prop="publish_date" label="发布时间" sortable align='center'>
+      </el-table-column>
+      <el-table-column prop="assign_date" label="任务派发时间" align='center'>
+      </el-table-column>
+      <el-table-column prop="finish_date" label="任务完成时间" align='center'>
+      </el-table-column>
+      <el-table-column label="操作" align="center">
+        <template #default="scope">
+          <el-button type="text" @click="signalprint(scope.row)">打印</el-button>
+          <el-button type="text" @click="test(scope.row)">预览</el-button>
+          <el-button type="text" @click="gofinish(scope.row)" v-if="this.usermessage.role === 'admin'">确认完成
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <div>
+      <div class="btngroup">
         <button class="homebutton" @click="goDelete" v-if="this.usermessage.role === 'admin'">删除</button>
-        <button class="homebutton" @click="dialogTableVisible2=true" v-if="this.usermessage.role === 'admin'">复合打印
-        </button>
-        <el-dialog v-model="dialogTableVisible2" title="通用措施风险预控选择" width="95%" center>
-          <div v-for="(data, index) in names">
-            <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
-            <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
-            <div v-for="riskprevention in this.generalmeasures.risks[index]">
-              <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention
-                           :val="riskprevention"
-                           checked
-                           border/>
-            </div>
-            <div style="height: 20px; font-size: 16px;">预控措施</div>
-            <div v-for="measureprevention in this.generalmeasures.measures[index]">
-              <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention
-                           :val="measureprevention"
-                           checked
-                           border/>
-            </div>
-          </div>
-          <el-input v-model="input2" placeholder="请输入工单任务名称"/>
-          <el-select v-model="assigner1" placeholder="请选择任务委派人">
-            <el-option
-                v-for="(names, index) in this.allusers"
-                :label=names.name
-                :value=names.name
-                :key="index"
-            ></el-option>
-          </el-select>
-          <el-button @click="compositeprint" style="margin-top: 10px;margin-left: 50%">打印</el-button>
-        </el-dialog>
-        <el-dialog v-model="dialogTableVisible" title="详细信息">
-          <div v-for="data in testdata">
-            <div style="font-size: 24px">{{ data.task_name }}</div>
-            <div style="height: 20px; font-size: 10px;margin-left: 20px; margin-top: 5px;">
-              备注:{{ data.additional }}
-            </div>
-            <div v-for="taskdata in data.details">
-              <div style="margin-top: 5px; margin-left: 20px;">
-                <div class="q-pa-md">
-                  <q-table
-                      :rows=[taskdata]
-                      :columns="columns"
-                      :hide-pagination="hidePagination"
-                  />
-                </div>
-              </div>
-              <div style="height: 20px; font-size: 18px;margin-left: 20px;">
-                存在的主要风险
-              </div>
-              <div class="q-pa-md">
-                <div class="q-gutter-sm" v-for="riskprevention in taskdata.risks">
-                  <div>{{ riskprevention }}</div>
-                </div>
-              </div>
-              <div style="height: 20px; font-size: 18px;margin-left: 20px; margin-top: 10px;">
-                预控措施
-              </div>
-              <div class="q-pa-md">
-                <div class="q-gutter-sm" v-for="processcontrol in taskdata.measures">
-                  <div>{{ processcontrol }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <el-input v-model="input1" placeholder="请输入工单任务名称" v-if="this.usermessage.role === 'admin'"/>
-          <el-select v-model="assigner" placeholder="请选择任务委派人" v-if="this.usermessage.role === 'admin'">
-            <el-option
-                v-for="(names, index) in this.allusers"
-                :label=names.name
-                :value=names.name
-                :key="index"
-            ></el-option>
-          </el-select>
-          <el-button @click="republished(testdata)" v-if="this.usermessage.role === 'admin'">重新发布</el-button>
-        </el-dialog>
-        <el-dialog v-model="dialogTableVisible1" title="通用措施风险预控选择" width="95%" center>
-          <div v-for="(data, index) in names">
-            <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
-            <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
-            <div v-for="riskprevention in this.generalmeasures.risks[index]">
-              <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention
-                           :val="riskprevention"
-                           checked
-                           border/>
-            </div>
-            <div style="height: 20px; font-size: 16px;">预控措施</div>
-            <div v-for="measureprevention in this.generalmeasures.measures[index]">
-              <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention
-                           :val="measureprevention"
-                           checked
-                           border/>
-            </div>
-          </div>
-          <el-button @click="goPrint" style="margin-top: 10px;margin-left: 50%">打印</el-button>
-        </el-dialog>
+        <button class="homebutton" @click="dialogTableVisible2=true"
+          v-if="this.usermessage.role === 'admin'">复合打印</button>
       </div>
+      
+      <el-dialog v-model="dialogTableVisible2" title="通用措施风险预控选择" width="95%" center>
+        <div v-for="(data, index) in names" :key="index">
+          <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
+          <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
+          <div v-for="(riskprevention,index) in this.generalmeasures.risks[index]" :key="index">
+            <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
+              border />
+          </div>
+          <div style="height: 20px; font-size: 16px;">预控措施</div>
+          <div v-for="(measureprevention,index) in this.generalmeasures.measures[index]" :key="index">
+            <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
+              checked border />
+          </div>
+        </div>
+        <el-input v-model="input2" placeholder="请输入工单任务名称" />
+        <el-select v-model="assigner1" placeholder="请选择任务委派人">
+          <el-option v-for="(names, index) in this.allusers" :label=names.name :value=names.name :key="index">
+          </el-option>
+        </el-select>
+        <el-button @click="compositeprint" style="margin-top: 10px;margin-left: 50%">打印</el-button>
+      </el-dialog>
+      <el-dialog v-model="dialogTableVisible" title="详细信息">
+        <div v-for="(data,index) in testdata" :key="index">
+          <div style="font-size: 24px">{{ data.task_name }}</div>
+          <div style="height: 20px; font-size: 10px;margin-left: 20px; margin-top: 5px;">
+            备注:{{ data.additional }}
+          </div>
+          <div v-for="(taskdata,index) in data.details" :key="index">
+            <div style="margin-top: 5px; margin-left: 20px;">
+              <div class="q-pa-md">
+                <q-table :rows=[taskdata] :columns="columns" :hide-pagination="hidePagination" />
+              </div>
+            </div>
+            <div style="height: 20px; font-size: 18px;margin-left: 20px;">
+              存在的主要风险
+            </div>
+            <div class="q-pa-md">
+              <div class="q-gutter-sm" v-for="(riskprevention,index) in taskdata.risks" :key="index">
+                <div>{{ riskprevention }}</div>
+              </div>
+            </div>
+            <div style="height: 20px; font-size: 18px;margin-left: 20px; margin-top: 10px;">
+              预控措施
+            </div>
+            <div class="q-pa-md">
+              <div class="q-gutter-sm" v-for="(processcontrol,index) in taskdata.measures" :key="index">
+                <div>{{ processcontrol }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <el-input v-model="input1" placeholder="请输入工单任务名称" v-if="this.usermessage.role === 'admin'" />
+        <el-select v-model="assigner" placeholder="请选择任务委派人" v-if="this.usermessage.role === 'admin'">
+          <el-option v-for="(names, index) in this.allusers" :label=names.name :value=names.name :key="index">
+          </el-option>
+        </el-select>
+        <el-button @click="republished(testdata)" v-if="this.usermessage.role === 'admin'">重新发布</el-button>
+      </el-dialog>
+      <el-dialog v-model="dialogTableVisible1" title="通用措施风险预控选择" width="95%" center>
+        <div v-for="(data, index) in names" :key="index">
+          <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
+          <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
+          <div v-for="(riskprevention,index) in this.generalmeasures.risks[index]" :key="index">
+            <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
+              border />
+          </div>
+          <div style="height: 20px; font-size: 16px;">预控措施</div>
+          <div v-for="(measureprevention,index) in this.generalmeasures.measures[index]" :key="index">
+            <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
+              checked border />
+          </div>
+        </div>
+        <el-button @click="goPrint" style="margin-top: 10px;margin-left: 50%">打印</el-button>
+      </el-dialog>
     </div>
-  </q-page>
+  </div>
+
 </template>
 
 <script>
-import {ref} from "vue";
+import { ref } from "vue";
 import store from '../store';
-import {deleteData, gettableData, postRiskData, updateStatus} from "../api/getComponents";
+import { deleteData, gettableData, postRiskData, updateStatus } from "../api/getComponents";
 import {
   mapState
 } from 'vuex';
+import { List } from "@element-plus/icons";
+
 
 export default {
   name: "Published",
@@ -237,6 +220,9 @@ export default {
       statuss: [],
       signaldata: {},
     }
+  },
+  components: {
+    List
   },
   mounted() {
     if (store.state.user.role === 'superadmin') {
@@ -491,14 +477,34 @@ export default {
 </script>
 
 <style scoped>
+.title {
+  display: flex;
+  margin-top: 3%;
+  margin-left: 7%;
+}
+
+.title .el-icon {
+  font-size: calc(100vw * 26 / 1920);
+  margin-right: 20px;
+}
+
+.title p {
+  color: black;
+  font-size: calc(100vw * 20 / 1920);
+  font-weight: 800;
+}
 .homebutton {
-  width: 6%;
-  height: 60px;
-  font-size: 20px;
-  margin-top: 20px;
-  color: #FFFFFF;
-  margin-left: 30%;
-  background-color: #0000ff;
-  float: left;
+  width: 120px;
+	height: 40px;
+	font-size: calc(100vw * 16 / 1920);
+	margin-top: 5%;
+	color: #FFFFFF;
+  margin-left: 100px;
+	background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
+}
+
+.btngroup{
+  width:500px;
+  margin: 0 auto;
 }
 </style>

@@ -7,7 +7,7 @@
       <p>用户中心</p>
     </div>
 
-    <el-table border :data="userlist" style="width: 90%" v-if="this.usermessage.role === 'superadmin'">
+    <el-table border :data="userlist" style="width: 85%;margin-left: 7%;margin-top: 1%" v-if="this.usermessage.role === 'superadmin'">
       <el-table-column prop="id" label="ID" align='center' />
       <el-table-column prop="name" label="姓名" align='center' />
       <el-table-column prop="phone" label="电话号码" align='center' />
@@ -21,7 +21,7 @@
       </el-table-column>
     </el-table>
 
-    <el-table border :data="userlist" style="width: 90%" v-else>
+    <el-table border :data="userlist" style="width: 85%;margin-left: 7%;margin-top: 1%" v-else>
       <el-table-column prop="id" label="ID" align='center' />
       <el-table-column prop="name" label="姓名" align='center' />
       <el-table-column prop="phone" label="电话号码" align='center' />
@@ -515,7 +515,7 @@ export default defineComponent({
 .title {
   display: flex;
   margin-top: 3%;
-  margin-left: 3%;
+  margin-left: 7%;
 }
 
 .title .el-icon {
