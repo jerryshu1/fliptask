@@ -19,7 +19,7 @@
             <el-checkbox size="medium" v-model="check[index].checkrisks" :label=riskprevention :val="riskprevention" checked="true"/>
           </div>
         </div>
-        <div style="height: 20px; font-size: 18px;margin-left: 20px; margin-top: 20px;">
+        <div style="height: 20px; font-size: 18px; margin-left: 20px; margin-top: 20px;">
           预控措施
         </div>
         <div class="q-pa-md">
@@ -28,7 +28,7 @@
           </div>
         </div>
       </div>
-      <div style="height: 20px; font-size: 18px;margin-left: 20px; margin-top: 20px;">
+      <div style="height: 20px; font-size: 18px; margin-left: 20px; margin-top: 20px;">
         备注
       </div>
       <div class="q-pa-md">

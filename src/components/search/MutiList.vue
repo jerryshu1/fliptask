@@ -428,7 +428,7 @@ export default defineComponent({
         b.value = '开关变压器' + queryData.query.split('开关变压器')[1]
       }
       let senddata = {
-        station: store.state.companyname,
+        station: '新泽',
         device: a.value
       }
       searchtype(senddata, store.state.jwtToken).then((res1) => {

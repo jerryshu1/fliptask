@@ -57,9 +57,6 @@
         <el-form-item label="工号" prop="id">
           <el-input v-model="form.id"></el-input>
         </el-form-item>
-        <!--              <el-form-item label="密码" prop="password">-->
-        <!--                <el-input v-model="form.password"></el-input>-->
-        <!--              </el-form-item>-->
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -81,7 +78,7 @@
 
     <!-- 新增分公司 -->
     <el-dialog title="新建用户" v-model="dialogTableVisible2" width="40%">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号" prop="id">
           <el-input v-model="ruleForm.id" style="width: 300px" placeholder="请输入登录工号"></el-input>
         </el-form-item>
@@ -109,7 +106,7 @@
         <el-form-item>
           <el-button type="primary" @click="submitForm" v-if="this.usermessage.role === 'admin'">立即创建</el-button>
           <el-button type="primary" @click="superadminsubmitForm" v-else>立即创建</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button @click="resetForm(ruleFormRef)">重置</el-button>
           <el-button @click="gousers">返回</el-button>
         </el-form-item>
       </el-form>
@@ -119,15 +116,15 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref, reactive } from "vue";
 import { mapState, useStore } from "vuex";
 import { useQuasar, date } from "quasar";
 import userService from "../services/user";
 import { List } from "@element-plus/icons";
-import store from "../store";
-import { postcopytask, postsuperaddcompany } from "../api/getComponents";
 
 import {
+  postcopytask,
+  postsuperaddcompany,
   changepassword,
   deletecompany,
   getallusers,
@@ -143,90 +140,12 @@ export default defineComponent({
     return {
       input: '',
       dialogTableVisible: false,
-      dialogTableVisible2: false,
+      // dialogTableVisible2: false,
       id: '',
-      form: {
-        id: '',
-        // password: '',
-        password: '',
-        name: '',
-        phone: '',
-        role: ''
-      },
-      rules1: {
-        phone: [
-          { message: '请输入手机号', trigger: 'change' },
-          { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '请输入正确的号码格式', trigger: 'change' }
-        ],
-        // password: [
-        //   {message: '请输入密码', trigger: 'change'},
-        //   {min: 9, message: '密码位数需大于8位', trigger: 'change'}
-        // ],
-        name: [
-          { message: '请输入手机号', trigger: 'change' },
-        ],
-        id: [
-          { required: true, trigger: 'change' },
-        ],
-        role: [
-          { trigger: 'change' },
-        ]
-      },
-      ruleForm: {
-        id: '',
-        name: '',
-        phone: '',
-        companyname: '',
-        companyid: '',
-        password: '',
-        role: '普通用户',
-      },
-      rules: {
-        phone: [
-          // 添加正则表达式 pattern: /^1[3|5|7|8|9]\d{9}$/，验证手机号是否正确
-          { message: '请输入手机号', trigger: 'change' },
-          { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '请输入正确的号码格式', trigger: 'change' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'change' },
-          { min: 9, message: '密码位数需大于8位', trigger: 'change' }
-        ],
-        name: [
-          { required: true, message: '请输入姓名', trigger: 'change' },
-        ],
-        companyname: [
-          { required: true, message: '请输入所属分公司名称', trigger: 'change' },
-        ],
-        companyid: [
-          { required: true, message: '请输入所属分公司id', trigger: 'change' },
-          { pattern: /^\w+$/, message: 'id由大小写字母以及数字', trigger: 'change' },
-        ],
-        id: [
-          { required: true, trigger: 'change' },
-        ],
-        role: [
-          { required: true, trigger: 'change' },
-        ]
-      },
-      userlist: []
     }
   },
   components: {
     List
-  },
-  mounted() {
-    // getcompany("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMDAwMCIsInJvbGUiOiJzdXBlcmFkbWluIiwiY29tcGFueV9pZCI6IiIsIlN0YW5kYXJkQ2xhaW0iOnsiZXhwIjoxNjUyODQ0NTUwLCJpYXQiOjE2NTI4MzczNTAsImlzcyI6ImRlZXJsYW5kdGVjaCJ9fQ.PL7sORrdWWXkQ5o8bGtMs-rTdbCXMnZdzk2j_u6QkF4");
-    if (useStore().state.user.role === 'admin') {
-      this.getadminalluser()
-      // this.$store.dispatch('getallusersMessage', 'admin')
-    } else if (useStore().state.user.role === 'superadmin') {
-      getallusers().then((res) => {
-        console.log('xjw', res);
-      })
-      // this.$store.dispatch('getallusersMessage', 'superadmin')
-    } else {
-      this.$store.dispatch('getoneusersMessage')
-    }
   },
   computed: {
     ...mapState({
@@ -241,70 +160,174 @@ export default defineComponent({
       }
     })
   },
-  methods: {
-    getadminalluser() {
-      let companyid = useStore().state.user.company_id
-      console.log(companyid);
+
+  setup() {
+    const userlist = ref([])
+    const id = ref('')
+    const dialogTableVisible2 = ref(false)
+    const dialogTableVisible = ref(false)
+    const ruleForm = reactive({
+      id: '',
+      name: '',
+      phone: '',
+      companyname: '',
+      companyid: '',
+      password: '',
+      role: '普通用户',
+    })
+    const form = reactive({
+      id: '',
+      password: '',
+      name: '',
+      phone: '',
+      role: ''
+    })
+    const ruleFormRef = ref()
+    const rules1 = reactive({
+      phone: [
+        { message: '请输入手机号', trigger: 'change' },
+        { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '请输入正确的号码格式', trigger: 'change' }
+      ],
+      // password: [
+      //   {message: '请输入密码', trigger: 'change'},
+      //   {min: 9, message: '密码位数需大于8位', trigger: 'change'}
+      // ],
+      name: [
+        { message: '请输入手机号', trigger: 'change' },
+      ],
+      id: [
+        { required: true, trigger: 'change' },
+      ],
+      role: [
+        { trigger: 'change' },
+      ]
+    })
+    const rules = reactive({
+      phone: [
+        // 添加正则表达式 pattern: /^1[3|5|7|8|9]\d{9}$/，验证手机号是否正确
+        { message: '请输入手机号', trigger: 'change' },
+        { pattern: /^1[3|5|7|8|9]\d{9}$/, message: '请输入正确的号码格式', trigger: 'change' }
+      ],
+      password: [
+        { required: true, message: '请输入密码', trigger: 'change' },
+        { min: 9, message: '密码位数需大于8位', trigger: 'change' }
+      ],
+      name: [
+        { required: true, message: '请输入姓名', trigger: 'change' },
+      ],
+      companyname: [
+        { required: true, message: '请输入所属分公司名称', trigger: 'change' },
+      ],
+      companyid: [
+        { required: true, message: '请输入所属分公司id', trigger: 'change' },
+        { pattern: /^\w+$/, message: 'id由大小写字母以及数字', trigger: 'change' },
+      ],
+      id: [
+        { required: true, trigger: 'change' },
+      ],
+      role: [
+        { required: true, trigger: 'change' },
+      ]
+    })
+
+    const store = useStore();
+
+    const getadminalluser = () => {
+      let companyid = store.state.user.company_id
       getallusers().then((res) => {
         if (res) {
-          this.userlist = []
+          userlist.value = []
           for (var i in res.users) {
             if (res.users[i].role === 'admin' && res.users[i].company_id === companyid) {
               res.users[i].role = '管理员'
-              this.userlist.push(res.users[i])
+              userlist.value.push(res.users[i])
             } else if (res.users[i].role === 'appuser' && res.users[i].company_id === companyid) {
               res.users[i].role = '普通用户'
-              this.userlist.push(res.users[i])
+              userlist.value.push(res.users[i])
             }
           }
-          this.dialogTableVisible2 = false
         }
       })
-    },
-    Deleteadminuser(prop) {
-      if (this.usermessage.role === 'superadmin') {
-        ElMessageBox.confirm(
-          '是否删除该用户',
-          'Warning',
-          {
-            confirmButtonText: '确认',
-            cancelButtonText: '取消',
-            type: 'warning',
-
-          }
-        )
-          .then(() => {
-            deleteuser(prop.id, this.token).then((res) => {
-              this.$store.dispatch('getallusersMessage', 'superadmin')
-              if (this.usermessage) {
-                ElMessage({
-                  type: 'success',
-                  message: '删除成功',
-                })
-              }
-            });
-            if (this.usermessage) {
-              ElMessage({
-                type: 'success',
-                message: '删除成功',
-              })
+    }
+    const getsuperadminalluser = () => {
+      getallusers().then((res) => {
+        if (res) {
+          userlist.value = []
+          for (var i in res.users) {
+            if (res.users[i].role === 'admin') {
+              res.users[i].role = '管理员'
+              userlist.value.push(res.users[i])
+            } else if (res.users[i].role === 'superadmin') {
+              res.users[i].role = '超级管理员'
+              userlist.value.push(res.users[i])
             }
-          })
-          .catch(() => {
-            ElMessage({
-              type: 'info',
-              message: '取消删除',
-            })
-          })
-      } else {
-        this.$message({
+          }
+        }
+      })
+    }
+    const adduser = () => {
+      dialogTableVisible2.value = true
+    }
+    const gousers = () => {
+      dialogTableVisible2.value = false
+    }
+    const submitForm = () => {
+      if (ruleForm.id === '' || ruleForm.password === '' || ruleForm.password.length <= 8 || ruleForm.name === '') {
+        ElMessage({
+          message: '信息不足',
           type: 'error',
-          message: '权限不足'
-        });
+        })
+      } else {
+        if (ruleForm.role === '管理员') {
+          ruleForm.role = 'admin'
+        } else {
+          ruleForm.role = 'appuser'
+        }
+        var userdata = {
+          id: ruleForm.id,
+          name: ruleForm.name,
+          phone: ruleForm.phone,
+          password: ruleForm.password,
+          company_id: store.state.user.company_id,
+          role: ruleForm.role,
+        }
+        postnewuser(userdata).then(() => {
+          getadminalluser()
+          dialogTableVisible2.value = false
+        })
       }
-    },
-    Deleteuser(prop) {
-      if (this.usermessage.role === 'admin') {
+    }
+    const superadminsubmitForm = () => {
+      if (ruleForm.id === '' || ruleForm.password === '' || ruleForm.password.length <= 8 || ruleForm.companyname === '' || ruleForm.companyid === '') {
+        ElMessage({
+          message: '信息不足',
+          type: 'error',
+        })
+      } else {
+        ruleForm.role = 'admin';
+        var userdata = {
+          id: ruleForm.id,
+          name: ruleForm.name,
+          phone: ruleForm.phone,
+          password: ruleForm.password,
+          company_id: ruleForm.companyid,
+          role: 'admin',
+        }
+        var companydata = {
+          name: ruleForm.companyname,
+          id: ruleForm.companyid,
+        }
+        postnewuser(userdata).then(() => {
+          postsuperaddcompany(companydata).then((res) => {
+            postcopytask(companydata.id)
+          })
+          getsuperadminalluser()
+          dialogTableVisible2.value = false
+        })
+      }
+    }
+    const Deleteuser = (prop) => {
+      if (store.state.user.role === 'admin') {
         ElMessageBox.confirm(
           '是否删除该用户',
           'Warning',
@@ -314,38 +337,106 @@ export default defineComponent({
             type: 'warning',
             center: true,
           }
-        )
-          .then(() => {
-            deleteuser(prop.id, this.token).then((res) => {
-              this.$store.dispatch('getallusersMessage', 'admin');
-              if (this.usermessage) {
-                ElMessage({
-                  type: 'success',
-                  message: '删除成功',
-                })
-              }
-            })
-          })
-          .catch(() => {
+        ).then(() => {
+          deleteuser(prop.id).then((res) => {
+            getadminalluser()
             ElMessage({
-              type: 'info',
-              message: '取消删除',
+              type: 'success',
+              message: '删除成功',
             })
           })
+        }).catch(() => {
+          ElMessage({
+            type: 'info',
+            message: '取消删除',
+          })
+        })
       } else {
-        this.$message({
+        ElMessage({
           type: 'error',
-          message: '权限不足'
-        });
+          message: '权限不足',
+        })
       }
-    },
-    Changepassword(prop) {
-      this.$prompt('请输入新密码', '提示', {
+    }
+    const resetForm = (formEl) => {
+      formEl.resetFields()
+    }
+    const Deleteadminuser = (prop) => {
+      ElMessageBox.confirm(
+        '是否删除该用户',
+        'Warning',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+
+        }
+      ).then(() => {
+        deleteuser(prop.id).then((res) => {
+          getsuperadminalluser()
+          ElMessage({
+            type: 'success',
+            message: '删除成功',
+          })
+        })
+      }).catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消删除',
+        })
+      })
+    }
+    const deleteCompany = () => {
+      ElMessageBox.prompt('请输入需要删除的分公司id', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(({ value }) => {
+        deletecompany(value).then((res) => {
+          if (res) {
+            ElMessage({
+              message: '删除成功',
+              type: 'success',
+            })
+          }
+        })
+      }).catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '取消删除'
+        });
+      });
+    }
+    const xiugai = (prop) => {
+      form.value = prop;
+      id.value = prop.id;
+      dialogTableVisible.value = true
+    }
+    const adminupdate = () => {
+      let params = {
+        id: form.id,
+        body: form
+      }
+      if (form.role === '管理员') {
+        params.body.role = 'admin'
+      }
+      if (form.role === '普通用户') {
+        params.body.role = 'appuser'
+      }
+      postadminupdate(params.id, params.body).then((res) => {
+        getadminalluser()
+        ElMessage({
+          type: 'success',
+          message: '用户信息修改成功'
+        });
+      })
+    }
+    const Changepassword = (prop) => {
+      ElMessageBox.prompt('请输入新密码', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
       }).then(({ value }) => {
         if (value.length <= 8) {
-          this.$message({
+          ElMessage({
             type: 'error',
             message: '密码位数需大于8位'
           });
@@ -354,213 +445,67 @@ export default defineComponent({
             password: value
           }
           if (this.usermessage.role === 'admin') {
-            adminchangepassword(prop.id, this.token, body)
+            adminchangepassword(prop.id, body).then((res) => {
+              if (res) {
+                ElMessage({
+                  type: 'success',
+                  message: '修改成功'
+                })
+              }
+            })
           } else {
-            changepassword(prop.id, this.token, body);
+            changepassword(prop.id, body).then((res) => {
+              if (res) {
+                ElMessage({
+                  type: 'success',
+                  message: '修改成功'
+                })
+              }
+            })
           }
-          this.$message({
-            type: 'success',
-            message: '密码修改成功'
-          });
         }
       }).catch(() => {
-        this.$message({
+        ElMessage({
           type: 'info',
           message: '取消修改'
         });
       });
-    },
-    xiugai(prop) {
-      this.form = prop;
-      this.id = prop.id;
-      this.dialogTableVisible = true
-    },
-    adduser() {
-      this.dialogTableVisible2 = true
-    },
-    adminupdate() {
-      let params = {
-        id: this.form.id,
-        body: this.form
-      }
-      if (this.form.role === '管理员') {
-        params.body.role = 'admin'
-      }
-      if (this.form.role === '普通用户') {
-        params.body.role = 'appuser'
-      }
-      postadminupdate(params.id, params.body, this.token).then((res) => {
-        if (this.$store.state.user.role === 'admin') {
-          this.$store.dispatch('getallusersMessage', 'admin')
-        } else if (this.$store.state.user.role === 'superadmin') {
-          this.$store.dispatch('getallusersMessage', 'superadmin')
-        } else {
-          this.$store.dispatch('getoneusersMessage')
-        }
-        setTimeout(() => {
-          this.dialogTableVisible = false;
-        }, 500)
-      })
-      this.$message({
-        type: 'success',
-        message: '用户信息修改成功'
-      });
-    },
-    deleteCompany() {
-      this.$prompt('请输入需要删除的分公司id', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-      }).then(({ value }) => {
-        deletecompany(value, this.token);
-        // deletetasklist(value, this.token);
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消删除'
-        });
-      });
-    },
-    superadminsubmitForm() {
-      if (this.ruleForm.id === '' || this.ruleForm.password === '' || this.ruleForm.password.length <= 8 || this.ruleForm.companyname === '' || this.ruleForm.companyid === '') {
-        this.$message({
-          type: 'error',
-          message: '信息不足'
-        });
-      } else {
-        this.ruleForm.role = 'admin';
-        var userdata = {
-          id: this.ruleForm.id,
-          name: this.ruleForm.name,
-          phone: this.ruleForm.phone,
-          password: this.ruleForm.password,
-          company_id: this.ruleForm.companyid,
-          role: 'admin',
-        }
-        var companydata = {
-          name: this.ruleForm.companyname,
-          id: this.ruleForm.companyid,
-        }
-        this.$store.dispatch('addnewuser', userdata);
-        postsuperaddcompany(companydata, this.token).then((res) => {
-          postcopytask(companydata.id, this.token)
-
-        }
-        )
-        if (store.state.user.role === 'admin') {
-          this.$store.dispatch('getallusersMessage', 'admin')
-        } else if (store.state.user.role === 'superadmin') {
-          this.$store.dispatch('getallusersMessage', 'superadmin')
-        } else {
-          this.$store.dispatch('getoneusersMessage')
-        }
-        this.dialogTableVisible2 = false
-        // this.$router.go(0)
-      }
-    },
-    submitForm() {
-      if (this.ruleForm.id === '' || this.ruleForm.password === '' || this.ruleForm.password.length <= 8 || this.ruleForm.name === '') {
-        this.$message({
-          type: 'error',
-          message: '信息不足'
-        });
-      } else {
-        if (this.ruleForm.role === '管理员') {
-          this.ruleForm.role = 'admin'
-        } else {
-          this.ruleForm.role = 'appuser'
-        }
-        var userdata = {
-          id: this.ruleForm.id,
-          name: this.ruleForm.name,
-          phone: this.ruleForm.phone,
-          password: this.ruleForm.password,
-          company_id: this.usermessage.company_id,
-          role: this.ruleForm.role,
-        }
-        // this.$store.dispatch('addnewuser', userdata);
-        postnewuser(userdata).then(() => {
-            this.getadminalluser()
-            this.dialogTableVisible2 = false
-
-        })
-        // this.$router.go(0)
-      }
-    },
-    gousers() {
-      this.dialogTableVisible2 = false
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
     }
-  },
 
-  setup() {
-    const store = useStore();
-    const $q = useQuasar();
-    const user = ref({});
-    const users = [];
-
-    const showAddUserDialog = ref(false);
-    const showUpdateUserDialog = ref(false);
-
-    const addUser = () => {
-      showAddUserDialog.value = true;
-    };
-    const editUser = (props) => {
-      user.value = {
-        id: props.row.id,
-        name: props.row.name,
-        role: props.row.role,
-      };
-      showUpdateUserDialog.value = true;
-    };
-    const deleteUser = (props) => {
-      $q.dialog({
-        title: "Delete user",
-        message:
-          "You are about to delete this user: <ul><li>" +
-          props.row.id +
-          "</li></ul>",
-        cancel: true,
-        persistent: true,
-        html: true,
-      }).onOk(() => {
-        userService.delete(props.row.id).then(() => {
-          getUsers();
-        });
-      });
-    };
+    onMounted(() => {
+      if (store.state.user.role === 'admin') {
+        getadminalluser()
+      } else if (store.state.user.role === 'superadmin') {
+        getsuperadminalluser()
+      } else {
+        this.$store.dispatch('getoneusersMessage')
+      }
+    })
 
     return {
-      user,
-      showAddUserDialog,
-      showUpdateUserDialog,
-      users,
-      pagination: {
-        rowsPerPage: 20,
-      },
-      filterQuery: ref(""),
-      filterData(rows, terms) {
-        var filtered = [];
-        terms = terms.toLowerCase();
-        for (var i = 0; i < rows.length; i++) {
-          if (rows[i]["name"].toLowerCase().includes(terms)) {
-            filtered.push(rows[i]);
-          }
-        }
-        return filtered;
-      },
-      addUser,
-      editUser,
-      deleteUser,
-      userAdded() {
-        showAddUserDialog.value = false;
-        getUsers();
-      },
-      userUpdated() {
-        showUpdateUserDialog.value = false;
-        getUsers();
-      },
+      userlist,
+      dialogTableVisible2,
+      dialogTableVisible,
+      id,
+      ruleForm,
+      ruleFormRef,
+      rules1,
+      rules,
+      form,
+
+      getadminalluser,
+      getsuperadminalluser,
+      adduser,
+      submitForm,
+      superadminsubmitForm,
+      resetForm,
+      gousers,
+      Deleteuser,
+      Deleteadminuser,
+      deleteCompany,
+      xiugai,
+      adminupdate,
+      Changepassword,
     };
   },
 });

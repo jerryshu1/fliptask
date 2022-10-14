@@ -58,9 +58,9 @@ export const getsearchtasklist = (id,token,params) => requests({
     }
 })
 //复制任务表数据
-export const postcopytask = (companyid, token) => requests({
+export const postcopytask = (companyid) => requests({
     url: '/ft/api/originalTasks/' +  companyid + '/cloneFromOriginal', method: 'post', headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
 //删除分公司任务库任务
@@ -100,15 +100,15 @@ export const getoneusers = (id, token) => userrequest({
     }
 });
 
-export const changepassword = (id, token, body) => userrequest({
+export const changepassword = (id, body) => userrequest({
     url: '/auth/users/' + id + '/reset', method: 'post', data: body, headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 
-export const adminchangepassword = (id, token, body) => userrequest({
+export const adminchangepassword = (id, body) => userrequest({
     url: '/auth/users/' + id + '/adminReset', method: 'post', data: body, headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 
@@ -118,27 +118,27 @@ export const postnewuser = (body, token) => userrequest({
     }
 });
 //删除用户
-export const deleteuser = (id, token) => userrequest({
+export const deleteuser = (id) => userrequest({
     url: '/auth/users/' + id, method: 'delete', headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 //删除分公司
-export const deletecompany = (companyid, token) => userrequest({
+export const deletecompany = (companyid) => userrequest({
     url: '/auth/company/' + companyid, method: 'delete', headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 
-export const postadminupdate = (id, body, token) => userrequest({
+export const postadminupdate = (id, body) => userrequest({
     url: '/auth/users/' + id, method: 'post', data: body, headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
 
-export const postsuperaddcompany = (body, token) => userrequest({
+export const postsuperaddcompany = (body) => userrequest({
     url: '/auth/company/register', method: 'post', data: body, headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
 
