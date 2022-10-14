@@ -33,9 +33,9 @@
           <el-button @click="Deleteuser(scope.row)" type="text" size="small"
             v-if="scope.row.role !== '管理员' && current_role === 'admin'">删除用户
           </el-button>
-          <el-button @click="Changepassword(scope.row)" type="text" size="small">修改密码
+          <el-button @click="Changepassword(scope.row)" type="text" size="small" v-if="scope.row.id === current_id">修改密码
           </el-button>
-          <el-button type="text" @click="xiugai(scope.row)" v-if="current_role === 'admin'">修改用户信息</el-button>
+          <el-button type="text" @click="xiugai(scope.row)" v-if="current_role === 'admin'" size="small">修改用户信息</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -142,6 +142,7 @@ export default defineComponent({
   setup() {
     const userlist = ref([])
     const current_role = ref('')
+    const current_id = ref('')
     const id = ref('')
     const dialogTableVisible2 = ref(false)
     const dialogTableVisible = ref(false)
@@ -245,10 +246,10 @@ export default defineComponent({
       })
     }
     const getappuser = () => {
-      getoneusers().then((res) => {
-        userlist.value = []
+      userlist.value = []
+      getoneusers(store.state.user.id).then((res) => {
         if (res) {
-          userlist.value = res
+          userlist.value.push(res.user)
         }
       })
     }
@@ -436,31 +437,17 @@ export default defineComponent({
         }
         if (store.state.role === 'admin') {
           adminchangepassword(prop.id, body).then((res) => {
-            if (res) {
-              ElMessage({
-                type: 'success',
-                message: '修改成功'
-              })
-            } else {
-              ElMessage({
-                type: 'error',
-                message: '修改失败'
-              })
-            }
+            ElMessage({
+              type: 'success',
+              message: '修改成功'
+            })
           })
         } else {
           changepassword(prop.id, body).then((res) => {
-            if (res) {
-              ElMessage({
-                type: 'success',
-                message: '修改成功'
-              })
-            } else {
-              ElMessage({
-                type: 'error',
-                message: '修改失败'
-              })
-            }
+            ElMessage({
+              type: 'success',
+              message: '修改成功'
+            })
           })
         }
       }).catch(() => {
@@ -473,6 +460,7 @@ export default defineComponent({
 
     onMounted(() => {
       current_role.value = store.state.user.role
+      current_id.value = store.state.user.id
       if (store.state.user.role === 'admin') {
         getadminalluser()
       } else if (store.state.user.role === 'superadmin') {
@@ -493,6 +481,7 @@ export default defineComponent({
       rules,
       form,
       current_role,
+      current_id,
 
       getadminalluser,
       getsuperadminalluser,
