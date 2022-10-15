@@ -49,7 +49,7 @@
     </el-button>
     <el-button class="homebutton1" style="margin-left: 30%; margin-top: 40px" @click="deleteCompany"
       v-if="current_role === 'superadmin'">
-      删除分公司 
+      删除分公司
     </el-button>
 
     <!-- 修改用户信息 -->
