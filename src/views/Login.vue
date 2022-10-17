@@ -90,12 +90,11 @@ export default defineComponent({
                 getcompanyname(res1.user.company_id).then((res2) => {
                   if (res2) {
                     store.commit('savecompanyname', res2)
+                    router.push({ path: "/published" });
                   }
                 })
               }
             })
-            console.log('xjw');
-            router.push({ path: "/published" });
           } else {
             $q.notify({
               position: "bottom-right",

@@ -5,28 +5,57 @@
             <h3>任务派发</h3>
         </div>
         <el-steps direction="vertical" :active="active">
-            <el-step title="步骤 1">
+            <el-step title="请选择公司及站点">
                 <template v-slot:description>
                     <el-select v-model="current_company" class="m-2" placeholder="请选择公司" size="mini"
                         @change="getstationList">
                         <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
                     </el-select>
 
-                    <!-- <el-select v-model="current_station" class="m-2" placeholder="请选择公司" size="large" @change="getstationList">
-                        <el-option v-for="item in stationlist" :key="item" :label="item" :value="item" />
-                    </el-select> -->
                     <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable
-                        placeholder="请选择站点" @select="handleSelect" v-if="current_company !== ''"/>
+                        placeholder="请选择站点" @select="handleSelect" v-if="current_company !== ''" />
                 </template>
             </el-step>
-            <el-step title="步骤 2">
+            <el-step title="清输入线路名称以及选择间隔单元">
                 <template v-slot:description>
-
+                    <div>
+                        <el-select v-model="current_company1" class="m-2" placeholder="请选择公司" size="mini"
+                            @change="getstationList">
+                            <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
+                        </el-select>
+                    </div>
+                    <div>
+                        <el-radio-group v-model="looptype" @change="changelooptype">
+                            <el-radio label="1" size="large" border>线路</el-radio>
+                            <el-radio label="2" size="large" border>变压器</el-radio>
+                            <el-radio label="3" size="large" border>站用变</el-radio>
+                            <el-radio label="4" size="large" border>电抗器</el-radio>
+                            <el-radio label="5" size="large" border>电容器</el-radio>
+                            <el-radio label="6" size="large" border>母线</el-radio>
+                            <el-radio label="7" size="large" border>X母压变避雷器</el-radio>
+                            <el-radio label="8" size="large" border>线路导母线</el-radio>
+                        </el-radio-group>
+                    </div>
                 </template>
             </el-step>
-            <el-step title="步骤 3">
+            <el-step title="请选择调度令">
                 <template v-slot:description>
-
+                    <div v-if="searchtype === 0">
+                        <el-select v-model="current_company" class="m-2" placeholder="请选择公司" size="mini"
+                            @change="getstationList">
+                            <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
+                        </el-select>
+                        <el-select v-model="current_company" class="m-2" placeholder="请选择公司" size="mini"
+                            @change="getstationList">
+                            <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
+                        </el-select>
+                    </div>
+                    <div v-if="searchtype === 1">
+                        <el-select v-model="current_company" class="m-2" placeholder="请选择公司" size="mini"
+                            @change="getstationList">
+                            <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
+                        </el-select>
+                    </div>
                 </template>
             </el-step>
             <el-step title="步骤 4">
@@ -55,8 +84,11 @@ export default defineComponent({
         const companylist = ref([])
         const stationlist = ref([])
         const current_company = ref('')
+        const current_company1 = ref('')
         const current_station = ref('')
+        const looptype = ref('')
         const active = ref(0)
+        const searchtype = ref(1)
 
         const getcompanyList = () => {
             getcompanylist().then((res) => {
@@ -70,10 +102,10 @@ export default defineComponent({
             stationlist.value = []
             getstationlist(value).then((res) => {
                 if (res) {
-                    for (var i in res.station){
+                    for (var i in res.station) {
                         stationlist.value.push({
-                          value: res.station[i],
-                          link: res.station[i]
+                            value: res.station[i],
+                            link: res.station[i]
                         })
                     }
                 }
@@ -99,26 +131,41 @@ export default defineComponent({
         const handleSelect = (item) => {
             console.log(item)
         }
-        // const getstationList = () => {
-        //     getstationlist(current_company).then((res) => {
-        //         console.log(res)
-        //     })
-        // }
+
+        const changelooptype = (val) => {
+            if (val === '1' || '2' || '3' || '4' || '5'){
+                searchtype.value = 0
+            }
+            if (val === '6'){
+                searchtype.value = 1
+            }
+            if (val === '7'){
+                searchtype.value = 1
+            }
+            if (val === '8'){
+                searchtype.value = 2
+            }
+        }
+
         getcompanyList()
 
 
         return {
             companylist,
             current_company,
+            current_company1,
             current_station,
             active,
             stationlist,
+            looptype,
+            searchtype,
 
             getcompanyList,
             getstationList,
             querySearch,
             handleSelect,
-            createFilter
+            createFilter,
+            changelooptype,
         }
     }
 })
