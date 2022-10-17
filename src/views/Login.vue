@@ -48,11 +48,8 @@
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 import { useQuasar } from "quasar";
-import { Buffer } from "buffer";
 import { useRouter } from "vue-router";
-// import authapi from "../services/auth";
-import { getcompanyname, postlogin } from "../api/getComponents";
-import { ElMessage } from "element-plus";
+import { getcompanyname, postlogin, getuser } from "../api/getComponents";
 
 export default defineComponent({
   name: "PageLogin",
@@ -86,8 +83,19 @@ export default defineComponent({
             creds.token = res.token;
             localStorage.setItem('token', res.token)
             store.commit("savetoken", creds);
-            store.dispatch("getuserMessage", creds.id);
-            router.replace({ path: "/published" });
+            // store.dispatch("getuserMessage", creds.id);
+            getuser(creds.id).then((res1) => {
+              if (res1) {
+                store.commit('saveuser', res1);
+                getcompanyname(res1.user.company_id).then((res2) => {
+                  if (res2) {
+                    store.commit('savecompanyname', res2)
+                  }
+                })
+              }
+            })
+            console.log('xjw');
+            router.push({ path: "/published" });
           } else {
             $q.notify({
               position: "bottom-right",

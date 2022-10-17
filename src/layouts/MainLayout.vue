@@ -16,7 +16,7 @@
         <div>
           <q-btn-dropdown outline rounded no-caps icon-right="manage_accounts">
             <template #label>
-              <div class="row items-center no-wrap">{{ user.name }}</div>
+              <div class="row items-center no-wrap">{{ user }}</div>
             </template>
             <q-list>
               <q-item-label header>Account</q-item-label>
@@ -105,7 +105,7 @@ const linksList = [
   }
 ];
 
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import store from "../store";
@@ -125,18 +125,21 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
+    const user = ref('')
 
     const signout = () => {
       sessionStorage.clear();
       store.dispatch("logout");
       localStorage.setItem("creds", "");
-      router.push("/login");
+      window.location.replace("/login")
     };
 
+    user.value = store.state.user.name
+    
     return {
       essentialLinks: linksList,
       leftDrawerOpen: ref(false),
-      user: store.state.user,
+      user,
       signout,
     };
   },

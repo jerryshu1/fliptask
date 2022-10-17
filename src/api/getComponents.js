@@ -83,9 +83,9 @@ export const postlogin = (body) => userrequest({
     }
 });
 
-export const getuser = (id, token) => userrequest({
+export const getuser = (id) => userrequest({
     url: '/auth/users/' + id, method: 'get', headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 
@@ -161,9 +161,9 @@ export const searchtype = (params, token) => requests({
     }
 })
 //根据公司id获取公司名称
-export const getcompanyname = (companyid, token) => userrequest({
+export const getcompanyname = (companyid) => userrequest({
     url: '/auth/company/' + companyid, method: 'get', headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
 //获取所有公司列表

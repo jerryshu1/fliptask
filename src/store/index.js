@@ -67,10 +67,11 @@ export default createStore({
             state.user_password = payload.password;
         },
         saveuser(state, payload) {
+            state.user = {}
             state.user = payload.user;
         },
         savecompanyname(state, payload) {
-            console.log(payload)
+
             state.companyname = payload.company.name;
         },
         login(state, payload) {
@@ -83,10 +84,7 @@ export default createStore({
             }
         },
         logout(state) {
-            state.user._id = "";
-            state.user.name = "";
-            state.user.role = "";
-            state.user.phone = "";
+            state.user = {}
             state.user_id = "";
             state.user_password = "";
             state.jwtToken = "";
@@ -203,7 +201,7 @@ export default createStore({
         },
         //users
         SUPERALLUSERS(state, result) {
-            console.log(result);
+
             state.allUsers = [];
             for (var i in result.users) {
                 if (result.users[i].role === 'superadmin') {
@@ -228,7 +226,6 @@ export default createStore({
             }
         },
         ALLUSERS(state, result) {
-            console.log(result);
             state.allUsers = [];
             if (state.user.role === 'appuser') {
                 state.allUsers.push(result.user);
@@ -342,7 +339,7 @@ export default createStore({
         },
         //user
         async getuserMessage({commit, state}, params) {
-            let result = await getuser(params, state.jwtToken);
+            let result = await getuser(params);
             if (result) {
                 commit('saveuser', result);
                 let companyname = await getcompanyname(result.user.company_id, state.jwtToken)
