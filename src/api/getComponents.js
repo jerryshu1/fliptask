@@ -1,5 +1,6 @@
 import requests from '../utils/request';
 import userrequest from "../utils/userrequest";
+import datarequest from "../utils/datarequest"
 
 export const getComponentsData = (params, token) => requests({
     url: '/ft/api/components', method: 'get', params: params, headers: {
@@ -164,4 +165,20 @@ export const getcompanyname = (companyid, token) => userrequest({
     url: '/auth/company/' + companyid, method: 'get', headers: {
         'Authorization': 'Bearer ' + token
     }
+})
+//获取所有公司列表
+export const getcompanylist = () => datarequest({
+	url: '/mt/api/ledger/company',
+	method: 'get',
+	headers: {
+		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+	}
+})
+//获取某公司下站点
+export const getstationlist = (company_id) => datarequest({
+	url: '/mt/api/ledger/company/' + company_id,
+	method: 'get',
+	headers: {
+		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+	}
 })

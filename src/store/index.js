@@ -360,7 +360,7 @@ export default createStore({
             }
         },
         async getoneusersMessage({commit, state}) {
-            let result = await getoneusers(state.user_id, state.jwtToken);
+            let result = await getoneusers(state.user_id);
             if (result) {
                 commit('ALLUSERS', result);
             }

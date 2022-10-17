@@ -12,6 +12,7 @@ import Print from "../views/Print.vue";
 import Mutisearch from "../views/Mutisearch.vue";
 import Register from "../views/Register.vue";
 import Tasks from "../views/Tasks.vue";
+import NewSearch from "../views/NewSearch/index.vue"
 
 const routes = [
   {
@@ -29,6 +30,14 @@ const routes = [
         path: "search",
         name: "search",
         component: Search,
+        meta: {
+          keepAlive: true,
+        },
+      },
+      {
+        path: "newsearch",
+        name: "newsearch",
+        component: NewSearch,
         meta: {
           keepAlive: true,
         },
