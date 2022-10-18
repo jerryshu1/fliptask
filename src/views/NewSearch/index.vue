@@ -20,7 +20,6 @@
                         placeholder="请选择站点" @select="handleSelect" />
                 </template>
             </el-step>
-
             <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
@@ -65,27 +64,15 @@
             </el-step>
             <el-step title="请选择操作对象、存在的主要风险">
                 <template v-slot:description>
-                    <el-table :data="showtabledata[0]" :border="parentBorder" style="width: 100%">
-                        <el-table-column type="selection">
-                            <!-- <template #default="props">
-                                <div m="4">
-                                    <el-table :data="props.row.family" :border="childBorder">
-                                        <el-table-column type="selection" />
-                                        <el-table-column label="Name" prop="name" />
-                                        <el-table-column label="State" prop="state" />
-                                        <el-table-column label="City" prop="city" />
-                                        <el-table-column label="Address" prop="address" />
-                                        <el-table-column label="Zip" prop="zip" />
-                                    </el-table>
-                                </div>
-                            </template> -->
-                        </el-table-column>
+                    <el-table ref="taskTableRef" :data="showtabledata[0]" :border="parentBorder" style="width: 100%" @select="handleSelectionChange" :row-key="getRowKeys">
+                        <el-table-column type="selection" :reserve-selection="true" />
                         <el-table-column label="Name" prop="name" />
                         <el-table-column label="State" prop="state" />
                         <el-table-column label="City" prop="city" />
                         <el-table-column label="Address" prop="address" />
                         <el-table-column label="Zip" prop="zip" />
                     </el-table>
+                    <el-button @click="prestep">上一步</el-button>
                     <el-button @click="nextstep">下一步</el-button>
                 </template>
             </el-step>
@@ -96,9 +83,8 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import { List } from "@element-plus/icons";
-
+import { ElMessage } from 'element-plus'
 import { getcompanylist, getstationlist } from "../../api/getComponents";
-import { colProps } from "element-plus";
 
 export default defineComponent({
     setup() {
@@ -113,6 +99,9 @@ export default defineComponent({
         const searchtype = ref(1);
         const start_status = ref("");
         const end_status = ref("");
+        // 底下单选的value
+        const value=ref([])
+        const checkdevice = ref([])
         const showtabledata = ref([])
         const Length = ref(0)
         const statuslist = ref([
@@ -185,6 +174,7 @@ export default defineComponent({
         ]
         const current_step = ref(0)
         const multipleSelection = ref([])
+        const taskTableRef = ref()
 
         const getcompanyList = () => {
             getcompanylist().then((res) => {
@@ -242,17 +232,39 @@ export default defineComponent({
                 searchtype.value = 2;
             }
         };
+
         const nextstep = () => {
-            console.log(current_step.value + 1 < Length.value)
             if (current_step.value + 1 < Length.value) {
                 current_step.value += 1
-                console.log(current_step.value)
+                checkdevice.value.push(value.value)
                 showtabledata.value = [tableData[current_step.value].family]
             } else {
-
+                // 跳转中间层
+            }
+        };
+        const prestep = () =>{
+            if(current_step.value - 1 >=0){
+                current_step.value -= 1
+                showtabledata.value = [tableData[current_step.value].family]
+            }else{
+                ElMessage.info("已经是第一页！")
             }
         }
 
+
+        const handleSelectionChange = (selection) => {
+            if (selection.length > 1) {
+                let del_row = selection.pop();
+                console.log('0',del_row);
+                ElMessage("最多只能选1");
+                taskTableRef.value.toggleRowSelection(del_row, false)
+            } else {
+                value.value = selection[0];
+            }
+        }
+        const getRowKeys = (row) =>{
+            return row
+        }
         onMounted(() => {
             getcompanyList()
             Length.value = tableData.length
@@ -278,6 +290,9 @@ export default defineComponent({
             current_step,
             showtabledata,
             Length,
+            taskTableRef,
+            value,
+            checkdevice,
 
             getcompanyList,
             getstationList,
@@ -286,6 +301,11 @@ export default defineComponent({
             createFilter,
             changelooptype,
             nextstep,
+            prestep,
+            getRowKeys,
+            // selectClick,
+            // selected,
+            handleSelectionChange,
             List,
         };
     },
@@ -317,4 +337,9 @@ export default defineComponent({
 .choosecomp {
     margin-right: 2%;
 }
+
+:deep(.el-table th.el-table__cell:nth-child(1) .cell) {
+    visibility: hidden;
+}
+ 
 </style>
