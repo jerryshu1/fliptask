@@ -429,12 +429,13 @@ export default defineComponent({
       }
       let senddata = {
         station: '新泽',
-        device: a.value
+        device: '220千伏副二母'
       }
+      console.log(senddata);
       searchtype(senddata, store.state.jwtToken).then((res1) => {
-        if (res1 !== ''){
+        if (res1 === ''){
           let params = {
-            q: res1 + '-' + b.value
+            q: '出线' + '-' + b.value
           }
           getsearchtasklist(store.state.user.company_id, store.state.jwtToken, params)
               .then((res) => {

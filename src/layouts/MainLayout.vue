@@ -79,14 +79,9 @@ import MenuLink from "../components/MenuLink.vue";
 
 const linksList = [
   {
-    title: "单步任务搜索",
+    title: "任务搜索",
     icon: "manage_search",
-    link: "/search",
-  },
-  {
-    title: "复合型任务搜索",
-    icon: "manage_search",
-    link: "/mutisearch",
+    link: "/newsearch",
   },
   {
     title: "用户中心",
