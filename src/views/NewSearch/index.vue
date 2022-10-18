@@ -65,9 +65,9 @@
             </el-step>
             <el-step title="请选择操作对象、存在的主要风险">
                 <template v-slot:description>
-                    <el-table :data="tableData" :border="parentBorder" style="width: 100%">
-                        <el-table-column type="expand">
-                            <template #default="props">
+                    <el-table :data="showtabledata[0]" :border="parentBorder" style="width: 100%">
+                        <el-table-column type="selection">
+                            <!-- <template #default="props">
                                 <div m="4">
                                     <el-table :data="props.row.family" :border="childBorder">
                                         <el-table-column type="selection" />
@@ -78,9 +78,13 @@
                                         <el-table-column label="Zip" prop="zip" />
                                     </el-table>
                                 </div>
-                            </template>
+                            </template> -->
                         </el-table-column>
-                        <el-table-column label="task_name" prop="date" />
+                        <el-table-column label="Name" prop="name" />
+                        <el-table-column label="State" prop="state" />
+                        <el-table-column label="City" prop="city" />
+                        <el-table-column label="Address" prop="address" />
+                        <el-table-column label="Zip" prop="zip" />
                     </el-table>
                     <el-button @click="nextstep">下一步</el-button>
                 </template>
@@ -90,10 +94,11 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { List } from "@element-plus/icons";
 
 import { getcompanylist, getstationlist } from "../../api/getComponents";
+import { colProps } from "element-plus";
 
 export default defineComponent({
     setup() {
@@ -104,10 +109,12 @@ export default defineComponent({
         const current_station = ref("");
         const looptype = ref("");
         const active = ref(0);
-        const checked1 = ref([[false, false, false],[false, false, false]])
+        const checked1 = ref([[false, false, false], [false, false, false]])
         const searchtype = ref(1);
         const start_status = ref("");
         const end_status = ref("");
+        const showtabledata = ref([])
+        const Length = ref(0)
         const statuslist = ref([
             "运行",
             "热备用",
@@ -127,21 +134,21 @@ export default defineComponent({
                 date: '运行改为热备用',
                 family: [
                     {
-                        name: 'Jerry',
+                        name: 'hjx1',
                         state: 'California',
                         city: 'San Francisco',
                         address: '3650 21st St, San Francisco',
                         zip: 'CA 94114',
                     },
                     {
-                        name: 'Spike',
+                        name: 'hjx2',
                         state: 'California',
                         city: 'San Francisco',
                         address: '3650 21st St, San Francisco',
                         zip: 'CA 94114',
                     },
                     {
-                        name: 'Tyke',
+                        name: 'hjx3',
                         state: 'California',
                         city: 'San Francisco',
                         address: '3650 21st St, San Francisco',
@@ -153,21 +160,21 @@ export default defineComponent({
                 date: '运行改为冷备用',
                 family: [
                     {
-                        name: 'Jerry',
+                        name: 'xjw1',
                         state: 'California',
                         city: 'San Francisco',
                         address: '3650 21st St, San Francisco',
                         zip: 'CA 94114',
                     },
                     {
-                        name: 'Spike',
+                        name: 'xjw2',
                         state: 'California',
                         city: 'San Francisco',
                         address: '3650 21st St, San Francisco',
                         zip: 'CA 94114',
                     },
                     {
-                        name: 'Tyke',
+                        name: 'xjw3',
                         state: 'California',
                         city: 'San Francisco',
                         address: '3650 21st St, San Francisco',
@@ -176,6 +183,7 @@ export default defineComponent({
                 ],
             },
         ]
+        const current_step = ref(0)
         const multipleSelection = ref([])
 
         const getcompanyList = () => {
@@ -204,7 +212,6 @@ export default defineComponent({
             const results = queryString
                 ? stationlist.value.filter(createFilter(queryString))
                 : stationlist.value;
-            // call callback function to return suggestions
             cb(results);
         };
 
@@ -236,24 +243,21 @@ export default defineComponent({
             }
         };
         const nextstep = () => {
-            if (current_step + 1 < length) {
-                current_step += 1
-                showtabledata = tableData[current_step]
+            console.log(current_step.value + 1 < Length.value)
+            if (current_step.value + 1 < Length.value) {
+                current_step.value += 1
+                console.log(current_step.value)
+                showtabledata.value = [tableData[current_step.value].family]
             } else {
 
             }
         }
 
-        const checkthis = (val, val2) => {
-            console.log(val);
-            console.log(val2);
-            console.log(checked1.value);
-            lastcheck.value = [val2.$index,val.$index]
-            // multipleSelection.value = val
-            // console.log(multipleSelection.value);
-        }
-        
-        getcompanyList();
+        onMounted(() => {
+            getcompanyList()
+            Length.value = tableData.length
+            showtabledata.value = [tableData[current_step.value].family]
+        })
 
         return {
             companylist,
@@ -271,6 +275,9 @@ export default defineComponent({
             multipleSelection,
             checked1,
             lastcheck,
+            current_step,
+            showtabledata,
+            Length,
 
             getcompanyList,
             getstationList,
@@ -278,7 +285,6 @@ export default defineComponent({
             handleSelect,
             createFilter,
             changelooptype,
-            checkthis,
             nextstep,
             List,
         };
