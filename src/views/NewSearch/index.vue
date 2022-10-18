@@ -13,13 +13,13 @@
                     </el-select>
 
                     <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable
-                        placeholder="请选择站点" @select="handleSelect" v-if="current_company !== ''" />
+                        placeholder="请选择站点" @select="handleSelect" />
                 </template>
             </el-step>
             <el-step title="清输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
-                        <el-select v-model="current_company1" class="m-2" placeholder="请选择公司" size="mini"
+                        <el-select v-model="current_company1" class="m-2" placeholder="请选择线路" size="mini"
                             @change="getstationList">
                             <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
                         </el-select>
@@ -41,29 +41,24 @@
             <el-step title="请选择调度令">
                 <template v-slot:description>
                     <div v-if="searchtype === 0">
-                        <el-select v-model="current_company" class="m-2" placeholder="请选择公司" size="mini"
+                        <el-select v-model="start_status" class="m-2" placeholder="请选择开始状态" size="mini"
                             @change="getstationList">
-                            <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
+                            <el-option v-for="item in statuslist" :key="item" :label="item" :value="item" />
                         </el-select>
-                        <el-select v-model="current_company" class="m-2" placeholder="请选择公司" size="mini"
+                        <el-select v-model="end_status" class="m-2" placeholder="请选择结束状态" size="mini"
                             @change="getstationList">
-                            <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
+                            <el-option v-for="item in statuslist" :key="item" :label="item" :value="item" />
                         </el-select>
                     </div>
                     <div v-if="searchtype === 1">
-                        <el-select v-model="current_company" class="m-2" placeholder="请选择公司" size="mini"
+                        <el-select v-model="current_company" class="m-2" placeholder="请选择任务" size="mini"
                             @change="getstationList">
                             <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
                         </el-select>
                     </div>
                 </template>
             </el-step>
-            <el-step title="步骤 4">
-                <template v-slot:description>
-
-                </template>
-            </el-step>
-            <el-step title="步骤 5">
+            <el-step title="请选择操作对象、存在的主要风险">
                 <template v-slot:description>
 
                 </template>
@@ -89,6 +84,11 @@ export default defineComponent({
         const looptype = ref('')
         const active = ref(0)
         const searchtype = ref(1)
+        const start_status = ref('')
+        const end_status = ref('')
+        const statuslist = ref(
+            ['运行','热备用','冷备用','开关检修','线路检修','开关线路检修','变压器检修','开关变压器检修','开关站用变检修','电容器检修检修','电抗器检修检修']
+        )
 
         const getcompanyList = () => {
             getcompanylist().then((res) => {
@@ -159,6 +159,9 @@ export default defineComponent({
             stationlist,
             looptype,
             searchtype,
+            start_status,
+            end_status,
+            statuslist,
 
             getcompanyList,
             getstationList,
