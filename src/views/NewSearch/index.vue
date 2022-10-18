@@ -1,10 +1,14 @@
 <template>
     <div class="maincontain">
         <div class="title">
-            <i class="el-icon-s-order"></i>
-            <h3>任务派发</h3>
+            <div style="font-size:20px">
+                <el-icon :size="26">
+                    <component :is="List"></component>
+                </el-icon>
+            </div>
+            <p>任务派发</p>
         </div>
-        <el-steps direction="vertical" :active="active">
+        <el-steps style="width:85%; margin-left: 7%;margin-top: 1%" direction="vertical" :active="active">
             <el-step title="请选择公司及站点">
                 <template v-slot:description>
                     <el-select v-model="current_company" class="m-2" placeholder="请选择公司" size="mini"
@@ -16,6 +20,7 @@
                         placeholder="请选择站点" @select="handleSelect" />
                 </template>
             </el-step>
+
             <el-step title="清输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
@@ -69,12 +74,13 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
+import { List } from "@element-plus/icons";
 
 import { getcompanylist, getstationlist } from "../../api/getComponents"
 
 
 export default defineComponent({
-
+    
     setup() {
         const companylist = ref([])
         const stationlist = ref([])
@@ -169,6 +175,7 @@ export default defineComponent({
             handleSelect,
             createFilter,
             changelooptype,
+            List
         }
     }
 })
@@ -177,5 +184,14 @@ export default defineComponent({
 <style>
 .el-steps .el-step {
     flex-basis: auto !important;
+}
+
+.el-select{
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+.el-radio-group{
+    margin-bottom: 1%;
 }
 </style>
