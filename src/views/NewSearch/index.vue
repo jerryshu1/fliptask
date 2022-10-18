@@ -10,7 +10,7 @@
         </div>
         <el-steps style="width: 85%; margin-left: 7%; margin-top: 1%" direction="vertical" :active="active">
             <el-step title="请选择公司及站点">
-                <template v-slot:description>
+                <template class="selectgroup" v-slot:description>
                     <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" size="mini"
                         @change="getstationList">
                         <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
@@ -235,6 +235,7 @@ export default defineComponent({
             if (val === "线路" || "变压器" || "站用变" || "电抗器" || "电容器") {
                 end_status.value = ''
                 start_status.value = ''
+                paths.value=false
                 searchtype.value = 0;
                 statuslist.value[4] = '开关' + val + '检修'
             }
@@ -297,9 +298,11 @@ export default defineComponent({
                 getcomontasklist(current_company_id.value, params).then((res) => {
                     if (res) {
                         if (res.paths === null) {
+                            paths.value=false
                             ElMessage.error('任务库无此类任务')
                         } else {
                             if (res.paths.length === 1) {
+                                paths.value=false
                                 neededdata.value = res
                             } else {
                                 paths.value = true
@@ -326,7 +329,7 @@ export default defineComponent({
             console.log(selection)
         }
         const getRowKeys = (row) => {
-            return row.date
+            return row.name
         }
         onMounted(() => {
             getcompanyList()
@@ -391,6 +394,15 @@ export default defineComponent({
     margin-bottom: 2%;
 }
 
+.el-autocomplete{
+    margin-top: 1%;
+    margin-bottom: 2%;
+}
+
+.selectgroup{
+    display: flex;
+}
+
 .el-radio-group {
     margin-bottom: 1%;
 }
@@ -410,4 +422,6 @@ export default defineComponent({
 :deep(.el-table th.el-table__cell:nth-child(1) .cell) {
     visibility: hidden;
 }
+
+
 </style>
