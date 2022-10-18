@@ -21,7 +21,7 @@
                 </template>
             </el-step>
 
-            <el-step title="清输入线路名称以及选择间隔单元">
+            <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
                         <el-select v-model="current_company1" class="m-2" placeholder="请选择线路" size="mini"
@@ -97,7 +97,6 @@ import { getcompanylist, getstationlist } from "../../api/getComponents";
 
 export default defineComponent({
     setup() {
-<<<<<<< Updated upstream
         const companylist = ref([]);
         const stationlist = ref([]);
         const current_company = ref("");
@@ -178,21 +177,6 @@ export default defineComponent({
             },
         ]
         const multipleSelection = ref([])
-=======
-        const companylist = ref([])
-        const stationlist = ref([])
-        const current_company = ref('')
-        const current_company1 = ref('')
-        const current_station = ref('')
-        const looptype = ref('')
-        const active = ref(0)
-        const searchtype = ref(4)
-        const start_status = ref('')
-        const end_status = ref('')
-        const statuslist = ref(
-            ['运行','热备用','冷备用','开关检修','线路检修','开关线路检修','变压器检修','开关变压器检修','开关站用变检修','电容器检修检修','电抗器检修检修']
-        )
->>>>>>> Stashed changes
 
         const getcompanyList = () => {
             getcompanylist().then((res) => {
