@@ -182,3 +182,21 @@ export const getstationlist = (company_id) => datarequest({
 		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
 	}
 })
+//获取某公司站点下的所有category
+export const getcategorylist = (params) => requests({
+    url: '/ft/api/ledger/category', method: 'get', params: params, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+//获取母线以及X母。。。的任务列表
+export const getotherstasklist = (company_id, params) => requests({
+    url: '/ft/api/originalTasks/' + company_id + '/others', method: 'get', params: params, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+//获取常规任务列表
+export const getcomontasklist = (company_id, params) => requests({
+    url: '/ft/api/originalTasks/' + company_id + '/common', method: 'get', params: params, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})

@@ -87,14 +87,14 @@ export default defineComponent({
             getuser(creds.id).then((res1) => {
               if (res1) {
                 store.commit('saveuser', res1);
-                getcompanyname(res1.user.company_id).then((res2) => {
-                  if (res2) {
-                    store.commit('savecompanyname', res2)
-                    router.push({ path: "/published" });
-                  }
-                })
+                // getcompanyname(res1.user.company_id).then((res2) => {
+                //   if (res2) {
+                //     store.commit('savecompanyname', res2)
+                //   }
+                // })
               }
             })
+            router.push({ path: "/published" });
           } else {
             $q.notify({
               position: "bottom-right",
