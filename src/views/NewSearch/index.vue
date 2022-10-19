@@ -10,21 +10,23 @@
         </div>
         <el-steps style="width: 85%; margin-left: 7%; margin-top: 1%" direction="vertical" :active="active">
             <el-step title="请选择公司及站点">
-                <template class="selectgroup" v-slot:description>
-                    <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" size="mini"
-                        @change="getstationList">
-                        <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
-                    </el-select>
+                <template v-slot:description>
+                    <div class="selectgroup">
+                        <el-select v-model="current_company" class="choosecomp" placeholder="请选择公司" size="mini"
+                            @change="getstationList">
+                            <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
+                        </el-select>
 
-                    <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable
-                        placeholder="请选择站点" @select="handleSelect" />
+                        <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable
+                            placeholder="请选择站点" @select="handleSelect" />
+                    </div>
                 </template>
             </el-step>
             <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
                         <el-select v-model="current_category" class="m-2" placeholder="请选择线路" size="mini">
-                            <el-option v-for="(item, index) in categorylist" :key="item" :label="item" :value="item" />
+                            <el-option v-for="(item, index) in categorylist" :key="index" :label="item" :value="item" />
                         </el-select>
                     </div>
                     <div>
@@ -51,10 +53,9 @@
                             @change="getcommonlist">
                             <el-option v-for="item in statuslist" :key="item" :label="item" :value="item" />
                         </el-select>
-                        
+
                         <el-select v-model="current_task" class="ends m-2" placeholder="请选择任务" size="mini" v-if="paths">
-                            <el-option v-for="item in pathlist" :key="item" :label="item"
-                                :value="item" />
+                            <el-option v-for="item in pathlist" :key="item" :label="item" :value="item" />
                         </el-select>
                     </div>
                     <div v-if="searchtype === 1">
@@ -87,100 +88,98 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import { List } from "@element-plus/icons";
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
-import { getcompanylist, getstationlist, getcategorylist, getotherstasklist, getcomontasklist } from "../../api/getComponents";
+import {
+    getcompanylist,
+    getstationlist,
+    getcategorylist,
+    getotherstasklist,
+    getcomontasklist,
+} from "../../api/getComponents";
 
 export default defineComponent({
     setup() {
-        const current_company_id = ref('')
+        const current_company_id = ref("");
         const companylist = ref([]);
         const stationlist = ref([]);
-        const categorylist = ref([])
-        const othertasklist = ref([])
+        const categorylist = ref([]);
+        const othertasklist = ref([]);
         const current_company = ref("");
         const current_category = ref("");
         const current_station = ref("");
-        const current_task = ref(null)
+        const current_task = ref(null);
         const looptype = ref("");
         const active = ref(0);
         const searchtype = ref(null);
-        const paths = ref(false)
-        const pathlist = ref ([])
+        const paths = ref(false);
+        const pathlist = ref([]);
         const start_status = ref("");
         const end_status = ref("");
         // 底下单选的value
-        const showtabledata = ref([])
-        const Length = ref(0)
-        const statuslist = ref([
-            "运行",
-            "热备用",
-            "冷备用",
-            "检修",
-            "开关检修"
-        ]);
-        const lastcheck = ref([])
+        const showtabledata = ref([]);
+        const Length = ref(0);
+        const statuslist = ref(["运行", "热备用", "冷备用", "检修", "开关检修"]);
+        const lastcheck = ref([]);
         const tableData = [
             {
-                date: '运行改为热备用',
+                date: "运行改为热备用",
                 family: [
                     {
-                        name: 'hjx1',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "hjx1",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                     {
-                        name: 'hjx2',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "hjx2",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                     {
-                        name: 'hjx3',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "hjx3",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                 ],
             },
             {
-                date: '运行改为冷备用',
+                date: "运行改为冷备用",
                 family: [
                     {
-                        name: 'xjw1',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "xjw1",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                     {
-                        name: 'xjw2',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "xjw2",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                     {
-                        name: 'xjw3',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
-                    }
+                        name: "xjw3",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
+                    },
                 ],
             },
-        ]
-        const neededdata = ref({})
-        const current_step = ref(0)
-        const multipleSelection = ref([])
-        const taskTableRef = ref()
-
+        ];
+        const neededdata = ref({});
+        const current_step = ref(0);
+        const multipleSelection = ref([]);
+        const taskTableRef = ref();
         const store = useStore();
-
         const getcompanyList = () => {
             getcompanylist().then((res) => {
                 if (res) {
@@ -188,7 +187,6 @@ export default defineComponent({
                 }
             });
         };
-
         const getstationList = (value) => {
             stationlist.value = [];
             getstationlist(value).then((res) => {
@@ -202,121 +200,118 @@ export default defineComponent({
                 }
             });
         };
-
         const querySearch = (queryString, cb) => {
             const results = queryString
                 ? stationlist.value.filter(createFilter(queryString))
                 : stationlist.value;
             cb(results);
         };
-
         const createFilter = (queryString) => {
             return (restaurant) => {
                 return (
-                    restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+                    restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+                    0
                 );
             };
         };
-
         const handleSelect = (item) => {
-            current_station.value = item.value
+            current_station.value = item.value;
             let params = {
                 city: current_company.value,
-                station: current_station.value
-            }
+                station: current_station.value,
+            };
+            console.log(current_company.value);
+            console.log( current_station.value);
             getcategorylist(params).then((res) => {
                 if (res) {
-                    categorylist.value = res.categories
+                    categorylist.value = res.categories;
                 }
-            })
+            });
         };
-
         const changelooptype = (val) => {
             if (val === "线路" || "变压器" || "站用变" || "电抗器" || "电容器") {
-                end_status.value = ''
-                start_status.value = ''
-                paths.value=false
+                end_status.value = "";
+                start_status.value = "";
+                paths.value = false;
                 searchtype.value = 0;
-                statuslist.value[4] = '开关' + val + '检修'
+                statuslist.value[4] = "开关" + val + "检修";
             }
             if (val === "母线") {
                 let params = {
-                    subject: val
-                }
+                    subject: val,
+                };
                 getotherstasklist(current_company_id.value, params).then((res) => {
                     if (res) {
-                        othertasklist.value = res
-                        current_task.value = null
+                        othertasklist.value = res;
+                        current_task.value = null;
                         searchtype.value = 1;
                     }
-                })
+                });
             }
             if (val === "X母压变避雷器") {
                 let params = {
-                    subject: val
-                }
+                    subject: val,
+                };
                 getotherstasklist(current_company_id.value, params).then((res) => {
                     if (res) {
-                        othertasklist.value = res
-                        current_task.value = null
+                        othertasklist.value = res;
+                        current_task.value = null;
                         searchtype.value = 1;
                     }
-                })
+                });
             }
             if (val === "线路导母线") {
                 searchtype.value = 2;
             }
         };
-
         const nextstep = () => {
             if (current_step.value + 1 < Length.value) {
-                current_step.value += 1
+                current_step.value += 1;
                 // checkdevice.value.push(value.value)
-                showtabledata.value = [tableData[current_step.value].family]
+                showtabledata.value = [tableData[current_step.value].family];
             } else {
                 // 跳转中间层
             }
         };
         const prestep = () => {
             if (current_step.value - 1 >= 0) {
-                current_step.value -= 1
-                showtabledata.value = [tableData[current_step.value].family]
+                current_step.value -= 1;
+                showtabledata.value = [tableData[current_step.value].family];
             } else {
-                ElMessage.info("已经是第一页！")
+                ElMessage.info("已经是第一页！");
             }
-        }
+        };
         const getcommonlist = () => {
-            if (end_status.value === '') {
-                ElMessage.error('结束状态未选择')
-            } else if (start_status.value === '') {
-                ElMessage.error('起始状态未选择')
+            if (end_status.value === "") {
+                ElMessage.error("结束状态未选择");
+            } else if (start_status.value === "") {
+                ElMessage.error("起始状态未选择");
             } else {
                 let params = {
                     to: end_status.value,
-                    from: start_status.value
-                }
+                    from: start_status.value,
+                };
                 getcomontasklist(current_company_id.value, params).then((res) => {
                     if (res) {
                         if (res.paths === null) {
-                            paths.value=false
-                            ElMessage.error('任务库无此类任务')
+                            paths.value = false;
+                            ElMessage.error("任务库无此类任务");
                         } else {
                             if (res.paths.length === 1) {
-                                paths.value=false
-                                neededdata.value = res
+                                paths.value = false;
+                                neededdata.value = res;
                             } else {
-                                paths.value = true
-                                pathlist.value = res.paths
-                                neededdata.value = res
+                                paths.value = true;
+                                pathlist.value = res.paths;
+                                neededdata.value = res;
                             }
                         }
                     } else {
-                        ElMessage.error('请求错误')
+                        ElMessage.error("请求错误");
                     }
-                })
+                });
             }
-        }
-
+        };
         const handleSelectionChange = (selection) => {
             // if (selection.length > 1) {
             //     let del_row = selection.pop();
@@ -326,18 +321,18 @@ export default defineComponent({
             // } else {
             //     value.value = selection[0];
             // }
-            console.log(selection)
-        }
+            console.log(selection);
+        };
         const getRowKeys = (row) => {
-            return row.name
-        }
+            return row.name;
+        };
         onMounted(() => {
-            getcompanyList()
-            current_company_id.value = store.state.user.company_id
-            Length.value = tableData.length
-            showtabledata.value = [tableData[current_step.value].family]
-        })
-
+            getcompanyList();
+            current_company_id.value = store.state.user.company_id;
+            Length.value = tableData.length;
+            showtabledata.value = [tableData[current_step.value].family];
+        });
+   
         return {
             current_company_id,
             companylist,
@@ -390,17 +385,15 @@ export default defineComponent({
 }
 
 .el-select {
+    width: 20%;
     margin-top: 1%;
     margin-bottom: 2%;
 }
 
-.el-autocomplete{
+.el-autocomplete {
+    width: 20%;
     margin-top: 1%;
     margin-bottom: 2%;
-}
-
-.selectgroup{
-    display: flex;
 }
 
 .el-radio-group {
@@ -423,5 +416,8 @@ export default defineComponent({
     visibility: hidden;
 }
 
-
+.selectgroup {
+    display: flex;
+    align-items: center;
+}
 </style>

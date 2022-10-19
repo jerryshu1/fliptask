@@ -133,7 +133,7 @@ export default {
     
     return {
       essentialLinks: linksList,
-      leftDrawerOpen: ref(false),
+      leftDrawerOpen: ref(true),
       user,
       signout,
     };
