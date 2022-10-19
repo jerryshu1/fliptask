@@ -161,7 +161,7 @@ export default defineComponent({
                 task_name: '电压互感器'
             }]
         })
-        const risk_and_measure = ref([])
+        const risk_and_measure = ref({})
 
         const store = useStore();
         const getcompanyList = () => {
@@ -346,12 +346,20 @@ export default defineComponent({
                 let key = current_task_use.value[current_step.value]
                 showtabledata.value = [neededdata.value['tasks'][key].details]
             } else {
-                console.log(userchoose.value)
-                risk_and_measure.value = []
+                risk_and_measure.value = {}
+                let keys = Object.keys(risk_and_measure.value)
+                for (var i in userchoose.value){
+                    if (keys.indexOf(userchoose.value[i].task_name) === -1){
+                        let key = userchoose.value[i].task_name
+                        risk_and_measure.value[key] = []
+                        keys = Object.keys(risk_and_measure.value)
+                    }
+                }
                 for (var i in userchoose.value) {
+                    let key = userchoose.value[i]['task_name']
                     getComponentsData(userchoose.value[i]).then((res) => {
                         if (res) {
-                            risk_and_measure.value.push(res[0])
+                            risk_and_measure.value[key].push(res[0])
                         }
                     })
                 }
