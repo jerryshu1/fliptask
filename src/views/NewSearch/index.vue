@@ -18,19 +18,20 @@
                         </el-select>
 
                         <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable
-                            placeholder="请选择站点" @select="handleSelect" />
+                            placeholder="请选择站点" @select="handleSelect" v-if="this.current_company!==''" />
                     </div>
                 </template>
             </el-step>
             <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
-                        <el-select v-model="current_category" class="m-2" placeholder="请选择线路" size="mini" @change="changexianlu">
+                        <el-select v-model="current_category" class="m-2" placeholder="请选择线路" size="mini"
+                            @change="changexianlu" v-if="this.current_station!==''">
                             <el-option v-for="(item, index) in categorylist" :key="index" :label="item" :value="item" />
                         </el-select>
                     </div>
                     <div>
-                        <el-radio-group v-model="looptype" @change="changelooptype">
+                        <el-radio-group v-model="looptype" @change="changelooptype" v-if="this.current_category!==''">
                             <el-radio label="线路" size="large" border>线路</el-radio>
                             <el-radio label="变压器" size="large" border>变压器</el-radio>
                             <el-radio label="站用变" size="large" border>站用变</el-radio>
@@ -46,7 +47,8 @@
             <el-step title="请选择调度令">
                 <template v-slot:description>
                     <div v-if="searchtype === 0">
-                        <el-select v-model="start_status" class="m-2" placeholder="请选择开始状态" size="mini" @change="changestartstatus">
+                        <el-select v-model="start_status" class="m-2" placeholder="请选择开始状态" size="mini"
+                            @change="changestartstatus" v-if="this.looptype!==''">
                             <el-option v-for="(item,index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
                         <el-select v-model="end_status" class="ends m-2" placeholder="请选择结束状态" size="mini"
@@ -62,7 +64,7 @@
                     <div v-if="searchtype === 1">
                         <el-select v-model="current_task" class="m-2" placeholder="请选择任务" size="mini"
                             @change="getcurrentothertask">
-                            <el-option v-for="(item, index) in othertasklist" :key="index" :label="item.task_name"
+                            <el-option v-for="(item,index) in othertasklist" :key="index" :label="item.task_name"
                                 :value="index" />
                         </el-select>
                     </div>
@@ -70,15 +72,18 @@
             </el-step>
             <el-step title="请选择操作对象">
                 <template v-slot:description>
-                    <el-table ref="taskTableRef" :data="showtabledata[0]" :border="parentBorder" style="width: 100%"
-                        @select="handleSelectionChange" :row-key="getRowKeys">
-                        <el-table-column type="selection" :reserve-selection="true" />
-                        <el-table-column label="操作设备" prop="device" />
-                        <el-table-column label="设备类型" prop="device_type" />
-                        <el-table-column label="操作方式" prop="operation" />
-                    </el-table>
-                    <el-button @click="prestep">上一步</el-button>
-                    <el-button @click="nextstep">下一步</el-button>
+                    <div  v-if="this.current_tasks.length !== 0  || this.current_task !== null || this.end_status!==''">
+                        <el-table ref="taskTableRef" :data="showtabledata[0]" :border="parentBorder" style="width: 100%"
+                            @select="handleSelectionChange" :row-key="getRowKeys">
+                            <el-table-column type="selection" :reserve-selection="true" />
+                            <el-table-column label="操作设备" prop="device" />
+                            <el-table-column label="设备类型" prop="device_type" />
+                            <el-table-column label="操作方式" prop="operation" />
+                        </el-table>
+                        <el-button @click="prestep">上一步</el-button>
+                        <el-button @click="nextstep">下一步</el-button>
+                    </div>
+
                 </template>
             </el-step>
         </el-steps>
@@ -178,7 +183,7 @@ export default defineComponent({
                     }
                 }
             });
-            
+
         };
         const querySearch = (queryString, cb) => {
             const results = queryString
@@ -195,7 +200,7 @@ export default defineComponent({
             };
         };
         const handleSelect = (item) => {
-            active.value=1
+            active.value = 1
             current_station.value = item.value;
             let params = {
                 city: current_company.value,
@@ -208,20 +213,20 @@ export default defineComponent({
             });
         };
 
-        const changestartstatus =()=>{
-            paths.value=false
+        const changestartstatus = () => {
+            paths.value = false
         }
 
-        const changexianlu =()=>{
-            active.value=1
+        const changexianlu = () => {
+            active.value = 1
         }
 
         const changelooptype = (val) => {
-            showtabledata.value=[]
-            active.value=2
+            showtabledata.value = []
+            active.value = 2
 
-            
-            
+
+
             if (val === "母线" || val === "X母压变避雷器") {
                 // end_status.value = false
                 // start_status.value = false
@@ -321,11 +326,11 @@ export default defineComponent({
 
                 showtabledata.value = [neededdata.value['tasks']['线路倒母线'].details]
             }
-            
+
         };
         const gettask = (val) => {
-            
-            showtabledata.value=[]
+
+            showtabledata.value = []
             current_task_use.value = val
             current_task_use.value.push('电压互感器')
             current_task_use.value.push('电流互感器')
@@ -333,7 +338,7 @@ export default defineComponent({
             Length.value = current_task_use.value.length
 
             showtabledata.value = [neededdata.value['tasks'][val[0]].details]
-            active.value=3
+            active.value = 3
         }
         const nextstep = () => {
             if (current_step.value + 1 < Length.value) {
@@ -363,7 +368,7 @@ export default defineComponent({
             }
         };
         const getcommonlist = () => {
-            showtabledata.value=[]
+            showtabledata.value = []
             if (end_status.value === "") {
                 ElMessage.error("结束状态未选择");
             } else if (start_status.value === "") {
@@ -392,9 +397,9 @@ export default defineComponent({
                             ElMessage.error('任务库无此类任务')
                         } else {
                             if (res.paths.length === 1) {
-                                for (var i in res.tasks){
+                                for (var i in res.tasks) {
                                     console.log(res.tasks[i])
-                                    for (var j in res.tasks[i].details){
+                                    for (var j in res.tasks[i].details) {
                                         res.tasks[i].details[j]['task_name'] = res.tasks[i]['task_name']
                                     }
                                 }
@@ -411,11 +416,11 @@ export default defineComponent({
                                 let key = neededdata.value['paths'][0][0]
 
                                 showtabledata.value = [neededdata.value['tasks'][key].details]
-                                active.value=3
+                                active.value = 3
                             } else {
-                                for (var i in res.tasks){
+                                for (var i in res.tasks) {
                                     console.log(res.tasks[i])
-                                    for (var j in res.tasks[i].details){
+                                    for (var j in res.tasks[i].details) {
                                         res.tasks[i].details[j]['task_name'] = res.tasks[i]['task_name']
                                     }
                                 }
@@ -425,13 +430,13 @@ export default defineComponent({
                                 neededdata.value['tasks']['电压互感器'] = every1.value
                                 neededdata.value['tasks']['电流互感器'] = every2.value
                                 neededdata.value['tasks']['避雷器'] = every3.value
-                                
+
                             }
                         }
                     } else {
                         ElMessage.error("请求错误");
                     }
-                    
+
                 });
             }
         };
@@ -459,6 +464,8 @@ export default defineComponent({
             neededdata.value['tasks']['避雷器'] = every3.value
 
             showtabledata.value = [neededdata.value['tasks'][key.task_name].details]
+            active.value = 3
+
         }
 
         onMounted(() => {
