@@ -111,6 +111,7 @@ export default defineComponent({
         const current_task = ref(null)
         const current_tasks = ref([])
         const current_task_use = ref([])
+        const userchoose = ref([])
         const looptype = ref("");
         const active = ref(0);
         const searchtype = ref(null);
@@ -248,7 +249,7 @@ export default defineComponent({
                 station: current_station.value,
             };
             console.log(current_company.value);
-            console.log( current_station.value);
+            console.log(current_station.value);
             getcategorylist(params).then((res) => {
                 if (res) {
                     categorylist.value = res.categories;
@@ -305,39 +306,39 @@ export default defineComponent({
                         device: '断路器',
                         device_type: 'AIS',
                         operation: '分合闸'
-                    },{
+                    }, {
                         device: '断路器',
                         device_type: 'GIS(HGIS)',
                         operation: '分合闸'
-                    },{
+                    }, {
                         device: '断路器',
                         device_type: '开关柜',
                         operation: '分合闸'
-                    },{
+                    }, {
                         device: '隔离开关',
                         device_type: 'AIS',
                         operation: '分闸'
-                    },{
+                    }, {
                         device: '隔离开关',
                         device_type: 'AIS',
                         operation: '合闸'
-                    },{
+                    }, {
                         device: '隔离开关',
                         device_type: 'GIS(HGIS)',
                         operation: '分闸'
-                    },{
+                    }, {
                         device: '隔离开关',
                         device_type: 'GIS(HGIS)',
                         operation: '合闸'
-                    },{
+                    }, {
                         device: '线路',
                         device_type: '双母线',
                         operation: '倒母操作'
-                    },{
+                    }, {
                         device: '保护压板',
                         device_type: '硬压板',
                         operation: '投退'
-                    },{
+                    }, {
                         device: '保护压板',
                         device_type: '软压板',
                         operation: '投退'
@@ -365,7 +366,7 @@ export default defineComponent({
                 let key = current_task_use.value[current_step.value]
                 showtabledata.value = [neededdata.value['tasks'][key].details]
             } else {
-                // 跳转中间层
+                console.log(userchoose.value)
             }
         };
         const prestep = () => {
@@ -408,6 +409,17 @@ export default defineComponent({
                             if (res.paths.length === 1) {
                                 paths.value = false
                                 neededdata.value = res
+                                current_task_use.value = neededdata.value['paths'][0]
+                                current_task_use.value.push('电压互感器')
+                                current_task_use.value.push('电流互感器')
+                                current_task_use.value.push('避雷器')
+                                neededdata.value['tasks']['电压互感器'] = every1.value
+                                neededdata.value['tasks']['电流互感器'] = every2.value
+                                neededdata.value['tasks']['避雷器'] = every3.value
+                                Length.value = current_task_use.value.length
+                                let key = neededdata.value['paths'][0][0]
+
+                                showtabledata.value = [neededdata.value['tasks'][key].details]
                             } else {
                                 paths.value = true
                                 pathlist.value = res.paths
@@ -424,12 +436,11 @@ export default defineComponent({
             }
         };
         const handleSelectionChange = (selection) => {
-            console.log(selection)
+            userchoose.value = selection
         }
         const getRowKeys = (row) => {
             return row.device + row.device_type + row.operation
         }
-
         const getcurrentothertask = (val) => {
             let key = othertasklist.value[val]
 
@@ -486,6 +497,7 @@ export default defineComponent({
             every1,
             every2,
             every3,
+            userchoose,
 
             getcompanyList,
             getstationList,
