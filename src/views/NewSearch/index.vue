@@ -12,11 +12,7 @@
             <el-step title="请选择公司及站点">
                 <template v-slot:description>
                     <div class="selectgroup">
-<<<<<<< HEAD
                         <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" size="mini"
-=======
-                        <el-select v-model="current_company" class="choosecomp" placeholder="请选择公司" size="mini"
->>>>>>> 70510d1639d459bec767f3717be9ef81a6e629f3
                             @change="getstationList">
                             <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
                         </el-select>
@@ -24,10 +20,6 @@
                         <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable
                             placeholder="请选择站点" @select="handleSelect" />
                     </div>
-<<<<<<< HEAD
-
-=======
->>>>>>> 70510d1639d459bec767f3717be9ef81a6e629f3
                 </template>
             </el-step>
             <el-step title="请输入线路名称以及选择间隔单元">
@@ -62,12 +54,8 @@
                             <el-option v-for="item in statuslist" :key="item" :label="item" :value="item" />
                         </el-select>
 
-<<<<<<< HEAD
                         <el-select v-model="current_tasks" class="ends m-2" placeholder="请选择任务" size="mini" v-if="paths"
                             @change="gettask">
-=======
-                        <el-select v-model="current_task" class="ends m-2" placeholder="请选择任务" size="mini" v-if="paths">
->>>>>>> 70510d1639d459bec767f3717be9ef81a6e629f3
                             <el-option v-for="item in pathlist" :key="item" :label="item" :value="item" />
                         </el-select>
                     </div>
