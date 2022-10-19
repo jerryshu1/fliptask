@@ -25,7 +25,7 @@
             <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
-                        <el-select v-model="current_category" class="m-2" placeholder="请选择线路" size="mini">
+                        <el-select v-model="current_category" class="m-2" placeholder="请选择线路" size="mini" @change="changexianlu">
                             <el-option v-for="(item, index) in categorylist" :key="index" :label="item" :value="item" />
                         </el-select>
                     </div>
@@ -46,17 +46,17 @@
             <el-step title="请选择调度令">
                 <template v-slot:description>
                     <div v-if="searchtype === 0">
-                        <el-select v-model="start_status" class="m-2" placeholder="请选择开始状态" size="mini">
-                            <el-option v-for="item in statuslist" :key="item" :label="item" :value="item" />
+                        <el-select v-model="start_status" class="m-2" placeholder="请选择开始状态" size="mini" @change="changestartstatus">
+                            <el-option v-for="(item,index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
                         <el-select v-model="end_status" class="ends m-2" placeholder="请选择结束状态" size="mini"
                             @change="getcommonlist">
-                            <el-option v-for="item in statuslist" :key="item" :label="item" :value="item" />
+                            <el-option v-for="(item,index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
 
                         <el-select v-model="current_tasks" class="ends m-2" placeholder="请选择任务" size="mini" v-if="paths"
                             @change="gettask">
-                            <el-option v-for="item in pathlist" :key="item" :label="item" :value="item" />
+                            <el-option v-for="(item,index) in pathlist" :key="index" :label="item" :value="item" />
                         </el-select>
                     </div>
                     <div v-if="searchtype === 1">
@@ -178,6 +178,7 @@ export default defineComponent({
                     }
                 }
             });
+            
         };
         const querySearch = (queryString, cb) => {
             const results = queryString
@@ -194,6 +195,7 @@ export default defineComponent({
             };
         };
         const handleSelect = (item) => {
+            active.value=1
             current_station.value = item.value;
             let params = {
                 city: current_company.value,
@@ -205,47 +207,47 @@ export default defineComponent({
                 }
             });
         };
+
+        const changestartstatus =()=>{
+            paths.value=false
+        }
+
+        const changexianlu =()=>{
+            active.value=1
+        }
+
         const changelooptype = (val) => {
+            showtabledata.value=[]
+            active.value=2
+
+            
+            
+            if (val === "母线" || val === "X母压变避雷器") {
+                // end_status.value = false
+                // start_status.value = false
+                // paths.value = false
+                let params = {
+                    subject: val,
+                };
+                getotherstasklist(current_company_id.value, params).then((res) => {
+                    if (res) {
+                        for (var i in res) {
+                            for (var j in res[i].details) {
+                                res[i].details[j]['task_name'] = res[i]['task_name']
+                            }
+                        }
+                        othertasklist.value = res;
+                        current_task.value = null;
+                        searchtype.value = 1;
+                    }
+                });
+            }
             if (val === "线路" || "变压器" || "站用变" || "电抗器" || "电容器") {
                 end_status.value = ''
                 start_status.value = ''
                 paths.value = false
                 searchtype.value = 0;
                 statuslist.value[4] = "开关" + val + "检修";
-            }
-            if (val === "母线") {
-                let params = {
-                    subject: val,
-                };
-                getotherstasklist(current_company_id.value, params).then((res) => {
-                    if (res) {
-                        for (var i in res) {
-                            for (var j in res[i].details) {
-                                res[i].details[j]['task_name'] = res[i]['task_name']
-                            }
-                        }
-                        othertasklist.value = res;
-                        current_task.value = null;
-                        searchtype.value = 1;
-                    }
-                });
-            }
-            if (val === "X母压变避雷器") {
-                let params = {
-                    subject: val,
-                };
-                getotherstasklist(current_company_id.value, params).then((res) => {
-                    if (res) {
-                        for (var i in res) {
-                            for (var j in res[i].details) {
-                                res[i].details[j]['task_name'] = res[i]['task_name']
-                            }
-                        }
-                        othertasklist.value = res;
-                        current_task.value = null;
-                        searchtype.value = 1;
-                    }
-                });
             }
             if (val === "线路导母线") {
                 searchtype.value = 2;
@@ -319,8 +321,11 @@ export default defineComponent({
 
                 showtabledata.value = [neededdata.value['tasks']['线路倒母线'].details]
             }
+            
         };
         const gettask = (val) => {
+            
+            showtabledata.value=[]
             current_task_use.value = val
             current_task_use.value.push('电压互感器')
             current_task_use.value.push('电流互感器')
@@ -328,6 +333,7 @@ export default defineComponent({
             Length.value = current_task_use.value.length
 
             showtabledata.value = [neededdata.value['tasks'][val[0]].details]
+            active.value=3
         }
         const nextstep = () => {
             if (current_step.value + 1 < Length.value) {
@@ -357,6 +363,7 @@ export default defineComponent({
             }
         };
         const getcommonlist = () => {
+            showtabledata.value=[]
             if (end_status.value === "") {
                 ElMessage.error("结束状态未选择");
             } else if (start_status.value === "") {
@@ -404,6 +411,7 @@ export default defineComponent({
                                 let key = neededdata.value['paths'][0][0]
 
                                 showtabledata.value = [neededdata.value['tasks'][key].details]
+                                active.value=3
                             } else {
                                 for (var i in res.tasks){
                                     console.log(res.tasks[i])
@@ -417,11 +425,13 @@ export default defineComponent({
                                 neededdata.value['tasks']['电压互感器'] = every1.value
                                 neededdata.value['tasks']['电流互感器'] = every2.value
                                 neededdata.value['tasks']['避雷器'] = every3.value
+                                
                             }
                         }
                     } else {
                         ElMessage.error("请求错误");
                     }
+                    
                 });
             }
         };
@@ -499,6 +509,8 @@ export default defineComponent({
             prestep,
             getRowKeys,
             getcommonlist,
+            changestartstatus,
+            changexianlu,
             gettask,
             getcurrentothertask,
             handleSelectionChange,
