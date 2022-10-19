@@ -1,45 +1,41 @@
 <template>
   <div class="column">
     <div style="width: 66%; border-style: solid; border-color: #0000FF; margin-left: 17%;margin-top: 40px">
-      <div v-for="(data, index) in muti_componentsDatas" :key="index">
-        <div style="font-size: 24px">{{ muti_taskName[index] }}</div>
+      <div v-for="(data, index) in risk_and_measure" :key="index">
+        <div style="font-size: 24px">{{ index }}</div>
         <div v-for="(taskdata, index1) in data" :key="index1">
           <div style="margin-top: 5px; margin-left: 20px;">
-            <div class="q-pa-md">
-              <q-table
-                  :rows=[muti_selectedTasks[index][index1]]
-                  :columns="columns"
-                  :hide-pagination="hidePagination"
-              />
-            </div>
+            <el-table :data="taskdata" :border="parentBorder" style="width: 90%">
+              <el-table-column label="操作设备" prop="device" />
+              <el-table-column label="设备类型" prop="device_type" />
+              <el-table-column label="操作方式" prop="operation" />
+            </el-table>
           </div>
           <div style="height: 20px; font-size: 18px;margin-left: 20px;">
             存在的主要风险
           </div>
           <div class="q-pa-md">
-            <div class="q-gutter-sm" v-for="(riskprevention,index) in taskdata.risks" :key="index">
-              <el-checkbox size="medium" v-model="check[index][index1].checkrisks" :label=riskprevention
-                           :val="riskprevention"
-                           checked="true"/>
+            <div class="q-gutter-sm" v-for="(riskprevention, index2) in taskdata[0].risks" :key="index2">
+              <el-checkbox size="medium" v-model="checked[index][index1].checkrisks" :label=riskprevention
+                :val="riskprevention" checked="true" />
             </div>
           </div>
           <div style="height: 20px; font-size: 18px;margin-left: 20px; margin-top: 10px;">
             预控措施
           </div>
           <div class="q-pa-md">
-            <div class="q-gutter-sm" v-for="(processcontrol,index) in taskdata.measures" :key="index">
-              <el-checkbox size="medium" v-model="check[index][index1].checkprocess" :label=processcontrol
-                           :val="processcontrol"
-                           checked="true"/>
+            <div class="q-gutter-sm" v-for="(processcontrol,index3) in taskdata[0].measures" :key="index3">
+              <el-checkbox size="medium" v-model="checked[index][index1].checkprocess" :label=processcontrol
+                :val="processcontrol" checked="true" />
             </div>
           </div>
         </div>
         <div style="height: 20px; font-size: 18px;margin-left: 20px; margin-top: 10px;">
           备注
         </div>
-        <div class="q-pa-md">
+        <!-- <div class="q-pa-md">
           <div>{{ muti_additionData[index] }}</div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div>
@@ -50,19 +46,15 @@
           <el-input v-model="input1" placeholder="请输入工单任务名称" />
           <el-form-item label="任务委派人" prop="password">
             <el-select v-model="assigner" placeholder="请选择任务委派人">
-              <el-option
-                  v-for="(names, index) in this.allusers"
-                  :label=names.name
-                  :value=names.name
-                  :key="index"
-              ></el-option>
+              <el-option v-for="(names, index) in this.allusers" :label=names.name :value=names.name :key="index">
+              </el-option>
             </el-select>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-              <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="adminupdate">确 定</el-button>
-            </span>
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="adminupdate">确 定</el-button>
+        </span>
       </el-dialog>
       <button class="homebutton1" @click="reload">取消</button>
     </div>
@@ -70,138 +62,37 @@
 </template>
 
 <script>
-import {ref} from "vue";
+import { ref, defineComponent, onMounted } from "vue";
 import store from '../store';
 import {
   mapState
 } from 'vuex';
+import { useRouter } from 'vue-router'
+import { useStore } from "vuex";
 import SearchBar from "../components/search/SearchBar.vue";
 import SearchList from "../components/search/SearchList.vue";
 
-export default {
+export default defineComponent({
   name: "Mutichoose",
   components: {
     SearchBar,
     SearchList,
   },
-  created() {
-    for (var j in store.state.muti_componentsData) {
-      if (store.state.muti_componentsDatas[store.state.muti_componentsData[j].index][0] === '') {
-        store.state.muti_componentsDatas[store.state.muti_componentsData[j].index][0] = store.state.muti_componentsData[j];
-      } else {
-        store.state.muti_componentsDatas[store.state.muti_componentsData[j].index].push(store.state.muti_componentsData[j]);
-      }
-    }
-  },
   computed: {
     ...mapState({
-      muti_componentsDatas: (state) => {
-        return store.state.muti_componentsDatas;
-      },
-      muti_selectedTasks: (state) => {
-        return store.state.muti_selectedTasks;
-      },
-      muti_taskName: (state) => {
-        return store.state.muti_taskName;
-      },
-      muti_additionData: (state) => {
-        return store.state.muti_additionData;
-      },
       allusers: (satae) => {
         return store.state.allUsers;
       }
     })
   },
-  beforeCreate() {
-    store.dispatch('getallusersMessage');
-  },
+  // beforeCreate() {
+  //   store.dispatch('getallusersMessage');
+  // },
   data() {
     return {
       assigner: '',
       dialogVisible: false,
-      columns: [
-        {
-          name: 'device',
-          align: 'left',
-          field: 'device',
-          label: '操作对象'
-        },
-        {
-          name: 'device_type',
-          align: 'left',
-          field: 'device_type',
-          label: '设备类型'
-        },
-        {
-          name: 'operation',
-          align: 'left',
-          field: 'operation',
-          label: '操作行为'
-        }
-      ],
       hidePagination: true,
-      check: [
-        [{
-          'checkrisks': [],
-          'checkprocess': [],
-        },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          }],
-        [{
-          'checkrisks': [],
-          'checkprocess': [],
-        },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          }],
-        [{
-          'checkrisks': [],
-          'checkprocess': [],
-        },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          },
-          {
-            'checkrisks': [],
-            'checkprocess': [],
-          }]
-      ],
       updataList: ref({}),
       input1: '',
     }
@@ -258,7 +149,41 @@ export default {
       window.location.reload();
     }
   },
-}
+  setup() {
+    //data
+    const risk_and_measure = ref({})
+    const sunxu = ref([])
+    const checked = ref({})
+    const lens = ref({})
+    //others
+    const store = useStore()
+    const router = useRouter()
+    //methods
+    onMounted(() => {
+      risk_and_measure.value = store.state.risk_and_measure
+      lens.value = store.state.lens
+      sunxu.value = Object.keys(risk_and_measure.value)
+      for (var i in sunxu.value) {
+        checked.value[sunxu.value[i]] = []
+        for (let j=0; j<lens.value[sunxu.value[i]]; j++) {
+          checked.value[sunxu.value[i]].push({
+            'checkrisks': [],
+            'checkprocess': [],
+          })
+        }
+      }
+    })
+
+    return {
+      //data
+      risk_and_measure,
+      checked,
+      lens,
+
+      //methods
+    }
+  }
+})
 
 
 </script>

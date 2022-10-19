@@ -48,13 +48,17 @@ export default createStore({
         supertasklist: [],
         admintasklist: [],
         //newsearch
-        risk_and_measure: {}
+        risk_and_measure: {},
+        lens: {}
 
 
     },
     mutations: {
         savenewriskandmeasure(state,result){
             state.risk_and_measure = result
+        },
+        savelens(state,result){
+            state.lens = result
         },
         signalsearch(state,result){
             state.additionData = result.additional;

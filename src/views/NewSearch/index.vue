@@ -94,8 +94,8 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { List } from "@element-plus/icons";
 import { useRouter } from 'vue-router'
-import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
+import { ElMessage } from "element-plus";
 import {
     getcompanylist,
     getstationlist,
@@ -162,6 +162,7 @@ export default defineComponent({
             }]
         })
         const risk_and_measure = ref({})
+        const task_num = ref({})
 
         const store = useStore();
         const router = useRouter()
@@ -353,19 +354,24 @@ export default defineComponent({
                 for (var i in userchoose.value){
                     if (keys.indexOf(userchoose.value[i].task_name) === -1){
                         let key = userchoose.value[i].task_name
+                        task_num.value[key] = 1
                         risk_and_measure.value[key] = []
                         keys = Object.keys(risk_and_measure.value)
+                    } else {
+                        let len = userchoose.value[i].task_name
+                        task_num.value[len] += 1
                     }
                 }
-                for (var i in userchoose.value) {
-                    let key = userchoose.value[i]['task_name']
-                    getComponentsData(userchoose.value[i]).then((res) => {
+                for (var j in userchoose.value) {
+                    let key = userchoose.value[j]['task_name']
+                    getComponentsData(userchoose.value[j]).then((res) => {
                         if (res) {
-                            risk_and_measure.value[key].push(res[0])
+                            risk_and_measure.value[key].push([res[0]])
                         }
                     })
                 }
                 store.commit('savenewriskandmeasure', risk_and_measure.value)
+                store.commit('savelens', task_num.value)
                 router.push({name: 'mutichoose'})
             }
         };
@@ -409,7 +415,6 @@ export default defineComponent({
                         } else {
                             if (res.paths.length === 1) {
                                 for (var i in res.tasks) {
-                                    console.log(res.tasks[i])
                                     for (var j in res.tasks[i].details) {
                                         res.tasks[i].details[j]['task_name'] = res.tasks[i]['task_name']
                                     }
@@ -430,7 +435,6 @@ export default defineComponent({
                                 active.value = 3
                             } else {
                                 for (var i in res.tasks) {
-                                    console.log(res.tasks[i])
                                     for (var j in res.tasks[i].details) {
                                         res.tasks[i].details[j]['task_name'] = res.tasks[i]['task_name']
                                     }
@@ -516,6 +520,7 @@ export default defineComponent({
             every3,
             userchoose,
             risk_and_measure,
+            task_num,
 
             getcompanyList,
             getstationList,
