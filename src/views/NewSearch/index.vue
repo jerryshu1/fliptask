@@ -96,6 +96,7 @@ import {
     getcategorylist,
     getotherstasklist,
     getcomontasklist,
+    getComponentsData,
 } from "../../api/getComponents";
 
 export default defineComponent({
@@ -124,60 +125,6 @@ export default defineComponent({
         const Length = ref(0);
         const statuslist = ref(["运行", "热备用", "冷备用", "检修", "开关检修"]);
         const lastcheck = ref([]);
-        const tableData = [
-            {
-                date: "运行改为热备用",
-                family: [
-                    {
-                        name: "hjx1",
-                        state: "California",
-                        city: "San Francisco",
-                        address: "3650 21st St, San Francisco",
-                        zip: "CA 94114",
-                    },
-                    {
-                        name: "hjx2",
-                        state: "California",
-                        city: "San Francisco",
-                        address: "3650 21st St, San Francisco",
-                        zip: "CA 94114",
-                    },
-                    {
-                        name: "hjx3",
-                        state: "California",
-                        city: "San Francisco",
-                        address: "3650 21st St, San Francisco",
-                        zip: "CA 94114",
-                    },
-                ],
-            },
-            {
-                date: "运行改为冷备用",
-                family: [
-                    {
-                        name: "xjw1",
-                        state: "California",
-                        city: "San Francisco",
-                        address: "3650 21st St, San Francisco",
-                        zip: "CA 94114",
-                    },
-                    {
-                        name: "xjw2",
-                        state: "California",
-                        city: "San Francisco",
-                        address: "3650 21st St, San Francisco",
-                        zip: "CA 94114",
-                    },
-                    {
-                        name: "xjw3",
-                        state: "California",
-                        city: "San Francisco",
-                        address: "3650 21st St, San Francisco",
-                        zip: "CA 94114",
-                    },
-                ],
-            },
-        ]
         const neededdata = ref({})
         const current_step = ref(0)
         const multipleSelection = ref([])
@@ -187,7 +134,8 @@ export default defineComponent({
             details: [{
                 device: '电压互感器',
                 device_type: '',
-                operation: '停复役'
+                operation: '停复役',
+                task_name: '电压互感器'
             }]
         })
         const every2 = ref({
@@ -195,7 +143,8 @@ export default defineComponent({
             details: [{
                 device: '电流互感器',
                 device_type: '',
-                operation: '停复役'
+                operation: '停复役',
+                task_name: '电压互感器'
             }]
         })
         const every3 = ref({
@@ -203,9 +152,11 @@ export default defineComponent({
             details: [{
                 device: '避雷器',
                 device_type: '',
-                operation: '复役'
+                operation: '复役',
+                task_name: '电压互感器'
             }]
         })
+        const risk_and_measure = ref([])
 
         const store = useStore();
         const getcompanyList = () => {
@@ -248,8 +199,6 @@ export default defineComponent({
                 city: current_company.value,
                 station: current_station.value,
             };
-            console.log(current_company.value);
-            console.log(current_station.value);
             getcategorylist(params).then((res) => {
                 if (res) {
                     categorylist.value = res.categories;
@@ -270,6 +219,11 @@ export default defineComponent({
                 };
                 getotherstasklist(current_company_id.value, params).then((res) => {
                     if (res) {
+                        for (var i in res) {
+                            for (var j in res[i].details) {
+                                res[i].details[j]['task_name'] = res[i]['task_name']
+                            }
+                        }
                         othertasklist.value = res;
                         current_task.value = null;
                         searchtype.value = 1;
@@ -282,6 +236,11 @@ export default defineComponent({
                 };
                 getotherstasklist(current_company_id.value, params).then((res) => {
                     if (res) {
+                        for (var i in res) {
+                            for (var j in res[i].details) {
+                                res[i].details[j]['task_name'] = res[i]['task_name']
+                            }
+                        }
                         othertasklist.value = res;
                         current_task.value = null;
                         searchtype.value = 1;
@@ -305,43 +264,53 @@ export default defineComponent({
                     details: [{
                         device: '断路器',
                         device_type: 'AIS',
-                        operation: '分合闸'
+                        operation: '分合闸',
+                        task_name: '线路倒母线',
                     }, {
                         device: '断路器',
                         device_type: 'GIS(HGIS)',
-                        operation: '分合闸'
+                        operation: '分合闸',
+                        task_name: '线路倒母线',
                     }, {
                         device: '断路器',
                         device_type: '开关柜',
-                        operation: '分合闸'
+                        operation: '分合闸',
+                        task_name: '线路倒母线',
                     }, {
                         device: '隔离开关',
                         device_type: 'AIS',
-                        operation: '分闸'
+                        operation: '分闸',
+                        task_name: '线路倒母线',
                     }, {
                         device: '隔离开关',
                         device_type: 'AIS',
-                        operation: '合闸'
+                        operation: '合闸',
+                        task_name: '线路倒母线',
                     }, {
                         device: '隔离开关',
                         device_type: 'GIS(HGIS)',
-                        operation: '分闸'
+                        operation: '分闸',
+                        task_name: '线路倒母线',
                     }, {
                         device: '隔离开关',
                         device_type: 'GIS(HGIS)',
-                        operation: '合闸'
+                        operation: '合闸',
+                        task_name: '线路倒母线',
                     }, {
                         device: '线路',
                         device_type: '双母线',
-                        operation: '倒母操作'
+                        operation: '倒母操作',
+                        task_name: '线路倒母线',
                     }, {
                         device: '保护压板',
                         device_type: '硬压板',
-                        operation: '投退'
+                        operation: '投退',
+                        task_name: '线路倒母线',
                     }, {
                         device: '保护压板',
                         device_type: '软压板',
-                        operation: '投退'
+                        operation: '投退',
+                        task_name: '线路倒母线',
                     },]
                 }
                 neededdata.value['tasks']['电压互感器'] = every1.value
@@ -367,6 +336,15 @@ export default defineComponent({
                 showtabledata.value = [neededdata.value['tasks'][key].details]
             } else {
                 console.log(userchoose.value)
+                risk_and_measure.value = []
+                for (var i in userchoose.value) {
+                    getComponentsData(userchoose.value[i]).then((res) => {
+                        if (res) {
+                            risk_and_measure.value.push(res[0])
+                        }
+                    })
+                }
+                console.log(risk_and_measure.value)
             }
         };
         const prestep = () => {
@@ -407,6 +385,12 @@ export default defineComponent({
                             ElMessage.error('任务库无此类任务')
                         } else {
                             if (res.paths.length === 1) {
+                                for (var i in res.tasks){
+                                    console.log(res.tasks[i])
+                                    for (var j in res.tasks[i].details){
+                                        res.tasks[i].details[j]['task_name'] = res.tasks[i]['task_name']
+                                    }
+                                }
                                 paths.value = false
                                 neededdata.value = res
                                 current_task_use.value = neededdata.value['paths'][0]
@@ -421,6 +405,12 @@ export default defineComponent({
 
                                 showtabledata.value = [neededdata.value['tasks'][key].details]
                             } else {
+                                for (var i in res.tasks){
+                                    console.log(res.tasks[i])
+                                    for (var j in res.tasks[i].details){
+                                        res.tasks[i].details[j]['task_name'] = res.tasks[i]['task_name']
+                                    }
+                                }
                                 paths.value = true
                                 pathlist.value = res.paths
                                 neededdata.value = res
@@ -439,7 +429,7 @@ export default defineComponent({
             userchoose.value = selection
         }
         const getRowKeys = (row) => {
-            return row.device + row.device_type + row.operation
+            return row.device + row.device_type + row.operation + row.task_name
         }
         const getcurrentothertask = (val) => {
             let key = othertasklist.value[val]
@@ -480,7 +470,6 @@ export default defineComponent({
             start_status,
             end_status,
             statuslist,
-            tableData,
             multipleSelection,
             lastcheck,
             current_step,
@@ -498,6 +487,7 @@ export default defineComponent({
             every2,
             every3,
             userchoose,
+            risk_and_measure,
 
             getcompanyList,
             getstationList,

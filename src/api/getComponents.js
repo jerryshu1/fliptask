@@ -2,9 +2,9 @@ import requests from '../utils/request';
 import userrequest from "../utils/userrequest";
 import datarequest from "../utils/datarequest"
 
-export const getComponentsData = (params, token) => requests({
+export const getComponentsData = (params) => requests({
     url: '/ft/api/components', method: 'get', params: params, headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 });
 

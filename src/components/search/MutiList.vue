@@ -137,6 +137,7 @@ export default defineComponent({
       }
       for (var i in store.state.muti_selectedTasks) {
         for (var j in store.state.muti_selectedTasks[i]) {
+          console.log(store.state.muti_selectedTasks[i][j])
           store.dispatch("getmutiComponents", store.state.muti_selectedTasks[i][j]);
         }
       }

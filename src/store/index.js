@@ -332,7 +332,7 @@ export default createStore({
             }
         },
         async getmutiComponents({commit, state}, params = {}) {
-            let result = await getComponentsData(params, state.jwtToken);
+            let result = await getComponentsData(params);
             if (result) {
                 commit('SAVEMUTIDATA', result[0])
             }
