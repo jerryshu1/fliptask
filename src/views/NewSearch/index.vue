@@ -80,8 +80,8 @@
                             <el-table-column label="设备类型" prop="device_type" />
                             <el-table-column label="操作方式" prop="operation" />
                         </el-table>
-                        <el-button @click="prestep">上一步</el-button>
-                        <el-button @click="nextstep">下一步</el-button>
+                        <el-button class="hobutton2" @click="prestep">上一步</el-button>
+                        <el-button class="hobutton2" @click="nextstep">下一步</el-button>
                     </div>
 
                 </template>
@@ -584,4 +584,16 @@ export default defineComponent({
 :deep(.el-table th.el-table__cell:nth-child(1) .cell) {
     visibility: hidden;
 }
+
+
+.hobutton2 {
+    width: 120px;
+    height: 40px;
+    font-size: calc(100vw * 16 / 1920);
+    color: #ffffff;
+    margin-left: 25%;
+    margin-top: 2%;
+    background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
+  }
+
 </style>

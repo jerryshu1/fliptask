@@ -17,7 +17,7 @@
         {{ index }}
       </div>
       <div v-for="(taskdata, index1) in data" :key="index1">
-        <div style="margin-top: 5px; margin-left: 20px">
+        <div style="margin-top: 5px; margin-left: 10%">
           <el-table :data="taskdata" border style="width: 90%">
             <el-table-column label="操作设备" prop="device" />
             <el-table-column label="设备类型" prop="device_type" />
@@ -27,13 +27,13 @@
         <div style="
             font-size: 16px;
             font-weight: 800;
-            margin-left: 20px;
+            margin-left: 10%;
             margin-top: 10px;
           ">
           存在的主要风险
         </div>
         <div class="q-pa-md">
-          <div class="q-gutter-sm" v-for="(riskprevention, index2) in taskdata[0].risks" :key="index2">
+          <div class="q-gutter-sm" v-for="(riskprevention, index2) in taskdata[0].risks" :key="index2" style="margin-left: 10%">
             <el-checkbox size="medium" v-model="checked[index][index1].checkrisks" :label="riskprevention"
               :val="riskprevention" checked="true" />
           </div>
@@ -41,15 +41,15 @@
         <div style="
             font-size: 16px;
             font-weight: 800;
-            margin-left: 20px;
+            margin-left: 10%;
             margin-top: 10px;
           ">
           预控措施
         </div>
         <div class="q-pa-md">
-          <div class="q-gutter-sm" v-for="(processcontrol, index3) in taskdata[0].measures" :key="index3">
+          <div class="q-gutter-sm" v-for="(processcontrol, index3) in taskdata[0].measures" :key="index3" style="margin-left: 10%">
             <el-checkbox size="medium" v-model="checked[index][index1].checkprocess" :label="processcontrol"
-              :val="processcontrol" checked="true" />
+              :val="processcontrol" checked="true"  />
           </div>
         </div>
       </div>
