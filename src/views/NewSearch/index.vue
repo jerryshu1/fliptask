@@ -93,6 +93,7 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import { List } from "@element-plus/icons";
+import { useRouter } from 'vue-router'
 import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
 import {
@@ -125,7 +126,6 @@ export default defineComponent({
         const pathlist = ref([])
         const start_status = ref("");
         const end_status = ref("");
-        // 底下单选的value
         const showtabledata = ref([]);
         const Length = ref(0);
         const statuslist = ref(["运行", "热备用", "冷备用", "检修", "开关检修"]);
@@ -164,6 +164,8 @@ export default defineComponent({
         const risk_and_measure = ref({})
 
         const store = useStore();
+        const router = useRouter()
+
         const getcompanyList = () => {
             getcompanylist().then((res) => {
                 if (res) {
@@ -363,7 +365,8 @@ export default defineComponent({
                         }
                     })
                 }
-                console.log(risk_and_measure.value)
+                store.commit('savenewriskandmeasure', risk_and_measure.value)
+                router.push({name: 'mutichoose'})
             }
         };
         const prestep = () => {

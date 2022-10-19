@@ -46,9 +46,16 @@ export default createStore({
         companyname: '',
         //
         supertasklist: [],
-        admintasklist: []
+        admintasklist: [],
+        //newsearch
+        risk_and_measure: {}
+
+
     },
     mutations: {
+        savenewriskandmeasure(state,result){
+            state.risk_and_measure = result
+        },
         signalsearch(state,result){
             state.additionData = result.additional;
             state.taskName = result.task_name;
@@ -331,7 +338,7 @@ export default createStore({
                 commit('PUBLISHDATA', []);
             }
         },
-        async getmutiComponents({commit, state}, params = {}) {
+        async getmutiComponents({commit}, params = {}) {
             let result = await getComponentsData(params);
             if (result) {
                 commit('SAVEMUTIDATA', result[0])

@@ -89,14 +89,6 @@ export default {
     SearchList,
     List
   },
-  mounted() {
-    if (store.state.taskName === ''){
-      let location = {
-        name: 'search',
-      };
-      this.$router.push(location);
-    }
-  },
   computed: {
     ...mapState({
       componentData: (state) => {
