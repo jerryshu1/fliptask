@@ -133,7 +133,6 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import store from '../store';
 import { deleteData, gettableData, postRiskData, updateStatus } from "../api/getComponents";
 import {
@@ -230,6 +229,7 @@ export default {
         name: "user"
       };
       this.$router.push(location);
+
     } else {
       store.dispatch('getPublishData');
     }

@@ -12,7 +12,11 @@
             <el-step title="请选择公司及站点">
                 <template v-slot:description>
                     <div class="selectgroup">
+<<<<<<< HEAD
                         <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" size="mini"
+=======
+                        <el-select v-model="current_company" class="choosecomp" placeholder="请选择公司" size="mini"
+>>>>>>> 70510d1639d459bec767f3717be9ef81a6e629f3
                             @change="getstationList">
                             <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
                         </el-select>
@@ -20,14 +24,17 @@
                         <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable
                             placeholder="请选择站点" @select="handleSelect" />
                     </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 70510d1639d459bec767f3717be9ef81a6e629f3
                 </template>
             </el-step>
             <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
                         <el-select v-model="current_category" class="m-2" placeholder="请选择线路" size="mini">
-                            <el-option v-for="(item, index) in categorylist" :key="item" :label="item" :value="item" />
+                            <el-option v-for="(item, index) in categorylist" :key="index" :label="item" :value="item" />
                         </el-select>
                     </div>
                     <div>
@@ -55,8 +62,12 @@
                             <el-option v-for="item in statuslist" :key="item" :label="item" :value="item" />
                         </el-select>
 
+<<<<<<< HEAD
                         <el-select v-model="current_tasks" class="ends m-2" placeholder="请选择任务" size="mini" v-if="paths"
                             @change="gettask">
+=======
+                        <el-select v-model="current_task" class="ends m-2" placeholder="请选择任务" size="mini" v-if="paths">
+>>>>>>> 70510d1639d459bec767f3717be9ef81a6e629f3
                             <el-option v-for="item in pathlist" :key="item" :label="item" :value="item" />
                         </el-select>
                     </div>
@@ -89,17 +100,23 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import { List } from "@element-plus/icons";
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
-import { getcompanylist, getstationlist, getcategorylist, getotherstasklist, getcomontasklist } from "../../api/getComponents";
+import {
+    getcompanylist,
+    getstationlist,
+    getcategorylist,
+    getotherstasklist,
+    getcomontasklist,
+} from "../../api/getComponents";
 
 export default defineComponent({
     setup() {
-        const current_company_id = ref('')
+        const current_company_id = ref("");
         const companylist = ref([]);
         const stationlist = ref([]);
-        const categorylist = ref([])
-        const othertasklist = ref([])
+        const categorylist = ref([]);
+        const othertasklist = ref([]);
         const current_company = ref("");
         const current_category = ref("");
         const current_station = ref("");
@@ -114,67 +131,61 @@ export default defineComponent({
         const start_status = ref("");
         const end_status = ref("");
         // 底下单选的value
-        const showtabledata = ref([])
-        const Length = ref(0)
-        const statuslist = ref([
-            "运行",
-            "热备用",
-            "冷备用",
-            "检修",
-            "开关检修"
-        ]);
-        const lastcheck = ref([])
+        const showtabledata = ref([]);
+        const Length = ref(0);
+        const statuslist = ref(["运行", "热备用", "冷备用", "检修", "开关检修"]);
+        const lastcheck = ref([]);
         const tableData = [
             {
-                date: '运行改为热备用',
+                date: "运行改为热备用",
                 family: [
                     {
-                        name: 'hjx1',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "hjx1",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                     {
-                        name: 'hjx2',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "hjx2",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                     {
-                        name: 'hjx3',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "hjx3",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                 ],
             },
             {
-                date: '运行改为冷备用',
+                date: "运行改为冷备用",
                 family: [
                     {
-                        name: 'xjw1',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "xjw1",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                     {
-                        name: 'xjw2',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
+                        name: "xjw2",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
                     },
                     {
-                        name: 'xjw3',
-                        state: 'California',
-                        city: 'San Francisco',
-                        address: '3650 21st St, San Francisco',
-                        zip: 'CA 94114',
-                    }
+                        name: "xjw3",
+                        state: "California",
+                        city: "San Francisco",
+                        address: "3650 21st St, San Francisco",
+                        zip: "CA 94114",
+                    },
                 ],
             },
         ]
@@ -208,7 +219,6 @@ export default defineComponent({
         })
 
         const store = useStore();
-
         const getcompanyList = () => {
             getcompanylist().then((res) => {
                 if (res) {
@@ -216,7 +226,6 @@ export default defineComponent({
                 }
             });
         };
-
         const getstationList = (value) => {
             stationlist.value = [];
             getstationlist(value).then((res) => {
@@ -230,66 +239,65 @@ export default defineComponent({
                 }
             });
         };
-
         const querySearch = (queryString, cb) => {
             const results = queryString
                 ? stationlist.value.filter(createFilter(queryString))
                 : stationlist.value;
             cb(results);
         };
-
         const createFilter = (queryString) => {
             return (restaurant) => {
                 return (
-                    restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+                    restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+                    0
                 );
             };
         };
-
         const handleSelect = (item) => {
-            current_station.value = item.value
+            current_station.value = item.value;
             let params = {
                 city: current_company.value,
-                station: current_station.value
-            }
+                station: current_station.value,
+            };
+            console.log(current_company.value);
+            console.log( current_station.value);
             getcategorylist(params).then((res) => {
                 if (res) {
-                    categorylist.value = res.categories
+                    categorylist.value = res.categories;
                 }
-            })
+            });
         };
-
         const changelooptype = (val) => {
             if (val === "线路" || "变压器" || "站用变" || "电抗器" || "电容器") {
                 end_status.value = ''
                 start_status.value = ''
                 paths.value = false
                 searchtype.value = 0;
-                statuslist.value[4] = '开关' + val + '检修'
+                statuslist.value[4] = "开关" + val + "检修";
             }
             if (val === "母线") {
                 let params = {
-                    subject: val
-                }
+                    subject: val,
+                };
                 getotherstasklist(current_company_id.value, params).then((res) => {
                     if (res) {
-                        othertasklist.value = res
-                        current_task.value = null
+                        othertasklist.value = res;
+                        current_task.value = null;
                         searchtype.value = 1;
                     }
-                })
+                });
             }
             if (val === "X母压变避雷器") {
                 let params = {
-                    subject: val
-                }
+                    subject: val,
+                };
                 getotherstasklist(current_company_id.value, params).then((res) => {
                     if (res) {
-                        othertasklist.value = res
-                        current_task.value = null
+                        othertasklist.value = res;
+                        current_task.value = null;
                         searchtype.value = 1;
                     }
-                })
+                });
             }
             if (val === "线路导母线") {
                 searchtype.value = 2;
@@ -378,14 +386,14 @@ export default defineComponent({
                 let key = current_task_use.value[current_step.value]
                 showtabledata.value = [neededdata.value['tasks'][key].details]
             } else {
-                ElMessage.info("已经是第一页！")
+                ElMessage.info("已经是第一页！");
             }
-        }
+        };
         const getcommonlist = () => {
-            if (end_status.value === '') {
-                ElMessage.error('结束状态未选择')
-            } else if (start_status.value === '') {
-                ElMessage.error('起始状态未选择')
+            if (end_status.value === "") {
+                ElMessage.error("结束状态未选择");
+            } else if (start_status.value === "") {
+                ElMessage.error("起始状态未选择");
             } else {
                 let start = ''
                 let end = ''
@@ -422,12 +430,11 @@ export default defineComponent({
                             }
                         }
                     } else {
-                        ElMessage.error('请求错误')
+                        ElMessage.error("请求错误");
                     }
-                })
+                });
             }
-        }
-
+        };
         const handleSelectionChange = (selection) => {
             console.log(selection)
         }
