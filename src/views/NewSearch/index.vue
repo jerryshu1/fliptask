@@ -149,7 +149,7 @@ export default defineComponent({
                 device: '电流互感器',
                 device_type: '',
                 operation: '停复役',
-                task_name: '电压互感器'
+                task_name: '电流互感器'
             }]
         })
         const every3 = ref({
@@ -158,7 +158,7 @@ export default defineComponent({
                 device: '避雷器',
                 device_type: '',
                 operation: '复役',
-                task_name: '电压互感器'
+                task_name: '避雷器'
             }]
         })
         const risk_and_measure = ref({})
