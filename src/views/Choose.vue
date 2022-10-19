@@ -1,6 +1,12 @@
 <template>
   <div class="column">
-    <div style="width: 66%; border-style: solid; border-color: #0000FF; margin-left: 17%;margin-top: 40px">
+    <div class="title">
+      <el-icon>
+        <List />
+      </el-icon>
+      <p>已发布任务列表</p>
+    </div>
+    <div style="width:85%; margin-left: 7%;margin-top: 1%">
       <div v-for="(data, index) in componentData" :key="index">
         <div style="margin-top: 20px; margin-left: 20px;">
           <div class="q-pa-md">
@@ -37,8 +43,8 @@
     </div>
     <div>
       <button class="homebutton" @click="laststep">上一步</button>
-      <button class="homebutton2" @click="addnewtask">继续添加</button>
-      <button class="homebutton1" @click="goPublished">确认发布</button>
+      <button class="homebutton" @click="addnewtask">继续添加</button>
+      <button class="homebutton" @click="goPublished">确认发布</button>
       <el-dialog title="请选择任务派遣人" v-model="dialogVisible" width="30%">
         <el-form ref="form" :model="form" label-width="140px" :rules="rules1">
           <el-form-item label="请输入工单任务名" prop="id">
@@ -56,11 +62,11 @@
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
-              <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="adminupdate">确 定</el-button>
+              <el-button class="homebutton" @click="dialogVisible = false">取 消</el-button>
+              <el-button class="homebutton" @click="adminupdate">确 定</el-button>
             </span>
       </el-dialog>
-      <button class="homebutton1" @click="reload">取消</button>
+      <button class="homebutton" @click="reload">取消</button>
     </div>
   </div>
 </template>
@@ -73,12 +79,15 @@ import {
 } from 'vuex';
 import SearchBar from "../components/search/SearchBar.vue";
 import SearchList from "../components/search/SearchList.vue";
+import { List } from "@element-plus/icons";
+
 
 export default {
   name: "choose",
   components: {
     SearchBar,
     SearchList,
+    List
   },
   mounted() {
     if (store.state.taskName === ''){
@@ -261,14 +270,13 @@ export default {
   float: left;
 }
 
-.homebutton1 {
-  width: 80px;
-  height: 60px;
-  font-size: 20px;
-  margin-top: 20px;
-  color: #FFFFFF;
-  margin-left: 15%;
-  background-color: #0000ff;
-  float: left;
+.homebutton {
+  width: 120px;
+	height: 40px;
+	font-size: calc(100vw * 16 / 1920);
+	margin-top: 5%;
+	color: #FFFFFF;
+  margin-left: 100px;
+	background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
 </style>
