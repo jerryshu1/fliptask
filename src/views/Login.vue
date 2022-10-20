@@ -13,13 +13,13 @@
               </div>
             </div>
             <q-form class="loginform" @submit="onSubmit">
-              <q-input v-model="id" label="User ID">
+              <q-input v-model="id" label="账号">
                 <template #prepend>
                   <q-icon name="email" />
                 </template>
               </q-input>
 
-              <q-input v-model="password" type="password" label="Password">
+              <q-input v-model="password" type="password" label="密码">
                 <template #prepend>
                   <q-icon name="lock" />
                 </template>

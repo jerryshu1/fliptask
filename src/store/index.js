@@ -49,16 +49,30 @@ export default createStore({
         admintasklist: [],
         //newsearch
         risk_and_measure: {},
-        lens: {}
-
+        lens: {},
+        companyinfo: {},
 
     },
     mutations: {
+        deletetask(state){
+            state.risk_and_measure = {}
+            state.lens = {}
+            state.companyinfo = {}
+        },
+        savestation(state,result){
+            state.companyinfo = result
+        },
         savenewriskandmeasure(state,result){
-            state.risk_and_measure = result
+            let keys = Object.keys(result)
+            for (var i in keys){
+                state.risk_and_measure[keys[i]] = result[keys[i]]
+            }
         },
         savelens(state,result){
-            state.lens = result
+            let keys = Object.keys(result)
+            for (var i in keys){
+                state.lens[keys[i]] = result[keys[i]]
+            }
         },
         signalsearch(state,result){
             state.additionData = result.additional;

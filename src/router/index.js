@@ -38,9 +38,9 @@ const routes = [
         path: "newsearch",
         name: "newsearch",
         component: NewSearch,
-        meta: {
-          keepAlive: true,
-        },
+        // meta: {
+        //   keepAlive: true,
+        // },
       },
       {
         path: "mutisearch",

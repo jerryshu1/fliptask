@@ -72,7 +72,7 @@
             </el-step>
             <el-step title="请选择操作对象">
                 <template v-slot:description>
-                    <div  v-if="this.current_tasks.length !== 0  || this.current_task !== null || this.end_status!==''">
+                    <div v-if="this.current_tasks.length !== 0  || this.current_task !== null || this.end_status!==''">
                         <el-table ref="taskTableRef" :data="showtabledata[0]" :border="parentBorder" style="width: 100%"
                             @select="handleSelectionChange" :row-key="getRowKeys">
                             <el-table-column type="selection" :reserve-selection="true" />
@@ -203,7 +203,6 @@ export default defineComponent({
             };
         };
         const handleSelect = (item) => {
-            active.value = 1
             current_station.value = item.value;
             let params = {
                 city: current_company.value,
@@ -212,8 +211,9 @@ export default defineComponent({
             getcategorylist(params).then((res) => {
                 if (res) {
                     categorylist.value = res.categories;
+                    active.value = 1
                 }
-            });
+            })
         };
 
         const changestartstatus = () => {
@@ -351,8 +351,8 @@ export default defineComponent({
             } else {
                 risk_and_measure.value = {}
                 let keys = Object.keys(risk_and_measure.value)
-                for (var i in userchoose.value){
-                    if (keys.indexOf(userchoose.value[i].task_name) === -1){
+                for (var i in userchoose.value) {
+                    if (keys.indexOf(userchoose.value[i].task_name) === -1) {
                         let key = userchoose.value[i].task_name
                         task_num.value[key] = 1
                         risk_and_measure.value[key] = []
@@ -372,7 +372,15 @@ export default defineComponent({
                 }
                 store.commit('savenewriskandmeasure', risk_and_measure.value)
                 store.commit('savelens', task_num.value)
-                router.push({name: 'mutichoose'})
+                let data = {
+                    company: current_company.value,
+                    station: current_station.value,
+                    category: current_category.value,
+                    looptype: looptype.value,
+                    searchtype: searchtype.value
+                }
+                store.commit('savestation', data)
+                router.push({ name: 'mutichoose' })
             }
         };
         const prestep = () => {
@@ -484,7 +492,27 @@ export default defineComponent({
         }
 
         onMounted(() => {
-            getcompanyList()
+            console.log(store.state.companyinfo)
+            if (Object.keys(store.state.companyinfo).length !== 0) {
+                current_company.value = store.state.companyinfo.company
+                current_station.value = store.state.companyinfo.station
+                let params = {
+                    city: current_company.value,
+                    station: current_station.value,
+                };
+                getcategorylist(params).then((res) => {
+                    if (res) {
+                        categorylist.value = res.categories;
+                        current_category.value = store.state.companyinfo.category
+                        looptype.value = store.state.companyinfo.looptype
+                        searchtype.value = store.state.companyinfo.searchtype
+                        active.value = 2
+                    }
+                })
+            } else {
+                getcompanyList()
+            }
+            // console.log(store.state.companyinfo.len)
             current_company_id.value = store.state.user.company_id
         })
 
@@ -594,6 +622,5 @@ export default defineComponent({
     margin-left: 25%;
     margin-top: 2%;
     background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
-  }
-
+}
 </style>

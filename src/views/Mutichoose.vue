@@ -33,7 +33,8 @@
           存在的主要风险
         </div>
         <div class="q-pa-md">
-          <div class="q-gutter-sm" v-for="(riskprevention, index2) in taskdata[0].risks" :key="index2" style="margin-left: 10%">
+          <div class="q-gutter-sm" v-for="(riskprevention, index2) in taskdata[0].risks" :key="index2"
+            style="margin-left: 10%">
             <el-checkbox size="medium" v-model="checked[index][index1].checkrisks" :label="riskprevention"
               :val="riskprevention" checked="true" />
           </div>
@@ -47,27 +48,39 @@
           预控措施
         </div>
         <div class="q-pa-md">
-          <div class="q-gutter-sm" v-for="(processcontrol, index3) in taskdata[0].measures" :key="index3" style="margin-left: 10%">
+          <div class="q-gutter-sm" v-for="(processcontrol, index3) in taskdata[0].measures" :key="index3"
+            style="margin-left: 10%">
             <el-checkbox size="medium" v-model="checked[index][index1].checkprocess" :label="processcontrol"
-              :val="processcontrol" checked="true"  />
+              :val="processcontrol" checked="true" />
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="btngroup">
-    <button class="hobutton1" @click="goLast">上一步</button>
+    <button class="hobutton1" @click="goLast">继续添加任务</button>
     <button class="hobutton1" @click="goPublished">确认发布</button>
-    <button class="hobutton1" @click="reload">取消</button>
+    <button class="hobutton1" @click="reload">取消任务发布</button>
   </div>
   <el-dialog title="请选择任务派遣人" v-model="dialogVisible" width="30%">
-    <el-form ref="form" :model="form" label-width="140px" :rules="rules1">
+    <!-- <el-form ref="form" :model="form" label-width="140px" :rules="rules1">
       <el-input v-model="input1" placeholder="请输入工单任务名称" />
       <el-form-item label="任务委派人" prop="password">
         <el-select v-model="assigner" placeholder="请选择任务委派人">
           <el-option v-for="(names, index) in this.allusers" :label="names.name" :value="names.name" :key="index">
           </el-option>
         </el-select>
+      </el-form-item>
+    </el-form> -->
+    <el-form ref="form" :model="form" label-position="right" label-width="auto">
+      <el-form-item label="请输入工单任务名" prop="id">
+        <el-input v-model="input1" style="width: 65%;"></el-input>
+      </el-form-item>
+      <el-form-item label="任务审核人" prop="password">
+        <el-input v-model="reviewer" style="width: 65%;"></el-input>
+      </el-form-item>
+      <el-form-item label="任务执行人" prop="password">
+        <el-input v-model="assigner" style="width: 65%;"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -107,7 +120,6 @@ export default defineComponent({
   data() {
     return {
       assigner: "",
-      dialogVisible: false,
       hidePagination: true,
       updataList: ref({}),
       input1: "",
@@ -150,31 +162,34 @@ export default defineComponent({
       };
       this.$router.push(location);
       this.dialogVisible = false;
-    },
-    goPublished() {
-      this.dialogVisible = true;
-    },
-    goLast() {
-      store.commit("MUTIDELETE");
-      let location = {
-        name: "mutisearch",
-      };
-      this.$router.push(location);
-    },
-    reload() {
-      window.location.reload();
-    },
+    }
   },
   setup() {
     //data
-    const risk_and_measure = ref({});
-    const sunxu = ref([]);
-    const checked = ref({});
-    const lens = ref({});
+    const risk_and_measure = ref({})
+    const sunxu = ref([])
+    const checked = ref({})
+    const lens = ref({})
+    const dialogVisible = ref(false)
+    const assigner = ref('')
+    const reviewer = ref('')
+    const hidePagination = ref(true)
+    const updataList = ref({})
+    const input1 = ref('')
     //others
     const store = useStore();
     const router = useRouter();
     //methods
+    const goLast = () => {
+      router.push({ path: '/newsearch' });
+    }
+    const goPublished = () => {
+      dialogVisible.value = true;
+    }
+    const reload = () => {
+      store.commit('deletetask')
+      router.push({ path: '/newsearch' });
+    }
     onMounted(() => {
       risk_and_measure.value = store.state.risk_and_measure;
       lens.value = store.state.lens;
@@ -195,15 +210,22 @@ export default defineComponent({
       risk_and_measure,
       checked,
       lens,
-
+      dialogVisible,
+      assigner,
+      hidePagination,
+      updataList,
+      input1,
+      reviewer,
       //methods
+      goLast,
+      goPublished,
+      reload,
     };
   },
 });
 </script>
 
 <style scoped>
-
 .hobutton1 {
   width: 120px;
   height: 40px;
