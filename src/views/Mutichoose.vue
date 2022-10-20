@@ -84,8 +84,8 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="adminupdate">确 定</el-button>
+      <el-button class="hobutton1" @click="dialogVisible = false">取 消</el-button>
+      <el-button class="hobutton1" @click="adminupdate">确 定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -227,7 +227,7 @@ export default defineComponent({
 
 <style scoped>
 .hobutton1 {
-  width: 120px;
+  width: 150px;
   height: 40px;
   font-size: calc(100vw * 16 / 1920);
   color: #ffffff;

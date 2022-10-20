@@ -23,7 +23,7 @@
         <th style="width: 160px;">预控措施</th>
         <th style="width: 40px;">打勾</th>
         </tbody>
-        <tbody align="center" style="height: 60px;" v-for="(data,index) in riskandmeasures.risks">
+        <tbody align="center" style="height: 60px;" v-for="(data,index) in riskandmeasures.risks" :key="index">
         <td width="40px" colspan="1" rowspan="1">
           {{index + 1}}
         </td>
@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import { defineComponent, reactive, toRefs, ref } from 'vue';
 import {mapState} from "vuex";
 import store from "../store";
 import {updateuserStatus} from "../api/getComponents";

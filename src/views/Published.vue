@@ -494,17 +494,14 @@ export default {
   font-weight: 800;
 }
 .homebutton {
-  width: 120px;
+  width: 150px;
 	height: 40px;
 	font-size: calc(100vw * 16 / 1920);
 	margin-top: 5%;
 	color: #FFFFFF;
-  margin-left: 100px;
+  margin-left: 25%;
 	background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
 
-.btngroup{
-  width:500px;
-  margin: 0 auto;
-}
+
 </style>

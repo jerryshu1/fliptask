@@ -521,7 +521,7 @@ export default defineComponent({
 }
 
 .homebutton1 {
-  width: 120px;
+  width: 150px;
   height: 40px;
   font-size: calc(100vw * 16 / 1920);
   margin-top: 5%;
