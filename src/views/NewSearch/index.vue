@@ -12,7 +12,7 @@
             <el-step title="请选择公司及站点">
                 <template v-slot:description>
                     <div class="selectgroup">
-                        <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" size="mini"
+                        <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" 
                             @change="getstationList">
                             <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
                         </el-select>
@@ -25,7 +25,7 @@
             <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
-                        <el-select v-model="current_category" class="m-2" placeholder="请选择线路" size="mini"
+                        <el-select v-model="current_category" class="m-2" placeholder="请选择线路" 
                             @change="changexianlu" v-if="this.current_station!==''">
                             <el-option v-for="(item, index) in categorylist" :key="index" :label="item" :value="item" />
                         </el-select>
