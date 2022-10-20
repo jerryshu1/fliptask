@@ -7,8 +7,7 @@
   </div>
   <div class="container" style="width: 85%; margin-left: 7%; margin-top: 1%">
     <div v-for="(data, index) in risk_and_measure" :key="index">
-      <div style="
-          font-size: 20px;
+      <div style="font-size: 20px;
           font-weight: 800;
           margin-left: 40%;
           margin-top: 2%;
