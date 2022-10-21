@@ -6,16 +6,16 @@
       </el-icon>
       <p>已发布任务列表</p>
     </div>
-    <div class="mt-4" style="width:85%; margin-left: 7%;margin-top: 1%">
-      <el-input v-model="input" placeholder="请输入搜索内容" class="input-with-select" @change="enter">
-        <template #prepend>
-          <el-select v-model="select1" placeholder="Select">
-            <el-option label="任务名称" value="任务名称" />
-            <el-option label="任务状态" value="任务状态" />
-          </el-select>
-        </template>
-      </el-input>
+
+    <div class="search" style="width:85%; margin-left: 7%;margin-top: 1%">
+      <el-select v-model="select1" placeholder="Select" class="selectpublish">
+        <el-option label="任务名称" value="任务名称" />
+        <el-option label="任务状态" value="任务状态" />
+      </el-select>
+      <!-- <el-input v-model="input" placeholder="请输入搜索内容" @change="enter" /> -->
+
     </div>
+
 
     <el-table border :data="this.publishedData" style="width:85%; margin-left: 7%;margin-top: 2%" @select='select'>
       <el-table-column type="selection" align='center'>
@@ -39,7 +39,7 @@
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button type="text" @click="signalprint(scope.row)">打印</el-button>
-          <el-button type="text" @click="test(scope.row)">预览</el-button>
+          <el-button type="text" @click="test(scope.row)">删除</el-button>
           <el-button type="text" @click="gofinish(scope.row)" v-if="this.usermessage.role === 'admin'">确认完成
           </el-button>
         </template>
@@ -49,10 +49,9 @@
     <div>
       <div class="btngroup">
         <button class="homebutton" @click="goDelete" v-if="this.usermessage.role === 'admin'">删除</button>
-        <button class="homebutton" @click="dialogTableVisible2=true"
-          v-if="this.usermessage.role === 'admin'">复合打印</button>
+        <button class="homebutton" @click="dialogTableVisible2=true">复合打印</button>
       </div>
-      
+
       <el-dialog v-model="dialogTableVisible2" title="通用措施风险预控选择" width="95%" center>
         <div v-for="(data, index) in names" :key="index">
           <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
@@ -134,7 +133,7 @@
 
 <script>
 import store from '../store';
-import { deleteData, gettableData, postRiskData, updateStatus } from "../api/getComponents";
+import { deleteData, gettableData, postRiskData, updateStatus, newgettasklist } from "../api/getComponents";
 import {
   mapState
 } from 'vuex';
@@ -218,27 +217,83 @@ export default {
       ids: [],
       statuss: [],
       signaldata: {},
+      publishedData: []
     }
   },
   components: {
     List
   },
   mounted() {
-    if (store.state.user.role === 'superadmin') {
-      let location = {
-        name: "user"
-      };
-      this.$router.push(location);
+    newgettasklist('市南供电公司', '宝南站').then((res) => {
+      if (res) {
+        this.publishedData = res
+        for (var i in this.publishedData) {
+          if (this.publishedData[i].status === 'published') {
+            this.publishedData[i].status = '已发布';
+          } else if (this.publishedData[i].status === 'assigned') {
+            this.publishedData[i].status = '已派发';
+          } else if (this.publishedData[i].status === 'finished') {
+            this.publishedData[i].status = '已完成';
+          }
 
-    } else {
-      store.dispatch('getPublishData');
-    }
+          var d = new Date(this.publishedData[i].publish_date);
+          this.publishedData[i].publish_date = d.toLocaleString();
+          if (this.publishedData[i].publish_date.split(' ')[0].split('/')[2].length === 1) {
+            this.publishedData[i].publish_date = this.publishedData[i].publish_date.split('/')[0] + '/' + this.publishedData[i].publish_date.split('/')[1] +
+              '/0' + this.publishedData[i].publish_date.split('/')[2]
+          }
+          if (this.publishedData[i].assign_date) {
+            var d1 = new Date(this.publishedData[i].assign_date);
+            this.publishedData[i].assign_date = d1.toLocaleString();
+            if (this.publishedData[i].assign_date.split(' ')[0].split('/')[2].length === 1) {
+              this.publishedData[i].assign_date = this.publishedData[i].assign_date.split('/')[0] + '/' + this.publishedData[i].assign_date.split('/')[1] +
+                '/0' + this.publishedData[i].assign_date.split('/')[2]
+            }
+          }
+          if (this.publishedData[i].finish_date) {
+            var d2 = new Date(this.publishedData[i].finish_date);
+            this.publishedData[i].finish_date = d2.toLocaleString();
+            if (this.publishedData[i].finish_date.split(' ')[0].split('/')[2].length === 1) {
+              this.publishedData[i].finish_date = this.publishedData[i].finish_date.split('/')[0] + '/' + this.publishedData[i].finish_date.split('/')[1] +
+                '/0' + this.publishedData[i].finish_date.split('/')[2]
+            }
+          }
+
+          for (var i in this.publishedData) {
+            var devices = '';
+            var devices_type = '';
+            var operations = '';
+            var measures = '';
+            for (var j in this.publishedData[i].task_details[0].details) {
+              devices += this.publishedData[i].task_details[0].details[j].device + ' ';
+              operations += this.publishedData[i].task_details[0].details[j].operation + ' ';
+              measures += this.publishedData[i].task_details[0].details[j].measure_type + ' ';
+              devices_type += this.publishedData[i].task_details[0].details[j].device_type + ' ';
+            }
+            this.publishedData[i].devices = devices;
+            this.publishedData[i].operations = operations;
+            this.publishedData[i].measures_type = measures;
+            this.publishedData[i].device_types = devices_type;
+          }
+        }
+        this.publishedData = this.publishedData.reverse();
+      }
+    })
+    // if (store.state.user.role === 'superadmin') {
+    //   let location = {
+    //     name: "user"
+    //   };
+    //   this.$router.push(location);
+
+    // } else {
+    //   store.dispatch('getPublishData');
+    // }
   },
   computed: {
     ...mapState({
-      publishedData: (state) => {
-        return store.state.publishedData;
-      },
+      // publishedData: (state) => {
+      //   return store.state.publishedData;
+      // },
       token: (state) => {
         return store.state.jwtToken;
       },
@@ -493,15 +548,29 @@ export default {
   font-size: calc(100vw * 20 / 1920);
   font-weight: 800;
 }
+
 .homebutton {
   width: 150px;
-	height: 40px;
-	font-size: calc(100vw * 16 / 1920);
-	margin-top: 5%;
-	color: #FFFFFF;
+  height: 40px;
+  font-size: calc(100vw * 16 / 1920);
+  margin-top: 5%;
+  color: #FFFFFF;
   margin-left: 25%;
-	background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
+  background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
 
+.search .el-input {
 
+  width: 70%
+}
+
+.search .el-select {
+  width: 20%;
+  margin-right: 10px;
+}
+
+.search{
+  display: flex;
+  align-items: center;
+}
 </style>

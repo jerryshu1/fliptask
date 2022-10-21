@@ -72,7 +72,7 @@
             </el-step>
             <el-step title="请选择操作对象">
                 <template v-slot:description>
-                    <div v-if="this.current_tasks.length !== 0  || this.current_task !== null || this.end_status!==''">
+                    <div v-if="this.current_tasks.length !== 0  || this.current_task !== null || this.end_status!=='' || this.showtabledata.length !== 0">
                         <el-table ref="taskTableRef" :data="showtabledata[0]" :border="parentBorder" style="width: 100%"
                             @select="handleSelectionChange" :row-key="getRowKeys">
                             <el-table-column type="selection" :reserve-selection="true" />
@@ -218,6 +218,7 @@ export default defineComponent({
 
         const changestartstatus = () => {
             paths.value = false
+            sta
         }
 
         const changexianlu = () => {
@@ -228,8 +229,6 @@ export default defineComponent({
             showtabledata.value = []
             active.value = 2
 
-
-
             if (val === "母线" || val === "X母压变避雷器") {
                 // end_status.value = false
                 // start_status.value = false
@@ -237,7 +236,7 @@ export default defineComponent({
                 let params = {
                     subject: val,
                 };
-                getotherstasklist(current_company_id.value, params).then((res) => {
+                getotherstasklist(current_company.value, current_station.value, params).then((res) => {
                     if (res) {
                         for (var i in res) {
                             for (var j in res[i].details) {
@@ -258,7 +257,9 @@ export default defineComponent({
                 statuslist.value[4] = "开关" + val + "检修";
             }
             if (val === "线路导母线") {
+                taskTableRef.value.clearSelection()
                 searchtype.value = 2;
+                current_step.value = 0
                 current_task_use.value = []
                 neededdata.value['paths'] = []
                 neededdata.value['tasks'] = {}
@@ -332,8 +333,9 @@ export default defineComponent({
 
         };
         const gettask = (val) => {
-
+            taskTableRef.value.clearSelection()
             showtabledata.value = []
+            current_step.value = 0
             current_task_use.value = val
             current_task_use.value.push('电压互感器')
             current_task_use.value.push('电流互感器')
@@ -344,6 +346,7 @@ export default defineComponent({
             active.value = 3
         }
         const nextstep = () => {
+            console.log(userchoose.value)
             if (current_step.value + 1 < Length.value) {
                 current_step.value += 1
                 let key = current_task_use.value[current_step.value]
@@ -394,6 +397,8 @@ export default defineComponent({
         };
         const getcommonlist = () => {
             showtabledata.value = []
+            current_task_use.value = []
+            current_step.value = 0
             if (end_status.value === "") {
                 ElMessage.error("结束状态未选择");
             } else if (start_status.value === "") {
@@ -415,7 +420,7 @@ export default defineComponent({
                     to: end,
                     from: start
                 }
-                getcomontasklist(current_company_id.value, params).then((res) => {
+                getcomontasklist(current_company.value, current_station.value, params).then((res) => {
                     if (res) {
                         if (res.paths === null) {
                             paths.value = false
@@ -470,6 +475,7 @@ export default defineComponent({
             return row.device + row.device_type + row.operation + row.task_name
         }
         const getcurrentothertask = (val) => {
+            taskTableRef.value.clearSelection()
             let key = othertasklist.value[val]
 
             neededdata.value['paths'] = []

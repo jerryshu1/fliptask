@@ -15,9 +15,12 @@ export default defineConfig({
     vue({
       template: { transformAssetUrls },
     }),
-
     quasar({
       sassVariables: "src/styles/quasar.variables.sass",
     }),
+    
   ],
+  server: {
+    host: '0.0.0.0'
+  },
 });

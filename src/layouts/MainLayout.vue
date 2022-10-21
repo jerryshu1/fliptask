@@ -5,15 +5,14 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="leftDrawerOpen = !leftDrawerOpen" />
         <q-toolbar-title>倒闸操作风险预控卡</q-toolbar-title>
 
-        <div class="selectgroup">
-          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司"
-            @change="getstationList">
-            <el-option v-for="(item,index) in companylist" :key="index" :label="item" :value="item" />
+        <!-- <div class="selectgroup">
+          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" @change="getstationList">
+            <el-option v-for="(item,index) in companylists" :key="index" :label="item" :value="item" />
           </el-select>
 
           <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable placeholder="请选择站点"
-            @select="handleSelect" v-if="this.current_company!==''" />
-        </div>
+            @select="handleSelect" />
+        </div> -->
         <q-btn-dropdown outline rounded no-caps icon-right="manage_accounts">
           <template #label>
             <div class="row items-center no-wrap">{{ user }}</div>
@@ -54,10 +53,10 @@
 
 <script>
 import MenuLink from "../components/MenuLink.vue";
-import { getstationlist, getcompanylist, } from "../api/getComponents";
+import { getstationlist, getcompanylist, newgetstation } from "../api/getComponents";
 const linksList = [
   {
-    title: "任务搜索",
+    title: "任务派发",
     icon: "manage_search",
     link: "/newsearch",
   },
@@ -73,7 +72,7 @@ const linksList = [
   },
   {
     title: "风险库中心",
-    icon: "apps",
+    icon: "store",
     link: "/tasks",
   }
 ];
@@ -86,8 +85,12 @@ import store from "../store";
 export default {
   name: "MainLayout",
 
+
   components: {
     MenuLink,
+  },
+  mounted() {
+
   },
   methods: {
     test() {
@@ -99,8 +102,10 @@ export default {
     const store = useStore();
     const router = useRouter();
     const user = ref('')
-    const companylist = ref([]);
+    const companylists = ref([]);
     const stationlist = ref([]);
+    const current_company = ref('')
+    const current_station = ref('')
 
     const signout = () => {
       sessionStorage.clear();
@@ -110,36 +115,54 @@ export default {
     };
     const getstationList = (value) => {
       stationlist.value = [];
-      getstationlist(value).then((res) => {
-        if (res) {
-          for (var i in res.station) {
-            stationlist.value.push({
-              value: res.station[i],
-              link: res.station[i],
+      newgetstation(value).then((res1) => {
+        let stationlist = []
+        if (res1) {
+          for (var i in res1.stations) {
+            stationlist.push({
+              value: res1.stations[i],
             });
           }
+          stationlist.value = stationlist
+          store.commit('savestationlist', stationlist)
+          store.commit('savecompany', value)
         }
-      });
+      })
     };
-
-    const getcompanyList = () => {
-      getcompanylist().then((res) => {
-        if (res) {
-          console.log(res);
-          companylist.value = res.company;
-        }
-      });
+    const querySearch = (queryString, cb) => {
+      const results = queryString
+        ? stationlist.value.filter(createFilter(queryString))
+        : stationlist.value;
+      cb(results);
     };
+    const createFilter = (queryString) => {
+      return (restaurant) => {
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        );
+      };
+    };
+    onMounted(() => {
 
-    user.value = store.state.user.name
+    })
+
+    // companylist.value = store.state.companylist
+    current_company.value = store.state.company
+    current_station.value = store.state.station
 
     return {
       essentialLinks: linksList,
       leftDrawerOpen: ref(true),
       user,
+      companylists,
+      stationlist,
+      current_company,
+      current_station,
       signout,
       getstationList,
-      getcompanyList
+      querySearch,
+      createFilter,
     };
   },
 };

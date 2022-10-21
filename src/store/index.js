@@ -1,4 +1,4 @@
-import {createStore} from "vuex";
+import { createStore } from "vuex";
 import {
     getComponentsData,
     postRiskData,
@@ -14,7 +14,6 @@ import {
     getadmintasklist,
     getcompanyname,
 } from "../api/getComponents";
-import comment from "@element-plus/icons-vue/dist/es/comment.mjs";
 
 export default createStore({
     state: {
@@ -51,30 +50,49 @@ export default createStore({
         risk_and_measure: {},
         lens: {},
         companyinfo: {},
-
+        userinfo: {},
+        companylist: [],
+        stationlist: [],
+        station: '',
+        company: '',
     },
     mutations: {
-        deletetask(state){
+        savestation(state, data){
+            state.station = data
+        },
+        savecompany(state, data){
+            state.company = data
+        },
+        savestationlist(state, data){
+            state.stationlist = data
+        },
+        savecompanylist(state, data){
+            state.companylist = data
+        },
+        saveuserinfo(state, data) {
+            state.userinfo = data
+        },
+        deletetask(state) {
             state.risk_and_measure = {}
             state.lens = {}
             state.companyinfo = {}
         },
-        savestation(state,result){
+        savestation(state, result) {
             state.companyinfo = result
         },
-        savenewriskandmeasure(state,result){
+        savenewriskandmeasure(state, result) {
             let keys = Object.keys(result)
-            for (var i in keys){
+            for (var i in keys) {
                 state.risk_and_measure[keys[i]] = result[keys[i]]
             }
         },
-        savelens(state,result){
+        savelens(state, result) {
             let keys = Object.keys(result)
-            for (var i in keys){
+            for (var i in keys) {
                 state.lens[keys[i]] = result[keys[i]]
             }
         },
-        signalsearch(state,result){
+        signalsearch(state, result) {
             state.additionData = result.additional;
             state.taskName = result.task_name;
             let data = {
@@ -276,12 +294,12 @@ export default createStore({
         fuheprint(state, result) {
             state.newtaskid = result._id;
         },
-        GETSUPERTASKLIST(state, result){
-            for (var i in result){
-                if (result[i].details){
+        GETSUPERTASKLIST(state, result) {
+            for (var i in result) {
+                if (result[i].details) {
                     var data = '';
-                    for (var j in result[i].details){
-                        if (result[i].details[j].device_type){
+                    for (var j in result[i].details) {
+                        if (result[i].details[j].device_type) {
                             data = data + result[i].details[j].device_type + result[i].details[j].device + result[i].details[j].operation + ';'
                         } else {
                             data = data + result[i].details[j].device + result[i].details[j].operation + ';'
@@ -291,7 +309,7 @@ export default createStore({
                     result[i].type = '单步任务';
                 } else {
                     var data1 = '';
-                    for (var k in result[i].combinations){
+                    for (var k in result[i].combinations) {
                         data1 = data1 + result[i].combinations[k] + ';'
                     }
                     result[i].message = data1;
@@ -301,12 +319,12 @@ export default createStore({
             }
             state.supertasklist = result
         },
-        GETADMINTASKLIST(state, result){
-            for (var i in result){
-                if (result[i].details){
+        GETADMINTASKLIST(state, result) {
+            for (var i in result) {
+                if (result[i].details) {
                     var data = '';
-                    for (var j in result[i].details){
-                        if (result[i].details[j].device_type){
+                    for (var j in result[i].details) {
+                        if (result[i].details[j].device_type) {
                             data = data + result[i].details[j].device_type + result[i].details[j].device + result[i].details[j].operation + ';'
                         } else {
                             data = data + result[i].details[j].device + result[i].details[j].operation + ';'
@@ -316,7 +334,7 @@ export default createStore({
                     result[i].type = '单步任务';
                 } else {
                     var data1 = '';
-                    for (var k in result[i].combinations){
+                    for (var k in result[i].combinations) {
                         data1 = data1 + result[i].combinations[k] + ';'
                     }
                     result[i].message = data1;
@@ -337,18 +355,18 @@ export default createStore({
         endpoint(context, payload) {
             context.commit("endpoint", payload);
         },
-        async getComponents({commit, state}, params = {}) {
+        async getComponents({ commit, state }, params = {}) {
             let result = await getComponentsData(params, state.jwtToken);
             if (result) {
                 commit('SAVEDATA', result[0])
             }
         },
-        postData({commit, state}, params) {
+        postData({ commit, state }, params) {
             postRiskData(state.user.company_id, params, state.jwtToken).then((res) => {
                 commit('fuheprint', res)
             })
         },
-        async getPublishData({commit, state}, params) {
+        async getPublishData({ commit, state }, params) {
             let result = await gettableData(state.user.company_id, params, state.jwtToken);
             if (result) {
                 commit('PUBLISHDATA', result);
@@ -356,14 +374,14 @@ export default createStore({
                 commit('PUBLISHDATA', []);
             }
         },
-        async getmutiComponents({commit}, params = {}) {
+        async getmutiComponents({ commit }, params = {}) {
             let result = await getComponentsData(params);
             if (result) {
                 commit('SAVEMUTIDATA', result[0])
             }
         },
         //user
-        async getuserMessage({commit, state}, params) {
+        async getuserMessage({ commit, state }, params) {
             let result = await getuser(params);
             if (result) {
                 commit('saveuser', result);
@@ -373,7 +391,7 @@ export default createStore({
                 }
             }
         },
-        async getallusersMessage({commit, state}, role) {
+        async getallusersMessage({ commit, state }, role) {
             let result = await getallusers(state.jwtToken);
             if (result && role === 'superadmin') {
                 commit('SUPERALLUSERS', result);
@@ -381,35 +399,35 @@ export default createStore({
                 commit('ADMINALLUSERS', result);
             }
         },
-        async getoneusersMessage({commit, state}) {
+        async getoneusersMessage({ commit, state }) {
             let result = await getoneusers(state.user_id);
             if (result) {
                 commit('ALLUSERS', result);
             }
         },
-        async addnewuser({state}, body) {
+        async addnewuser({ state }, body) {
             await postnewuser(body, state.jwtToken);
         },
-        async adminupdate({state}, body) {
+        async adminupdate({ state }, body) {
             await postadminupdate(body.id, body.body, state.jwtToken);
         },
         //超级管理员新增分公司、创建分公司管理员
-        async addnewcompany({state},body) {
+        async addnewcompany({ state }, body) {
             let result = await postsuperaddcompany(body, state.jwtToken);
-            if (result){
+            if (result) {
                 postcopytask(body.id, state.jwtToken)
             }
         },
         //超级管理员获取任务列表数据
-        async getsuperlist({commit,state}) {
+        async getsuperlist({ commit, state }) {
             let result = await getsupertasklist(state.jwtToken);
-            if(result){
+            if (result) {
                 commit("GETSUPERTASKLIST", result)
             }
         },
-        async getadminlist({commit,state}) {
-            let result = await getadmintasklist(state.user.company_id,state.jwtToken);
-            if(result){
+        async getadminlist({ commit, state }) {
+            let result = await getadmintasklist(state.user.company_id, state.jwtToken);
+            if (result) {
                 commit("GETADMINTASKLIST", result)
             }
         }

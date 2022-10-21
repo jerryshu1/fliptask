@@ -113,45 +113,45 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  var isAuthenticated = '';
-  var isrole = '';
-  if (sessionStorage.length !== 0){
-    isAuthenticated = JSON.parse(sessionStorage.state).jwtToken;
-    isrole = JSON.parse(sessionStorage.state).user.role;
-  } else {
-    isAuthenticated = store.state.jwtToken;
-    isrole = store.state.user.role;
-  }
-  if (to.path === "/search" && isrole === "appuser"){
-    this.$message({
-      type: 'error',
-      message: '权限不足'
-    });
-    next({path: "/published" });
-  }
-  if (to.path === "/mutisearch" && isrole === "appuser"){
-    alert('权限不足')
-    next({path: "/published" });
-  }
-  if (to.path === "/search" && isrole === "superadmin"){
-    next({path: "/user" });
-  }
-  if (to.path === "/mutisearch" && isrole === "superadmin"){
-    next({path: "/user" });
-  }
-  if (to.path === "/tasks" && isrole === "appuser"){
-    alert('权限不足')
-    next({path: "/published" });
-  }
-  if (to.path === "/published" && isrole === "superadmin"){
-    next({path: "/user" });
-  }
-  if (to.path !== "/login" && isAuthenticated === '') {
-    next({ path: "/login" });
-  } else {
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   var isAuthenticated = '';
+//   var isrole = '';
+//   if (sessionStorage.length !== 0){
+//     isAuthenticated = JSON.parse(sessionStorage.state).jwtToken;
+//     isrole = JSON.parse(sessionStorage.state).user.role;
+//   } else {
+//     isAuthenticated = store.state.jwtToken;
+//     isrole = store.state.user.role;
+//   }
+//   if (to.path === "/search" && isrole === "appuser"){
+//     this.$message({
+//       type: 'error',
+//       message: '权限不足'
+//     });
+//     next({path: "/published" });
+//   }
+//   if (to.path === "/mutisearch" && isrole === "appuser"){
+//     alert('权限不足')
+//     next({path: "/published" });
+//   }
+//   if (to.path === "/search" && isrole === "superadmin"){
+//     next({path: "/user" });
+//   }
+//   if (to.path === "/mutisearch" && isrole === "superadmin"){
+//     next({path: "/user" });
+//   }
+//   if (to.path === "/tasks" && isrole === "appuser"){
+//     alert('权限不足')
+//     next({path: "/published" });
+//   }
+//   if (to.path === "/published" && isrole === "superadmin"){
+//     next({path: "/user" });
+//   }
+//   if (to.path !== "/login" && isAuthenticated === '') {
+//     next({ path: "/login" });
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;

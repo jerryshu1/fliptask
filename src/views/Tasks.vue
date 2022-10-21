@@ -4,11 +4,18 @@
       <el-icon>
         <List />
       </el-icon>
-      <p>任务库</p>
+      <p>风险库</p>
     </div>
 
     <div>
-      <q-table style="
+      <el-table :data="this.tableData" style="width: 90%">
+        <el-table-column prop="device" label="设备名称" align='center' width='180'/>
+        <el-table-column prop="device_type" label="设备类型" align='center' width='180' />
+        <el-table-column prop="operation" label="操作名称" align='center' width='180' />
+        <el-table-column prop="risks" label="风险" align='center' />
+        <el-table-column prop="measures" label="预控措施" align='center' />
+      </el-table>
+      <!-- <q-table style="
           height: 500px;
           width: 85%;
           margin-left: 7%;
@@ -27,60 +34,61 @@
           padding-top: 2%;
           padding: 2%;
         " :rows="this.admintasklist" :columns="columns" row-key="index" virtual-scroll selection="multiple"
-        v-model:selected="selected" v-model:pagination="pagination" :rows-per-page-options="[0]" v-else />
+        v-model:selected="selected" v-model:pagination="pagination" :rows-per-page-options="[0]" v-else /> -->
     </div>
- 
-  <!--  <el-button v-if="this.usermessage.role === 'superadmin'" @click="addsignaltask" style="margin-left: 350px">新增单步任务</el-button>-->
-  <!--  <el-button v-if="this.usermessage.role === 'superadmin'" @click="addmutitask" style="margin-left: 350px">新增复合型任务</el-button>-->
-  <!--  <el-button v-else-if="this.usermessage.role === 'admin'" @click="adminadd" style="margin-left: 350px">新增任务表任务</el-button>-->
-  <!--  <el-button v-if="this.usermessage.role === 'superadmin'" @click="superadmindeletetask" style="margin-left: 350px">删除任务</el-button>-->
-  <el-button class="homtbutton" v-if="this.usermessage.role === 'admin'" @click="admindeletetask">删除任务
-  </el-button>
-  <el-dialog v-model="dialogTableVisible" title="新增单步任务" center>
-    <div>
-      <el-input v-model="task_name" placeholder="新增任务名称" style="width: 200px" />
-      <div>
-        <i @click="getAdd">增加</i>
-        <div v-for="(val, index) in addCalculation" :key="index" style="margin-top: 10px">
-          <el-input v-model="val.name" placeholder="器件名称"></el-input>
-          <el-input v-model="val.type" placeholder="器件类别"></el-input>
-          <el-input v-model="val.operation" placeholder="器件操作"></el-input>
-          <i @click="getRemove(index)" v-if="index > 0">减少</i>
-        </div>
-      </div>
-      <div style="margin-top: 10px">
-        <el-input v-model="additional" placeholder="备注" style="width: 200px" />
-      </div>
-      <el-button @click="superadminaddtask" style="margin-left: 48%">发布</el-button>
-    </div>
-  </el-dialog>
-  <el-dialog v-model="dialogTableVisible1" title="新增复合型任务" center>
-    <div>
-      <el-input v-model="task_name" placeholder="新增复合型任务名称" style="width: 200px" />
-      <div>
-        <i @click="getAdd1">增加</i>
-        <div v-for="(val, index) in addCalculation1" :key="index" style="margin-top: 10px">
-          <el-input v-model="val.name" placeholder="单步任务名称" style="width: 150px"></el-input>
-          <i @click="getRemove1(index)" v-if="index > 0">减少</i>
-        </div>
-      </div>
-      <el-button @click="superadminaddtask" style="margin-left: 48%">发布</el-button>
-    </div>
-  </el-dialog>
-  <el-dialog v-model="dialogTableVisible2" title="新增任务表任务" center>
-    <q-table style="height: 400px" title="未获取任务列表" :rows="rows" :columns="columns" row-key="index" virtual-scroll
-      selection="multiple" v-model:selected="selected1" v-model:pagination="pagination" :rows-per-page-options="[0]" />
-    <el-button @click="adminaddtask" style="margin-left: 48%; margin-top: 10px">加入任务库</el-button>
-  </el-dialog>
 
-</div>
+    <!--  <el-button v-if="this.usermessage.role === 'superadmin'" @click="addsignaltask" style="margin-left: 350px">新增单步任务</el-button>-->
+    <!--  <el-button v-if="this.usermessage.role === 'superadmin'" @click="addmutitask" style="margin-left: 350px">新增复合型任务</el-button>-->
+    <!--  <el-button v-else-if="this.usermessage.role === 'admin'" @click="adminadd" style="margin-left: 350px">新增任务表任务</el-button>-->
+    <!--  <el-button v-if="this.usermessage.role === 'superadmin'" @click="superadmindeletetask" style="margin-left: 350px">删除任务</el-button>-->
+    <el-button class="homtbutton" v-if="this.usermessage.role === 'admin'" @click="admindeletetask">删除任务
+    </el-button>
+    <el-dialog v-model="dialogTableVisible" title="新增单步任务" center>
+      <div>
+        <el-input v-model="task_name" placeholder="新增任务名称" style="width: 200px" />
+        <div>
+          <i @click="getAdd">增加</i>
+          <div v-for="(val, index) in addCalculation" :key="index" style="margin-top: 10px">
+            <el-input v-model="val.name" placeholder="器件名称"></el-input>
+            <el-input v-model="val.type" placeholder="器件类别"></el-input>
+            <el-input v-model="val.operation" placeholder="器件操作"></el-input>
+            <i @click="getRemove(index)" v-if="index > 0">减少</i>
+          </div>
+        </div>
+        <div style="margin-top: 10px">
+          <el-input v-model="additional" placeholder="备注" style="width: 200px" />
+        </div>
+        <el-button @click="superadminaddtask" style="margin-left: 48%">发布</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog v-model="dialogTableVisible1" title="新增复合型任务" center>
+      <div>
+        <el-input v-model="task_name" placeholder="新增复合型任务名称" style="width: 200px" />
+        <div>
+          <i @click="getAdd1">增加</i>
+          <div v-for="(val, index) in addCalculation1" :key="index" style="margin-top: 10px">
+            <el-input v-model="val.name" placeholder="单步任务名称" style="width: 150px"></el-input>
+            <i @click="getRemove1(index)" v-if="index > 0">减少</i>
+          </div>
+        </div>
+        <el-button @click="superadminaddtask" style="margin-left: 48%">发布</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog v-model="dialogTableVisible2" title="新增任务表任务" center>
+      <q-table style="height: 400px" title="未获取任务列表" :rows="rows" :columns="columns" row-key="index" virtual-scroll
+        selection="multiple" v-model:selected="selected1" v-model:pagination="pagination"
+        :rows-per-page-options="[0]" />
+      <el-button @click="adminaddtask" style="margin-left: 48%; margin-top: 10px">加入任务库</el-button>
+    </el-dialog>
+
+  </div>
 
 </template>
 
 <script>
 import { ref } from "vue";
 import { mapState, useStore } from "vuex";
-import { deletetask } from "../api/getComponents";
+import { deletetask, newgetComponents, newget } from "../api/getComponents";
 import store from "../store";
 import { List } from "@element-plus/icons";
 
@@ -117,6 +125,7 @@ export default {
       //复合
       addCalculation1: [{ id: 1, name: "" }],
       selected1: [],
+      tableData: []
     };
   },
   components: {
@@ -139,12 +148,10 @@ export default {
     }),
   },
   beforeCreate() {
-    if (useStore().state.user.role === "admin") {
-      this.$store.dispatch("getadminlist");
-    }
-    if (useStore().state.user.role === "superadmin") {
-      this.$store.dispatch("getsuperlist");
-    }
+    newget().then((res) => {
+      console.log(res)
+      this.tableData = res
+    })
   },
   methods: {
     addsignaltask() {
@@ -280,13 +287,13 @@ span {
   padding-right: 10px;
 }
 
-.homtbutton{
+.homtbutton {
   width: 120px;
-	height: 40px;
-	font-size: calc(100vw * 16 / 1920);
-	margin-top: 3%;
-	color: #FFFFFF;
+  height: 40px;
+  font-size: calc(100vw * 16 / 1920);
+  margin-top: 3%;
+  color: #FFFFFF;
   margin-left: 40%;
-	background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
+  background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
 </style>

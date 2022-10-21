@@ -6,7 +6,7 @@
           <q-card-section class="firstline">
             <div class="q-my-md">倒闸操作风险预控卡</div>
           </q-card-section>
-          
+
           <q-card-section class="loginbox">
             <div class="line">
               <div class="circle">
@@ -26,15 +26,7 @@
               </q-input>
 
               <q-card-actions class="q-px-lg q-mt-md q-mb-xl">
-                <q-btn
-                
-                  unelevated
-                  size="lg"
-                  class="btn"
-                  type="submit"
-                  label="Sign In"
-                  :loading="submitting"
-                />
+                <q-btn unelevated size="lg" class="btn" type="submit" label="Sign In" :loading="submitting" />
               </q-card-actions>
             </q-form>
           </q-card-section>
@@ -49,7 +41,7 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
-import { getcompanyname, postlogin, getuser } from "../api/getComponents";
+import { newpostlogin, newgetallcompany, newgetstation } from "../api/getComponents";
 
 export default defineComponent({
   name: "PageLogin",
@@ -78,23 +70,39 @@ export default defineComponent({
           id: id.value,
           password: password.value,
         };
-        postlogin(creds).then((res) => {
+        newpostlogin(creds).then((res) => {
           if (res) {
-            creds.token = res.token;
+            console.log(res)
             localStorage.setItem('token', res.token)
-            store.commit("savetoken", creds);
-            // store.dispatch("getuserMessage", creds.id);
-            getuser(creds.id).then((res1) => {
-              if (res1) {
-                store.commit('saveuser', res1);
-                // getcompanyname(res1.user.company_id).then((res2) => {
-                //   if (res2) {
-                //     store.commit('savecompanyname', res2)
-                //   }
-                // })
-              }
-            })
-            router.push({ path: "/published" });
+            store.commit('saveuserinfo', res)
+            if (res.role === 'superadmin') {
+              newgetallcompany().then((res1) => {
+                if (res1) {
+                  store.commit('savecompanylist', res1.companies)
+                  localStorage.setItem('companylist', res1.companies)
+                }
+              })
+            }
+            if (res.role === 'companyadmin') {
+              store.commit('savecompany', res.company)
+              newgetstation(res.company).then((res1) => {
+                let stationlist = []
+                if (res1) {
+                  for (var i in res1.stations) {
+                    stationlist.push({
+                      value: res1.stations[i],
+                    });
+                  }
+                  store.commit('savestationlist', stationlist)
+                  store.commit('savecompany', res.company)
+                }
+              })
+            }
+            if (res.role === 'stationadmin' || res.role === 'appuser') {
+              store.commit('savestation', res.station)
+              store.commit('savecompany', res.company)
+            }
+            router.push({ name: "newsearch" });
           } else {
             $q.notify({
               position: "bottom-right",
@@ -123,75 +131,75 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.firstline{
-    height: 150px;
-    width: 100%;
-    background:rgba(21, 39, 141, 0.8);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.firstline {
+  height: 150px;
+  width: 100%;
+  background: rgba(21, 39, 141, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .my-card {
-  width:80%;
+  width: 80%;
   color: white;
   background-color: transparent;
 }
 
-.q-my-md{
+.q-my-md {
   font-size: calc(100vw * 42 / 1920);
   color: white;
   font-weight: 700;
   line-height: 60px;
 }
 
-.q-page{
-    background-image: url("../assets/loginbg.jpeg");
-    background-size: 100% 100%;
-    background-position: center center;
-    overflow: auto;
-    background-repeat: no-repeat;
+.q-page {
+  background-image: url("../assets/loginbg.jpeg");
+  background-size: 100% 100%;
+  background-position: center center;
+  overflow: auto;
+  background-repeat: no-repeat;
 }
 
-.loginbox{
-    background-clip: padding-box;
-    width: 100%;
-    background-color:  rgba(255, 255, 255, 0.8);
-    padding-bottom: 5%;
+.loginbox {
+  background-clip: padding-box;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding-bottom: 5%;
 }
 
-.loginbox .line{
-    width: 80%;
-    margin: 0 auto;
-    padding: 30px;
-    border-bottom: 1px #0E37AC solid;
-    margin-bottom: 30px;
+.loginbox .line {
+  width: 80%;
+  margin: 0 auto;
+  padding: 30px;
+  border-bottom: 1px #0E37AC solid;
+  margin-bottom: 30px;
 }
 
-.loginbox .line .circle{
-    width: 30px;
-    height: 30px;
+.loginbox .line .circle {
+  width: 30px;
+  height: 30px;
 }
 
-.q-form{
+.q-form {
   width: 40%;
   margin: 0 auto;
 }
 
-.q-icon{
+.q-icon {
   font-size: 25px;
   color: #0E37AC;
 }
-.q-input{
+
+.q-input {
   margin-top: 5%;
 }
 
-.btn{
+.btn {
   width: 30%;
   background-color: rgba(21, 39, 141, 0.9);
   margin: 0 auto;
   margin-top: 10%;
 }
-
 </style>

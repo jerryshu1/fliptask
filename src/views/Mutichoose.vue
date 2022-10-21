@@ -75,12 +75,12 @@
       <el-form-item label="请输入工单任务名" prop="id">
         <el-input v-model="input1" style="width: 65%;"></el-input>
       </el-form-item>
-      <el-form-item label="任务审核人" prop="password">
+      <!-- <el-form-item label="任务审核人" prop="password">
         <el-input v-model="reviewer" style="width: 65%;"></el-input>
       </el-form-item>
       <el-form-item label="任务执行人" prop="password">
         <el-input v-model="assigner" style="width: 65%;"></el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button class="hobutton1" @click="dialogVisible = false">取 消</el-button>
@@ -98,6 +98,7 @@ import { useStore } from "vuex";
 import SearchBar from "../components/search/SearchBar.vue";
 import SearchList from "../components/search/SearchList.vue";
 import { List } from "@element-plus/icons";
+import { newposttask, postRiskData } from '../api/getComponents'
 
 export default defineComponent({
   name: "Mutichoose",
@@ -124,45 +125,7 @@ export default defineComponent({
       input1: "",
     };
   },
-  methods: {
-    adminupdate() {
-      // TODO: change the following to make compatible with multi-step operations
-      let postdata = [];
-      for (var i in store.state.muti_taskName) {
-        var task_detail = {
-          task_name: store.state.muti_taskName[i],
-          additional: store.state.muti_additionData[i],
-        };
-        var test = [];
-        for (var j in store.state.muti_componentsDatas[i]) {
-          var detail = {
-            device: store.state.muti_componentsDatas[i][j].device,
-            operation: store.state.muti_componentsDatas[i][j].operation,
-            // TODO: device_types => device_type
-            device_type: store.state.muti_componentsDatas[i][j].device_type,
-            risks: this.check[i][j].checkrisks,
-            measures: this.check[i][j].checkprocess,
-            measure_type: store.state.muti_componentsDatas[i][j].measure_type,
-          };
-          test.push(detail);
-        }
-        task_detail.details = test;
-        postdata.push(task_detail);
-      }
-      this.updataList.value = {
-        task_name: this.input1,
-        task_details: postdata,
-        assigner: this.assigner,
-        reviewer: store.state.user.name,
-      };
-      store.dispatch("postData", this.updataList.value);
-      let location = {
-        name: "published",
-      };
-      this.$router.push(location);
-      this.dialogVisible = false;
-    }
-  },
+
   setup() {
     //data
     const risk_and_measure = ref({})
@@ -188,6 +151,40 @@ export default defineComponent({
     const reload = () => {
       store.commit('deletetask')
       router.push({ path: '/newsearch' });
+    }
+    const adminupdate = () => {
+
+      let keys = Object.keys(risk_and_measure.value)
+      let task_detail = []
+      for (var i in keys) {
+        let opera = []
+        for (var j in risk_and_measure.value[keys[i]]) {
+          opera.push({
+            device: risk_and_measure.value[keys[i]][j][0].device,
+            device_type: risk_and_measure.value[keys[i]][j][0].device_type,
+            operation: risk_and_measure.value[keys[i]][j][0].operation,
+            risks: risk_and_measure.value[keys[i]][j][0].device.risks,
+            measures: risk_and_measure.value[keys[i]][j][0].device.measures,
+            measure_type: risk_and_measure.value[keys[i]][j][0].measure_type,
+          })
+        }
+        let taskdetail = {
+          task_name: keys[i],
+          details: opera,
+          additional: '',
+          description: '',
+        }
+        task_detail.push(taskdetail)
+      }
+      let task = {
+        task_name: input1.value,
+        task_details: task_detail,
+      }
+      console.log(store.state.company)
+      console.log(store.state.station)
+      newposttask(store.state.companyinfo.company, store.state.companyinfo.station, task).then((res) => {
+        router.push({name: 'published'})
+      })
     }
     onMounted(() => {
       risk_and_measure.value = store.state.risk_and_measure;
@@ -219,6 +216,7 @@ export default defineComponent({
       goLast,
       goPublished,
       reload,
+      adminupdate,
     };
   },
 });

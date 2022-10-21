@@ -37,9 +37,9 @@
         </tbody>
       </table>
     </div>
-    <button class="outputbutton" @click="handleExportExcel">导出excel文件</button>
-    <button class="printbutton" @click="printWindow">打印</button>
-    <button class="backbutton" @click="goPublished">返回</button>
+    <button class="hobutton1" @click="handleExportExcel">导出excel文件</button>
+    <button class="hobutton1" @click="printWindow">打印</button>
+    <button class="hobutton1" @click="goPublished">返回</button>
   </div>
 </template>
 
@@ -162,5 +162,15 @@ export default {
 
 .test {
   height: 60px;
+}
+
+.hobutton1 {
+  width: 150px;
+  height: 40px;
+  font-size: calc(100vw * 16 / 1920);
+  color: #ffffff;
+  margin-left: 15%;
+  margin-top: 2%;
+  background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
 </style>
