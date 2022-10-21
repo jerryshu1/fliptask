@@ -326,7 +326,7 @@ export const newgettasklist = (company_name, station_name) => newdatarequest({
 		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
 	}
 })
-//
+//获取风险库表
 export const newgetComponents = (company_name, station_name) => newdatarequest({
     url:'/ft/api/originalTasks/' + company_name + '/' + station_name,
     method: 'get',
@@ -335,10 +335,77 @@ export const newgetComponents = (company_name, station_name) => newdatarequest({
 	}
 })
 
+// 获取风险预控措施
 export const newget = () => newdatarequest({
     url: '/ft/api/components',
     method: 'get',
     headers:{
 		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
 	}
+})
+
+//根据id获取
+export const newgetbyid = (id) => newdatarequest({
+    url: '/ft/api/components/' + id, method: 'get', headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+//多个id获取
+export const newgetmutiid = (data) => newdatarequest({
+    url: '/ft/api/components/', method: 'post', data: data, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+//克隆表
+export const newclonetable = (company_name, station_name, data) => newdatarequest({
+    url: '/ft/api/originalTasks/' + company_name + '/' + station_name + '/cloneFromOriginal', method: 'post', data: data, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+
+//删除风险库数据（id）
+export const newdeleteriskdata = (company_name, station_name) => newdatarequest({
+    url: '/ft/api/originalTasks/' + company_name + '/' + station_name, method: 'delete', headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+//根据id获取任务列表
+export const newgettasklistbyid = (company_name, station_name, id) => newdatarequest({
+    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id, method: 'get', headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+
+//根据任务id修改任务信息（暂时没用）
+export const newchangetaskinfobyid = (company_name, station_name, id, data) => newdatarequest({
+    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id, method: 'post', data: data, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+//根据任务id删除任务
+export const newdeletetaskbyid = (company_name, station_name, id) => newdatarequest({
+    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id, method: 'delete', headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+//更新状态至已完成
+export const newupdateStatusToFinished = (company_name, station_name, id, data) => newdatarequest({
+    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id+'/updateStatusToFinished', method: 'post', data: data, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+
+//更新状态至已派发
+export const newupdateStatusToAssigned = (company_name, station_name, id, data) => newdatarequest({
+    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id+'/updateStatusToAssigned', method: 'post', data: data, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
