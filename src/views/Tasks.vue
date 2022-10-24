@@ -88,7 +88,7 @@
 <script>
 import { ref } from "vue";
 import { mapState, useStore } from "vuex";
-import { deletetask, newgetComponents, newget } from "../api/getComponents";
+import { deletetask, newgetrisks } from "../api/getComponents";
 import store from "../store";
 import { List } from "@element-plus/icons";
 
@@ -143,13 +143,12 @@ export default {
         return state.admintasklist;
       },
       token: (state) => {
-        return store.state.jwtToken;
+        return state.jwtToken;
       },
     }),
   },
   beforeCreate() {
-    newget().then((res) => {
-      console.log(res)
+    newgetrisks().then((res) => {
       this.tableData = res
     })
   },

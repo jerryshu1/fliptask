@@ -62,25 +62,10 @@
     <button class="hobutton1" @click="reload">取消任务发布</button>
   </div>
   <el-dialog title="请选择任务派遣人" v-model="dialogVisible" width="30%">
-    <!-- <el-form ref="form" :model="form" label-width="140px" :rules="rules1">
-      <el-input v-model="input1" placeholder="请输入工单任务名称" />
-      <el-form-item label="任务委派人" prop="password">
-        <el-select v-model="assigner" placeholder="请选择任务委派人">
-          <el-option v-for="(names, index) in this.allusers" :label="names.name" :value="names.name" :key="index">
-          </el-option>
-        </el-select>
-      </el-form-item>
-    </el-form> -->
     <el-form ref="form" :model="form" label-position="right" label-width="auto">
       <el-form-item label="请输入工单任务名" prop="id">
         <el-input v-model="input1" style="width: 65%;"></el-input>
       </el-form-item>
-      <!-- <el-form-item label="任务审核人" prop="password">
-        <el-input v-model="reviewer" style="width: 65%;"></el-input>
-      </el-form-item>
-      <el-form-item label="任务执行人" prop="password">
-        <el-input v-model="assigner" style="width: 65%;"></el-input>
-      </el-form-item> -->
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button class="hobutton1" @click="dialogVisible = false">取 消</el-button>
@@ -91,40 +76,15 @@
 
 <script>
 import { ref, defineComponent, onMounted } from "vue";
-import store from "../store";
-import { mapState } from "vuex";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import SearchBar from "../components/search/SearchBar.vue";
 import SearchList from "../components/search/SearchList.vue";
 import { List } from "@element-plus/icons";
-import { newposttask, postRiskData } from '../api/getComponents'
+import { newposttask } from '../api/getComponents'
 
 export default defineComponent({
   name: "Mutichoose",
-  components: {
-    SearchBar,
-    SearchList,
-    List,
-  },
-  computed: {
-    ...mapState({
-      allusers: (satae) => {
-        return store.state.allUsers;
-      },
-    }),
-  },
-  // beforeCreate() {
-  //   store.dispatch('getallusersMessage');
-  // },
-  data() {
-    return {
-      assigner: "",
-      hidePagination: true,
-      updataList: ref({}),
-      input1: "",
-    };
-  },
 
   setup() {
     //data
@@ -180,10 +140,8 @@ export default defineComponent({
         task_name: input1.value,
         task_details: task_detail,
       }
-      console.log(store.state.company)
-      console.log(store.state.station)
-      newposttask(store.state.companyinfo.company, store.state.companyinfo.station, task).then((res) => {
-        router.push({name: 'published'})
+      newposttask(store.state.company, store.state.station, task).then((res) => {
+        router.push({ name: 'published' })
       })
     }
     onMounted(() => {
@@ -217,6 +175,10 @@ export default defineComponent({
       goPublished,
       reload,
       adminupdate,
+
+      SearchBar,
+      SearchList,
+      List,
     };
   },
 });

@@ -5,14 +5,17 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="leftDrawerOpen = !leftDrawerOpen" />
         <q-toolbar-title>倒闸操作风险预控卡</q-toolbar-title>
 
-        <!-- <div class="selectgroup">
-          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" @change="getstationList">
-            <el-option v-for="(item,index) in companylists" :key="index" :label="item" :value="item" />
+        <div class="selectgroup">
+          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" @change="getstationList" v-if="current_userinfo.role === 'superadmin'">
+            <el-option v-for="(item, index) in companylist" :key="index" :label="item" :value="item" />
+          </el-select>
+          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" disabled @change="getstationList" v-else>
+            <el-option v-for="(item, index) in companylist" :key="index" :label="item" :value="item"/>
           </el-select>
 
           <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable placeholder="请选择站点"
             @select="handleSelect" />
-        </div> -->
+        </div>
         <q-btn-dropdown outline rounded no-caps icon-right="manage_accounts">
           <template #label>
             <div class="row items-center no-wrap">{{ user }}</div>
@@ -53,7 +56,7 @@
 
 <script>
 import MenuLink from "../components/MenuLink.vue";
-import { getstationlist, getcompanylist, newgetstation } from "../api/getComponents";
+import { newgetstation, newgetcategorylist } from "../api/getComponents";
 const linksList = [
   {
     title: "任务派发",
@@ -77,21 +80,13 @@ const linksList = [
   }
 ];
 
-import { ref, onMounted } from "vue";
-import { useStore } from "vuex";
+import { onMounted, ref, computed } from "vue";
+import { useStore, mapState } from "vuex";
 import { useRouter } from "vue-router";
-import store from "../store";
 
 export default {
   name: "MainLayout",
 
-
-  components: {
-    MenuLink,
-  },
-  mounted() {
-
-  },
   methods: {
     test() {
       store.commit("clearnewadddata");
@@ -102,10 +97,15 @@ export default {
     const store = useStore();
     const router = useRouter();
     const user = ref('')
-    const companylists = ref([]);
-    const stationlist = ref([]);
     const current_company = ref('')
     const current_station = ref('')
+
+    const storeStateFns = mapState(["companylist", "stationlist", "company", "station","current_userinfo"])
+    const storeState = {};
+    Object.keys(storeStateFns).forEach((fnKey) => {
+      const fn = storeStateFns[fnKey].bind({ $store: store });
+      storeState[fnKey] = computed(fn);
+    })
 
     const signout = () => {
       sessionStorage.clear();
@@ -114,7 +114,6 @@ export default {
       window.location.replace("/login")
     };
     const getstationList = (value) => {
-      stationlist.value = [];
       newgetstation(value).then((res1) => {
         let stationlist = []
         if (res1) {
@@ -123,16 +122,16 @@ export default {
               value: res1.stations[i],
             });
           }
-          stationlist.value = stationlist
           store.commit('savestationlist', stationlist)
           store.commit('savecompany', value)
         }
       })
     };
     const querySearch = (queryString, cb) => {
+      let searchlist = store.state.stationlist
       const results = queryString
-        ? stationlist.value.filter(createFilter(queryString))
-        : stationlist.value;
+        ? searchlist.filter(createFilter(queryString))
+        : searchlist;
       cb(results);
     };
     const createFilter = (queryString) => {
@@ -143,26 +142,44 @@ export default {
         );
       };
     };
+    const handleSelect = (value) => {
+      let company = store.state.company
+      let params = {
+        city: company,
+        station: value.value,
+      };
+      newgetcategorylist(params).then((res) => {
+        let categorylist = []
+        if (res) {
+          for (var i in res.categories) {
+            categorylist.push({
+              value: res.categories[i],
+            });
+          }
+          store.commit('savecategorylist', categorylist)
+          store.commit('savestation1', value.value)
+        }
+      })
+    }
     onMounted(() => {
-
+      current_company.value = store.state.company
+      current_station.value = store.state.station
     })
-
-    // companylist.value = store.state.companylist
-    current_company.value = store.state.company
-    current_station.value = store.state.station
 
     return {
       essentialLinks: linksList,
       leftDrawerOpen: ref(true),
       user,
-      companylists,
-      stationlist,
       current_company,
       current_station,
       signout,
       getstationList,
       querySearch,
       createFilter,
+      handleSelect,
+
+      MenuLink,
+      ...storeState,
     };
   },
 };

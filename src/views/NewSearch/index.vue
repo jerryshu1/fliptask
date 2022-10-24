@@ -9,29 +9,14 @@
             <p>任务派发</p>
         </div>
         <el-steps style="width: 85%; margin-left: 7%; margin-top: 1%" direction="vertical" :active="active">
-            <el-step title="请选择公司及站点">
-                <template v-slot:description>
-                    <div class="selectgroup">
-                        <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" 
-                            @change="getstationList">
-                            <el-option v-for="item in companylist" :key="item" :label="item" :value="item" />
-                        </el-select>
-
-                        <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable
-                            placeholder="请选择站点" @select="handleSelect" v-if="this.current_company!==''" />
-                    </div>
-                </template>
-            </el-step>
             <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div>
-                        <el-select v-model="current_category" class="m-2" placeholder="请选择线路" 
-                            @change="changexianlu" v-if="this.current_station!==''">
-                            <el-option v-for="(item, index) in categorylist" :key="index" :label="item" :value="item" />
-                        </el-select>
+                        <el-autocomplete v-model="current_category" :fetch-suggestions="querySearch" clearable
+                            placeholder="请选择站点" @select="changexianlu" v-if="station !== ''" />
                     </div>
                     <div>
-                        <el-radio-group v-model="looptype" @change="changelooptype" v-if="this.current_category!==''">
+                        <el-radio-group v-model="looptype" @change="changelooptype" v-if="station !== ''">
                             <el-radio label="线路" size="large" border>线路</el-radio>
                             <el-radio label="变压器" size="large" border>变压器</el-radio>
                             <el-radio label="站用变" size="large" border>站用变</el-radio>
@@ -48,23 +33,23 @@
                 <template v-slot:description>
                     <div v-if="searchtype === 0">
                         <el-select v-model="start_status" class="m-2" placeholder="请选择开始状态" size="mini"
-                            @change="changestartstatus" v-if="this.looptype!==''">
-                            <el-option v-for="(item,index) in statuslist" :key="index" :label="item" :value="item" />
+                            @change="changestartstatus" v-if="this.looptype !== ''">
+                            <el-option v-for="(item, index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
                         <el-select v-model="end_status" class="ends m-2" placeholder="请选择结束状态" size="mini"
                             @change="getcommonlist">
-                            <el-option v-for="(item,index) in statuslist" :key="index" :label="item" :value="item" />
+                            <el-option v-for="(item, index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
 
                         <el-select v-model="current_tasks" class="ends m-2" placeholder="请选择任务" size="mini" v-if="paths"
                             @change="gettask">
-                            <el-option v-for="(item,index) in pathlist" :key="index" :label="item" :value="item" />
+                            <el-option v-for="(item, index) in pathlist" :key="index" :label="item" :value="item" />
                         </el-select>
                     </div>
                     <div v-if="searchtype === 1">
                         <el-select v-model="current_task" class="m-2" placeholder="请选择任务" size="mini"
                             @change="getcurrentothertask">
-                            <el-option v-for="(item,index) in othertasklist" :key="index" :label="item.task_name"
+                            <el-option v-for="(item, index) in othertasklist" :key="index" :label="item.task_name"
                                 :value="index" />
                         </el-select>
                     </div>
@@ -72,9 +57,10 @@
             </el-step>
             <el-step title="请选择操作对象">
                 <template v-slot:description>
-                    <div v-if="this.current_tasks.length !== 0  || this.current_task !== null || this.end_status!=='' || this.showtabledata.length !== 0">
-                        <el-table ref="taskTableRef" :data="showtabledata[0]" :border="parentBorder" style="width: 100%"
-                            @select="handleSelectionChange" :row-key="getRowKeys">
+                    <div
+                        v-if="this.current_tasks.length !== 0 || this.current_task !== null || this.end_status !== '' || this.showtabledata.length !== 0">
+                        <el-table ref="multipleTableRef" :data="showtabledata[0]" :border="parentBorder"
+                            style="width: 100%" @select="handleSelectionChange" :row-key="getRowKeys">
                             <el-table-column type="selection" :reserve-selection="true" />
                             <el-table-column label="操作设备" prop="device" />
                             <el-table-column label="设备类型" prop="device_type" />
@@ -91,30 +77,21 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { List } from "@element-plus/icons";
 import { useRouter } from 'vue-router'
-import { useStore } from "vuex";
+import { useStore, mapState } from "vuex";
 import { ElMessage } from "element-plus";
 import {
-    getcompanylist,
-    getstationlist,
-    getcategorylist,
-    getotherstasklist,
-    getcomontasklist,
-    getComponentsData,
+    newgetotherstask,
+    newgetcommontask,
+    newgetrisks,
 } from "../../api/getComponents";
 
 export default defineComponent({
     setup() {
-        const current_company_id = ref("");
-        const companylist = ref([]);
-        const stationlist = ref([]);
-        const categorylist = ref([]);
         const othertasklist = ref([]);
-        const current_company = ref("");
         const current_category = ref("");
-        const current_station = ref("");
         const current_task = ref(null)
         const current_tasks = ref([])
         const current_task_use = ref([])
@@ -129,11 +106,10 @@ export default defineComponent({
         const showtabledata = ref([]);
         const Length = ref(0);
         const statuslist = ref(["运行", "热备用", "冷备用", "检修", "开关检修"]);
-        const lastcheck = ref([]);
         const neededdata = ref({})
         const current_step = ref(0)
         const multipleSelection = ref([])
-        const taskTableRef = ref()
+        const multipleTableRef = ref()
         const every1 = ref({
             task_name: '电压互感器',
             details: [{
@@ -167,31 +143,18 @@ export default defineComponent({
         const store = useStore();
         const router = useRouter()
 
-        const getcompanyList = () => {
-            getcompanylist().then((res) => {
-                if (res) {
-                    companylist.value = res.company;
-                }
-            });
-        };
-        const getstationList = (value) => {
-            stationlist.value = [];
-            getstationlist(value).then((res) => {
-                if (res) {
-                    for (var i in res.station) {
-                        stationlist.value.push({
-                            value: res.station[i],
-                            link: res.station[i],
-                        });
-                    }
-                }
-            });
+        const storeStateFns = mapState(["categorylist", "company", "station"])
+        const storeState = {};
+        Object.keys(storeStateFns).forEach((fnKey) => {
+            const fn = storeStateFns[fnKey].bind({ $store: store });
+            storeState[fnKey] = computed(fn);
+        })
 
-        };
         const querySearch = (queryString, cb) => {
+            let searchlist = store.state.categorylist
             const results = queryString
-                ? stationlist.value.filter(createFilter(queryString))
-                : stationlist.value;
+                ? searchlist.filter(createFilter(queryString))
+                : searchlist;
             cb(results);
         };
         const createFilter = (queryString) => {
@@ -202,41 +165,24 @@ export default defineComponent({
                 );
             };
         };
-        const handleSelect = (item) => {
-            current_station.value = item.value;
-            let params = {
-                city: current_company.value,
-                station: current_station.value,
-            };
-            getcategorylist(params).then((res) => {
-                if (res) {
-                    categorylist.value = res.categories;
-                    active.value = 1
-                }
-            })
-        };
 
         const changestartstatus = () => {
             paths.value = false
-            sta
         }
-
         const changexianlu = () => {
             active.value = 1
         }
-
         const changelooptype = (val) => {
             showtabledata.value = []
             active.value = 2
 
             if (val === "母线" || val === "X母压变避雷器") {
-                // end_status.value = false
-                // start_status.value = false
-                // paths.value = false
+                let company = store.state.company
+                let station = store.state.station
                 let params = {
                     subject: val,
                 };
-                getotherstasklist(current_company.value, current_station.value, params).then((res) => {
+                newgetotherstask(company, station, params).then((res) => {
                     if (res) {
                         for (var i in res) {
                             for (var j in res[i].details) {
@@ -257,7 +203,9 @@ export default defineComponent({
                 statuslist.value[4] = "开关" + val + "检修";
             }
             if (val === "线路导母线") {
-                taskTableRef.value.clearSelection()
+                if (multipleTableRef.value) {
+                    multipleTableRef.value.clearSelection()
+                }
                 searchtype.value = 2;
                 current_step.value = 0
                 current_task_use.value = []
@@ -333,7 +281,9 @@ export default defineComponent({
 
         };
         const gettask = (val) => {
-            taskTableRef.value.clearSelection()
+            if (multipleTableRef.value) {
+                multipleTableRef.value.clearSelection()
+            }
             showtabledata.value = []
             current_step.value = 0
             current_task_use.value = val
@@ -346,7 +296,6 @@ export default defineComponent({
             active.value = 3
         }
         const nextstep = () => {
-            console.log(userchoose.value)
             if (current_step.value + 1 < Length.value) {
                 current_step.value += 1
                 let key = current_task_use.value[current_step.value]
@@ -367,7 +316,7 @@ export default defineComponent({
                 }
                 for (var j in userchoose.value) {
                     let key = userchoose.value[j]['task_name']
-                    getComponentsData(userchoose.value[j]).then((res) => {
+                    newgetrisks(userchoose.value[j]).then((res) => {
                         if (res) {
                             risk_and_measure.value[key].push([res[0]])
                         }
@@ -375,14 +324,6 @@ export default defineComponent({
                 }
                 store.commit('savenewriskandmeasure', risk_and_measure.value)
                 store.commit('savelens', task_num.value)
-                let data = {
-                    company: current_company.value,
-                    station: current_station.value,
-                    category: current_category.value,
-                    looptype: looptype.value,
-                    searchtype: searchtype.value
-                }
-                store.commit('savestation', data)
                 router.push({ name: 'mutichoose' })
             }
         };
@@ -420,10 +361,13 @@ export default defineComponent({
                     to: end,
                     from: start
                 }
-                getcomontasklist(current_company.value, current_station.value, params).then((res) => {
+                let company = store.state.company
+                let station = store.state.station
+                newgetcommontask(company, station, params).then((res) => {
                     if (res) {
                         if (res.paths === null) {
                             paths.value = false
+                            end_status.value = ''
                             ElMessage.error('任务库无此类任务')
                         } else {
                             if (res.paths.length === 1) {
@@ -475,7 +419,10 @@ export default defineComponent({
             return row.device + row.device_type + row.operation + row.task_name
         }
         const getcurrentothertask = (val) => {
-            taskTableRef.value.clearSelection()
+            if (multipleTableRef.value) {
+                multipleTableRef.value.clearSelection()
+            }
+            current_step.value = 0
             let key = othertasklist.value[val]
 
             neededdata.value['paths'] = []
@@ -497,54 +444,22 @@ export default defineComponent({
 
         }
 
-        onMounted(() => {
-            console.log(store.state.companyinfo)
-            if (Object.keys(store.state.companyinfo).length !== 0) {
-                current_company.value = store.state.companyinfo.company
-                current_station.value = store.state.companyinfo.station
-                let params = {
-                    city: current_company.value,
-                    station: current_station.value,
-                };
-                getcategorylist(params).then((res) => {
-                    if (res) {
-                        categorylist.value = res.categories;
-                        current_category.value = store.state.companyinfo.category
-                        looptype.value = store.state.companyinfo.looptype
-                        searchtype.value = store.state.companyinfo.searchtype
-                        active.value = 2
-                    }
-                })
-            } else {
-                getcompanyList()
-            }
-            // console.log(store.state.companyinfo.len)
-            current_company_id.value = store.state.user.company_id
-        })
-
         return {
-            current_company_id,
-            companylist,
-            categorylist,
-            current_company,
-            current_category,
-            current_station,
             active,
-            stationlist,
             looptype,
             searchtype,
             start_status,
             end_status,
             statuslist,
             multipleSelection,
-            lastcheck,
             current_step,
             showtabledata,
             Length,
-            taskTableRef,
+            multipleTableRef,
             current_task,
             current_tasks,
             current_task_use,
+            current_category,
             othertasklist,
             paths,
             neededdata,
@@ -556,10 +471,7 @@ export default defineComponent({
             risk_and_measure,
             task_num,
 
-            getcompanyList,
-            getstationList,
             querySearch,
-            handleSelect,
             createFilter,
             changelooptype,
             nextstep,
@@ -572,6 +484,7 @@ export default defineComponent({
             getcurrentothertask,
             handleSelectionChange,
             List,
+            ...storeState,
         };
     },
 });

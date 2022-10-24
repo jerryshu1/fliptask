@@ -55,9 +55,13 @@ export default createStore({
         stationlist: [],
         station: '',
         company: '',
+        categorylist: [], //某电站下的所有线路
     },
     mutations: {
-        savestation(state, data){
+        savecategorylist(state,data){
+            state.categorylist = data
+        },
+        savestation1(state, data){
             state.station = data
         },
         savecompany(state, data){

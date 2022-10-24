@@ -49,20 +49,20 @@ export const getsupertasklist = (token) => requests({
     }
 })
 //分公司管理员获取分公司任务表数据
-export const getadmintasklist = (id,token,body) => requests({
+export const getadmintasklist = (id, token, body) => requests({
     url: '/ft/api/originalTasks/' + id, method: 'get', headers: {
         'Authorization': 'Bearer ' + token
     }
 })
 //分公司管理员搜索
-export const getsearchtasklist = (id,token,params) => requests({
+export const getsearchtasklist = (id, token, params) => requests({
     url: '/ft/api/originalTasks/' + id, method: 'get', params: params, headers: {
         'Authorization': 'Bearer ' + token
     }
 })
 //复制任务表数据
 export const postcopytask = (companyid) => requests({
-    url: '/ft/api/originalTasks/' +  companyid + '/cloneFromOriginal', method: 'post', headers: {
+    url: '/ft/api/originalTasks/' + companyid + '/cloneFromOriginal', method: 'post', headers: {
         'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
@@ -170,23 +170,17 @@ export const getcompanyname = (companyid) => userrequest({
 })
 //获取所有公司列表
 export const getcompanylist = () => datarequest({
-	url: '/mt/api/ledger/company',
-	method: 'get',
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/mt/api/ledger/company',
+    method: 'get',
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //获取某公司下站点
 export const getstationlist = (company_id) => datarequest({
-	url: '/mt/api/ledger/company/' + company_id,
-	method: 'get',
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
-})
-//获取某公司站点下的所有category
-export const getcategorylist = (params) => requests({
-    url: '/ft/api/ledger/category', method: 'get', params: params, headers: {
+    url: '/mt/api/ledger/company/' + company_id,
+    method: 'get',
+    headers: {
         'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
@@ -199,7 +193,14 @@ export const getotherstasklist = (company_name, station_name, params) => newdata
 
 //获取常规任务列表(new)
 export const getcomontasklist = (company_name, station_name, params) => newdatarequest({
-    url: '/ft/api/originalTasks/' + company_name + '/' + station_name +'/common', method: 'get', params: params, headers: {
+    url: '/ft/api/originalTasks/' + company_name + '/' + station_name + '/common', method: 'get', params: params, headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+
+//获取某公司站点下的所有线路
+export const getcategorylist = (params) => requests({
+    url: '/ft/api/ledger/category', method: 'get', params: params, headers: {
         'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
@@ -208,105 +209,105 @@ export const getcomontasklist = (company_name, station_name, params) => newdatar
 
 //登录
 export const newpostlogin = (body) => newuserrequest({
-	url: '/auth/login',
-	method: 'post',
-	data: JSON.stringify(body),
-	headers:{
-		'Content-Type':'application/json',
-	}
+    url: '/auth/login',
+    method: 'post',
+    data: JSON.stringify(body),
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 //注册用户
 export const newpostadduser = (company_name, station_name, body) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name +'/register',
-	method: 'post',
-	data: body,
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/users/' + company_name + '/' + station_name + '/register',
+    method: 'post',
+    data: body,
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //根据用户ID来获取多个用户
 export const newpostinfo = (company_name, station_name, body) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name,
-	method: 'post',
-	data: body,
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/users/' + company_name + '/' + station_name,
+    method: 'post',
+    data: body,
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //修改某个用户信息（密码除外）
-export const newpostchangeuserinfo = (company_name, station_name, user_id,body) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id,
-	method: 'post',
-	data: body,
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+export const newpostchangeuserinfo = (company_name, station_name, user_id, body) => newuserrequest({
+    url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id,
+    method: 'post',
+    data: body,
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //获取某个用户信息
 export const newgetoneuserinfo = (company_name, station_name, user_id) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id,
-	method: 'get',
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id,
+    method: 'get',
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //获取用户信息
 export const newgetusersinfo = (company_name, station_name) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name,
-	method: 'get',
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/users/' + company_name + '/' + station_name,
+    method: 'get',
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //删除某个用户信息
 export const newdeleteoneuserinfo = (company_name, station_name, user_id) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id,
-	method: 'delete',
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id,
+    method: 'delete',
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //用户修改密码
 export const newpostuserreset = (company_name, station_name, user_id, body) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id + '/reset',
-	method: 'post',
-	data: body,
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id + '/reset',
+    method: 'post',
+    data: body,
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //管理员修改密码(暂不开放)
 export const newpostadminreset = (company_name, station_name, user_id, body) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id + '/adimnReset',
-	method: 'post',
-	data: body,
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id + '/adimnReset',
+    method: 'post',
+    data: body,
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //获取所有公司
 export const newgetallcompany = () => newuserrequest({
-	url: '/auth/company',
-	method: 'get',
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/company',
+    method: 'get',
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //获取某公司下的站点
 export const newgetstation = (company_name) => newuserrequest({
-	url: '/auth/station/' + company_name,
-	method: 'get',
-	headers: {
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    url: '/auth/station/' + company_name,
+    method: 'get',
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //登出
-export const newpostlogout = (company_name,station_name, user_id) => newuserrequest({
-	url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id + '/logout',
-	method: 'post',
-	headers:{
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+export const newpostlogout = (company_name, station_name, user_id) => newuserrequest({
+    url: '/auth/users/' + company_name + '/' + station_name + '/' + user_id + '/logout',
+    method: 'post',
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 });
 
 //发布任务
@@ -314,98 +315,56 @@ export const newposttask = (company_name, station_name, data) => newdatarequest(
     url: '/ft/api/flipTasks/' + company_name + '/' + station_name,
     method: 'post',
     data: data,
-    headers:{
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //获取任务列表
 export const newgettasklist = (company_name, station_name) => newdatarequest({
     url: '/ft/api/flipTasks/' + company_name + '/' + station_name,
     method: 'get',
-    headers:{
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
 //获取风险库表
 export const newgetComponents = (company_name, station_name) => newdatarequest({
-    url:'/ft/api/originalTasks/' + company_name + '/' + station_name,
+    url: '/ft/api/originalTasks/' + company_name + '/' + station_name,
     method: 'get',
-    headers:{
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
 })
-
-// 获取风险预控措施
-export const newget = () => newdatarequest({
+//获取风险内容
+export const newgetrisks = (params) => newdatarequest({
     url: '/ft/api/components',
     method: 'get',
-    headers:{
-		'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-	}
-})
-
-//根据id获取
-export const newgetbyid = (id) => newdatarequest({
-    url: '/ft/api/components/' + id, method: 'get', headers: {
+    params: params,
+    headers: {
         'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
-
-//多个id获取
-export const newgetmutiid = (data) => newdatarequest({
-    url: '/ft/api/components/', method: 'post', data: data, headers: {
+//获取某公司站点下的所有category
+export const newgetcategorylist = (params) => newdatarequest({
+    url: '/ft/api/ledger/category', method: 'get', params: params, headers: {
         'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
-
-//克隆表
-export const newclonetable = (company_name, station_name, data) => newdatarequest({
-    url: '/ft/api/originalTasks/' + company_name + '/' + station_name + '/cloneFromOriginal', method: 'post', data: data, headers: {
+//获取other的单步任务内容
+export const newgetotherstask = (company, station, params) => newdatarequest({
+    url: '/ft/api/originalTasks/' + company + '/' + station + '/others',
+    method: 'get',
+    params: params,
+    headers: {
         'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
-
-
-//删除风险库数据（id）
-export const newdeleteriskdata = (company_name, station_name) => newdatarequest({
-    url: '/ft/api/originalTasks/' + company_name + '/' + station_name, method: 'delete', headers: {
-        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-    }
-})
-
-//根据id获取任务列表
-export const newgettasklistbyid = (company_name, station_name, id) => newdatarequest({
-    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id, method: 'get', headers: {
-        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-    }
-})
-
-
-//根据任务id修改任务信息（暂时没用）
-export const newchangetaskinfobyid = (company_name, station_name, id, data) => newdatarequest({
-    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id, method: 'post', data: data, headers: {
-        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-    }
-})
-
-//根据任务id删除任务
-export const newdeletetaskbyid = (company_name, station_name, id) => newdatarequest({
-    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id, method: 'delete', headers: {
-        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-    }
-})
-
-//更新状态至已完成
-export const newupdateStatusToFinished = (company_name, station_name, id, data) => newdatarequest({
-    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id+'/updateStatusToFinished', method: 'post', data: data, headers: {
-        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
-    }
-})
-
-
-//更新状态至已派发
-export const newupdateStatusToAssigned = (company_name, station_name, id, data) => newdatarequest({
-    url: '/ft/api/flipTasks/' + company_name + '/' + station_name + '/' + id+'/updateStatusToAssigned', method: 'post', data: data, headers: {
+//获取common的任务
+export const newgetcommontask = (company, station, params) => newdatarequest({
+    url: '/ft/api/originalTasks/' + company + '/' + station + '/common',
+    method: 'get',
+    params: params,
+    headers: {
         'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })

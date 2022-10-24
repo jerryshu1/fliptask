@@ -17,7 +17,7 @@
     </div>
 
 
-    <el-table border :data="this.publishedData" style="width:85%; margin-left: 7%;margin-top: 2%" @select='select'>
+    <el-table border :data="publishedData.value" style="width:85%; margin-left: 7%;margin-top: 2%" @select='select'>
       <el-table-column type="selection" align='center'>
       </el-table-column>
       <el-table-column type="index" label="序号" align='center'>
@@ -39,8 +39,8 @@
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button type="text" @click="signalprint(scope.row)">打印</el-button>
-          <el-button type="text" @click="test(scope.row)">删除</el-button>
-          <el-button type="text" @click="gofinish(scope.row)" v-if="this.usermessage.role === 'admin'">确认完成
+          <el-button type="text" @click="test(scope.row)">预览</el-button>
+          <el-button type="text" @click="gofinish(scope.row)" v-if="current_userinfo.role === 'admin'">确认完成
           </el-button>
         </template>
       </el-table-column>
@@ -48,20 +48,20 @@
 
     <div>
       <div class="btngroup">
-        <button class="homebutton" @click="goDelete" v-if="this.usermessage.role === 'admin'">删除</button>
-        <button class="homebutton" @click="dialogTableVisible2=true">复合打印</button>
+        <button class="homebutton" @click="goDelete">删除</button>
+        <button class="homebutton" @click="dialogTableVisible2                                                                                                               =                                                                                                               true">复合打印</button>
       </div>
 
       <el-dialog v-model="dialogTableVisible2" title="通用措施风险预控选择" width="95%" center>
         <div v-for="(data, index) in names" :key="index">
           <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
           <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
-          <div v-for="(riskprevention,index) in this.generalmeasures.risks[index]" :key="index">
+          <div v-for="(riskprevention,                                                                                                               index) in this.generalmeasures.risks[index]" :key="index">
             <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
               border />
           </div>
           <div style="height: 20px; font-size: 16px;">预控措施</div>
-          <div v-for="(measureprevention,index) in this.generalmeasures.measures[index]" :key="index">
+          <div v-for="(measureprevention,                                                                                                               index) in this.generalmeasures.measures[index]" :key="index">
             <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
               checked border />
           </div>
@@ -74,12 +74,12 @@
         <el-button @click="compositeprint" style="margin-top: 10px;margin-left: 50%">打印</el-button>
       </el-dialog>
       <el-dialog v-model="dialogTableVisible" title="详细信息">
-        <div v-for="(data,index) in testdata" :key="index">
+        <div v-for="(data,                                                                                                               index) in testdata" :key="index">
           <div style="font-size: 24px">{{ data.task_name }}</div>
           <div style="height: 20px; font-size: 10px;margin-left: 20px; margin-top: 5px;">
             备注:{{ data.additional }}
           </div>
-          <div v-for="(taskdata,index) in data.details" :key="index">
+          <div v-for="(taskdata,                                                                                                               index) in data.details" :key="index">
             <div style="margin-top: 5px; margin-left: 20px;">
               <div class="q-pa-md">
                 <q-table :rows=[taskdata] :columns="columns" :hide-pagination="hidePagination" />
@@ -89,7 +89,7 @@
               存在的主要风险
             </div>
             <div class="q-pa-md">
-              <div class="q-gutter-sm" v-for="(riskprevention,index) in taskdata.risks" :key="index">
+              <div class="q-gutter-sm" v-for="(riskprevention,                                                                                                               index) in taskdata.risks" :key="index">
                 <div>{{ riskprevention }}</div>
               </div>
             </div>
@@ -97,29 +97,29 @@
               预控措施
             </div>
             <div class="q-pa-md">
-              <div class="q-gutter-sm" v-for="(processcontrol,index) in taskdata.measures" :key="index">
+              <div class="q-gutter-sm" v-for="(processcontrol,                                                                                                               index) in taskdata.measures" :key="index">
                 <div>{{ processcontrol }}</div>
               </div>
             </div>
           </div>
         </div>
-        <el-input v-model="input1" placeholder="请输入工单任务名称" v-if="this.usermessage.role === 'admin'" />
-        <el-select v-model="assigner" placeholder="请选择任务委派人" v-if="this.usermessage.role === 'admin'">
+        <el-input v-model="input1" placeholder="请输入工单任务名称" v-if="current_userinfo.role === 'admin'" />
+        <el-select v-model="assigner" placeholder="请选择任务委派人" v-if="current_userinfo.role === 'admin'">
           <el-option v-for="(names, index) in this.allusers" :label=names.name :value=names.name :key="index">
           </el-option>
         </el-select>
-        <el-button @click="republished(testdata)" v-if="this.usermessage.role === 'admin'">重新发布</el-button>
+        <el-button @click="republished(testdata)" v-if="current_userinfo.role === 'admin'">重新发布</el-button>
       </el-dialog>
       <el-dialog v-model="dialogTableVisible1" title="通用措施风险预控选择" width="95%" center>
         <div v-for="(data, index) in names" :key="index">
           <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
           <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
-          <div v-for="(riskprevention,index) in this.generalmeasures.risks[index]" :key="index">
+          <div v-for="(riskprevention,                                                                                                               index) in this.generalmeasures.risks[index]" :key="index">
             <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
               border />
           </div>
           <div style="height: 20px; font-size: 16px;">预控措施</div>
-          <div v-for="(measureprevention,index) in this.generalmeasures.measures[index]" :key="index">
+          <div v-for="(measureprevention,                                                                                                               index) in this.generalmeasures.measures[index]" :key="index">
             <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
               checked border />
           </div>
@@ -132,15 +132,14 @@
 </template>
 
 <script>
-import store from '../store';
 import { deleteData, gettableData, postRiskData, updateStatus, newgettasklist } from "../api/getComponents";
-import {
-  mapState
-} from 'vuex';
 import { List } from "@element-plus/icons";
+import { defineComponent, ref, computed, onMounted } from "vue";
+import { useRouter } from 'vue-router'
+import { useStore, mapState } from "vuex";
 
 
-export default {
+export default defineComponent({
   name: "Published",
   data() {
     return {
@@ -217,93 +216,7 @@ export default {
       ids: [],
       statuss: [],
       signaldata: {},
-      publishedData: []
     }
-  },
-  components: {
-    List
-  },
-  mounted() {
-    newgettasklist('市南供电公司', '宝南站').then((res) => {
-      if (res) {
-        this.publishedData = res
-        for (var i in this.publishedData) {
-          if (this.publishedData[i].status === 'published') {
-            this.publishedData[i].status = '已发布';
-          } else if (this.publishedData[i].status === 'assigned') {
-            this.publishedData[i].status = '已派发';
-          } else if (this.publishedData[i].status === 'finished') {
-            this.publishedData[i].status = '已完成';
-          }
-
-          var d = new Date(this.publishedData[i].publish_date);
-          this.publishedData[i].publish_date = d.toLocaleString();
-          if (this.publishedData[i].publish_date.split(' ')[0].split('/')[2].length === 1) {
-            this.publishedData[i].publish_date = this.publishedData[i].publish_date.split('/')[0] + '/' + this.publishedData[i].publish_date.split('/')[1] +
-              '/0' + this.publishedData[i].publish_date.split('/')[2]
-          }
-          if (this.publishedData[i].assign_date) {
-            var d1 = new Date(this.publishedData[i].assign_date);
-            this.publishedData[i].assign_date = d1.toLocaleString();
-            if (this.publishedData[i].assign_date.split(' ')[0].split('/')[2].length === 1) {
-              this.publishedData[i].assign_date = this.publishedData[i].assign_date.split('/')[0] + '/' + this.publishedData[i].assign_date.split('/')[1] +
-                '/0' + this.publishedData[i].assign_date.split('/')[2]
-            }
-          }
-          if (this.publishedData[i].finish_date) {
-            var d2 = new Date(this.publishedData[i].finish_date);
-            this.publishedData[i].finish_date = d2.toLocaleString();
-            if (this.publishedData[i].finish_date.split(' ')[0].split('/')[2].length === 1) {
-              this.publishedData[i].finish_date = this.publishedData[i].finish_date.split('/')[0] + '/' + this.publishedData[i].finish_date.split('/')[1] +
-                '/0' + this.publishedData[i].finish_date.split('/')[2]
-            }
-          }
-
-          for (var i in this.publishedData) {
-            var devices = '';
-            var devices_type = '';
-            var operations = '';
-            var measures = '';
-            for (var j in this.publishedData[i].task_details[0].details) {
-              devices += this.publishedData[i].task_details[0].details[j].device + ' ';
-              operations += this.publishedData[i].task_details[0].details[j].operation + ' ';
-              measures += this.publishedData[i].task_details[0].details[j].measure_type + ' ';
-              devices_type += this.publishedData[i].task_details[0].details[j].device_type + ' ';
-            }
-            this.publishedData[i].devices = devices;
-            this.publishedData[i].operations = operations;
-            this.publishedData[i].measures_type = measures;
-            this.publishedData[i].device_types = devices_type;
-          }
-        }
-        this.publishedData = this.publishedData.reverse();
-      }
-    })
-    // if (store.state.user.role === 'superadmin') {
-    //   let location = {
-    //     name: "user"
-    //   };
-    //   this.$router.push(location);
-
-    // } else {
-    //   store.dispatch('getPublishData');
-    // }
-  },
-  computed: {
-    ...mapState({
-      // publishedData: (state) => {
-      //   return store.state.publishedData;
-      // },
-      token: (state) => {
-        return store.state.jwtToken;
-      },
-      usermessage: (state) => {
-        return store.state.user
-      },
-      allusers: (satae) => {
-        return store.state.allUsers;
-      }
-    })
   },
   methods: {
     signalprint(prop) {
@@ -317,9 +230,9 @@ export default {
         reviewer: store.state.user.name,
         assigner: this.assigner
       };
-      postRiskData(this.usermessage.company_id, republishdata, this.token).then((res) => {
+      postRiskData(current_userinfo.company_id, republishdata, this.token).then((res) => {
         this.$store.commit('fuheprint', res);
-        gettableData(this.usermessage.company_id, '', this.token).then((res1) => {
+        gettableData(current_userinfo.company_id, '', this.token).then((res1) => {
           this.$store.commit('PUBLISHDATA', res1);
           this.dialogTableVisible = false;
         })
@@ -346,7 +259,7 @@ export default {
           type: 'warning',
           center: true
         }).then(() => {
-          updateStatus(this.usermessage.company_id, prop._id, this.token).then(() => {
+          updateStatus(current_userinfo.company_id, prop._id, this.token).then(() => {
             this.$message({
               type: 'success',
               message: '任务完成'
@@ -402,7 +315,7 @@ export default {
     },
     goDelete() {
       for (var i in this.selected) {
-        deleteData(this.usermessage.company_id, this.selected[i]._id, this.token)
+        deleteData(current_userinfo.company_id, this.selected[i]._id, this.token)
       }
       setTimeout(() => {
         store.dispatch('getPublishData');
@@ -522,11 +435,86 @@ export default {
     }
   },
   setup() {
-    if (store.state.user.role === 'admin') {
-      store.dispatch('getallusersMessage');
+    const publishedData = ref([])
+
+    const router = useRouter()
+    const store = useStore()
+    const storeStateFns = mapState(["company", "station", "current_userinfo"])
+    const storeState = {};
+    Object.keys(storeStateFns).forEach((fnKey) => {
+      const fn = storeStateFns[fnKey].bind({ $store: store });
+      storeState[fnKey] = computed(fn);
+    })
+
+    const gettasklist = () => {
+      newgettasklist(store.state.company, store.state.station).then((res) => {
+        if (res) {
+          publishedData.value = res
+          for (var i in publishedData.value) {
+            if (publishedData.value[i].status === 'published') {
+              publishedData.value[i].status = '已发布';
+            } else if (publishedData.value[i].status === 'assigned') {
+              publishedData.value[i].status = '已派发';
+            } else if (publishedData.value[i].status === 'finished') {
+              publishedData.value[i].status = '已完成';
+            }
+
+            var d = new Date(publishedData.value[i].publish_date);
+            publishedData.value[i].publish_date = d.toLocaleString();
+            if (publishedData.value[i].publish_date.split(' ')[0].split('/')[2].length === 1) {
+              publishedData.value[i].publish_date = publishedData.value[i].publish_date.split('/')[0] + '/' + publishedData.value[i].publish_date.split('/')[1] +
+                '/0' + publishedData.value[i].publish_date.split('/')[2]
+            }
+            if (publishedData.value[i].assign_date) {
+              var d1 = new Date(publishedData.value[i].assign_date);
+              publishedData.value[i].assign_date = d1.toLocaleString();
+              if (publishedData.value[i].assign_date.split(' ')[0].split('/')[2].length === 1) {
+                publishedData.value[i].assign_date = publishedData.value[i].assign_date.split('/')[0] + '/' + publishedData.value[i].assign_date.split('/')[1] +
+                  '/0' + publishedData.value[i].assign_date.split('/')[2]
+              }
+            }
+            if (publishedData.value[i].finish_date) {
+              var d2 = new Date(publishedData.value[i].finish_date);
+              publishedData.value[i].finish_date = d2.toLocaleString();
+              if (publishedData.value[i].finish_date.split(' ')[0].split('/')[2].length === 1) {
+                publishedData.value[i].finish_date = publishedData.value[i].finish_date.split('/')[0] + '/' + publishedData.value[i].finish_date.split('/')[1] +
+                  '/0' + publishedData.value[i].finish_date.split('/')[2]
+              }
+            }
+
+            for (var i in publishedData.value) {
+              var devices = '';
+              var devices_type = '';
+              var operations = '';
+              var measures = '';
+              for (var j in publishedData.value[i].task_details[0].details) {
+                devices += publishedData.value[i].task_details[0].details[j].device + ' ';
+                operations += publishedData.value[i].task_details[0].details[j].operation + ' ';
+                measures += publishedData.value[i].task_details[0].details[j].measure_type + ' ';
+                devices_type += publishedData.value[i].task_details[0].details[j].device_type + ' ';
+              }
+              publishedData.value[i].devices = devices;
+              publishedData.value[i].operations = operations;
+              publishedData.value[i].measures_type = measures;
+              publishedData.value[i].device_types = devices_type;
+            }
+          }
+          publishedData.value = publishedData.value.reverse();
+        }
+      })
+    }
+    onMounted(() => {
+      gettasklist()
+    })
+    return {
+      publishedData,
+
+      gettasklist,
+
+      List,
     }
   },
-}
+})
 
 
 </script>
@@ -569,7 +557,7 @@ export default {
   margin-right: 10px;
 }
 
-.search{
+.search {
   display: flex;
   align-items: center;
 }
