@@ -9,6 +9,7 @@ export default defineConfig({
     // proxy:{
     //   '/api': 'http://192.168.1.48:4080'
     // }
+    // host: '0.0.0.0'
   },
   base: "./",
   plugins: [
@@ -20,7 +21,4 @@ export default defineConfig({
     }),
     
   ],
-  server: {
-    host: '0.0.0.0'
-  },
 });

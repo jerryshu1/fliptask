@@ -50,7 +50,7 @@ export default createStore({
         risk_and_measure: {},
         lens: {},
         companyinfo: {},
-        userinfo: {},
+        current_userinfo: {},
         companylist: [],
         stationlist: [],
         station: '',
@@ -70,7 +70,7 @@ export default createStore({
             state.companylist = data
         },
         saveuserinfo(state, data) {
-            state.userinfo = data
+            state.current_userinfo = data
         },
         deletetask(state) {
             state.risk_and_measure = {}
