@@ -7,13 +7,13 @@
       <p>用户中心</p>
     </div>
 
-    <el-table border :data="userinfos" style="width: 85%;margin-left: 7%;margin-top: 1%"
-      v-if="current_userinfo.role === 'superadmin'">
+    <el-table border :data="userinfos" style="width: 85%;margin-left: 7%;margin-top: 1%">
       <el-table-column prop="id" label="ID" align='center' />
       <el-table-column prop="name" label="姓名" align='center' />
       <el-table-column prop="phone" label="电话号码" align='center' />
+      <el-table-column prop="company" label="所属公司" align="center" />
+      <el-table-column prop="station" label="所属电站" align="center" />
       <el-table-column prop="role" label="角色" align='center' />
-      <el-table-column prop="company_id" label="分公司id" align='center' />
       <el-table-column label="操作" align="center">
         <template #default="scope">
           <el-button @click="Deleteuser(scope.row)" type="text" size="small" v-if="scope.row.role !== '超级管理员'">
@@ -29,9 +29,7 @@
       </el-table-column>
     </el-table>
 
-    <el-button class="homebutton1" @click="adduser" v-if="current_userinfo.role !== 'appuser'">
-      新增用户
-    </el-button>
+
 
     <!-- 修改用户信息 -->
     <el-dialog title="修改用户信息" v-model="dialogTableVisible1" width="30%">
@@ -79,14 +77,15 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm1">立即创建</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button @click="resetForm">重置</el-button>
           <el-button @click="gousers1">返回</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
+
     <!-- 新建站点管理员 -->
     <el-dialog title="站点创建新用户" v-model="dialogTableVisible3" width="40%">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="80px" class="demo-ruleForm">
         <el-form-item label="账户" prop="id">
           <el-input v-model="ruleForm.id" placeholder="请输入登录工号"></el-input>
         </el-form-item>
@@ -108,11 +107,14 @@
         </el-form-item>
         <el-form-item class="btngroup">
           <el-button type="primary" @click="submitForm">立即创建</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button @click="resetForm">重置</el-button>
           <el-button @click="gousers">返回</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
+    <el-button class="homebutton1" @click="adduser" v-if="current_userinfo.role !== 'appuser'">
+      新增用户
+    </el-button>
   </div>
 </template>
 
@@ -121,13 +123,6 @@ import { defineComponent, onMounted, ref, reactive, computed } from "vue";
 import { useStore, mapState } from "vuex";
 import { List } from "@element-plus/icons";
 import {
-  postcopytask,
-  postsuperaddcompany,
-  // changepassword,
-  // deletecompany,
-  getallusers,
-  deleteuser,
-  postnewuser,
   getoneusers,
   newgetusersinfo,
   newgetoneuserinfo,
@@ -151,20 +146,12 @@ export default defineComponent({
     const dialogTableVisible2 = ref(false)
     const dialogTableVisible1 = ref(false)
     const dialogTableVisible3 = ref(false)
-    const ruleForm = reactive({
-      id: '',
-      name: '',
-      phone: '',
-      // companyname: '',
-      // companyid: '',
-      password: '',
-      role: '普通用户',
-    })
+    const ruleForm = reactive({})
+    const ruleFormRef = ref(null)
     const form = reactive({
       name: '',
       phone: '',
     })
-    const ruleFormRef = ref()
     const changepeople = ref({})
     const rules1 = reactive({
       phone: [
@@ -225,8 +212,7 @@ export default defineComponent({
     const newgetusers = () => {
       let current_userinfo = store.state.current_userinfo
       let company = store.state.company
-      let station = store.state.state
-
+      let station = store.state.station
       if (current_userinfo.role === 'superadmin') {
         let company_name = ''
         let station_name = ''
@@ -242,7 +228,6 @@ export default defineComponent({
         }
         newgetusersinfo(company_name, station_name).then((res) => {
           if (res) {
-            console.log(res);
             userinfos.value = res.users
             for (var i in userinfos.value) {
               if (userinfos.value[i].role === "companyadmin") {
@@ -260,20 +245,20 @@ export default defineComponent({
       } else if (current_userinfo.role === 'companyadmin') {
         let station_name = ''
         if (station === '') {
-          station_name = 'any'
+          station_name = ''
         } else {
           station_name = station
         }
         newgetusersinfo(company, station_name).then((res) => {
           if (res) {
-            userinfos = res.users
-            for (var i in userinfos) {
-              if (userinfos[i].role === "companyadmin") {
-                userinfos[i].role = "分公司管理员";
-              } else if (userinfos[i].role === "stationadmin") {
-                userinfos[i].role = "站点管理员";
+            userinfos.value = res.users
+            for (var i in userinfos.value) {
+              if (userinfos.value[i].role === "companyadmin") {
+                userinfos.value[i].role = "分公司管理员";
+              } else if (userinfos.value[i].role === "stationadmin") {
+                userinfos.value[i].role = "站点管理员";
               } else {
-                userinfos[i].role = "普通用户";
+                userinfos.value[i].role = "普通用户";
               }
             }
           }
@@ -281,12 +266,12 @@ export default defineComponent({
       } else if (current_userinfo.role === 'stationadmin') {
         newgetusersinfo(company, station).then((res) => {
           if (res) {
-            userinfos = res.users
-            for (var i in userinfos) {
-              if (userinfos[i].role === "stationadmin") {
-                userinfos[i].role = "站点管理员";
+            userinfos.value = res.users
+            for (var i in userinfos.value) {
+              if (userinfos.value[i].role === "stationadmin") {
+                userinfos.value[i].role = "站点管理员";
               } else {
-                userinfos[i].role = "普通用户";
+                userinfos.value[i].role = "普通用户";
               }
             }
           }
@@ -294,46 +279,12 @@ export default defineComponent({
       } else {
         newgetoneuserinfo(company, station, current_userinfo.id).then((res) => {
           if (res) {
-            userinfos = [res.user]
-            userinfos[0].role = "普通用户"
+            userinfos.value = [res.user]
+            userinfos.value[0].role = "普通用户"
           }
         })
 
       }
-    }
-    const getadminalluser = () => {
-      let companyid = store.state.user.company_id
-      getallusers().then((res) => {
-        if (res) {
-          userinfos.value = []
-          for (var i in res.users) {
-            if (res.users[i].role === 'admin' && res.users[i].company_id === companyid) {
-              res.users[i].role = '管理员'
-              userinfos.value.push(res.users[i])
-            } else if (res.users[i].role === 'appuser' && res.users[i].company_id === companyid) {
-              res.users[i].role = '普通用户'
-              userinfos.value.push(res.users[i])
-            }
-          }
-        }
-      })
-    }
-
-    const getsuperadminalluser = () => {
-      getallusers().then((res) => {
-        if (res) {
-          userinfos.value = []
-          for (var i in res.users) {
-            if (res.users[i].role === 'admin') {
-              res.users[i].role = '管理员'
-              userinfos.value.push(res.users[i])
-            } else if (res.users[i].role === 'superadmin') {
-              res.users[i].role = '超级管理员'
-              userinfos.value.push(res.users[i])
-            }
-          }
-        }
-      })
     }
     const getappuser = () => {
       userinfos.value = []
@@ -344,19 +295,42 @@ export default defineComponent({
       })
     }
     const adduser = () => {
-      dialogTableVisible3.value = true
+      let current_userinfo = store.state.current_userinfo
+      let company = store.state.company
+      let station = store.state.station
+      if (current_userinfo.role === 'superadmin') {
+        if (company === '') {
+          ElMessage({
+            type: "error",
+            message: "请先选择要在哪个分公司或站点进行创建",
+          });
+        } else if (station === '') {
+          dialogTableVisible2.value = true
+        } else {
+          dialogTableVisible3.value = true
+        }
+      } else if (current_userinfo.role === 'companyadmin') {
+        if (station === '') {
+          ElMessage({
+            type: "error",
+            message: "请先选择要在哪个站点进行创建",
+          });
+        } else {
+          dialogTableVisible3.value = true
+        }
+      }
+
     }
     const gousers = () => {
       dialogTableVisible3.value = false
-    }
-    const adduser1 = () => {
-      dialogTableVisible2.value = true
     }
     const gousers1 = () => {
       dialogTableVisible2.value = false
     }
     // 站点管理员
     const submitForm = () => {
+      let company = store.state.company
+      let station = store.state.station
       if (ruleForm.id === '' || ruleForm.password === '' || ruleForm.password.length <= 8 || ruleForm.name === '') {
         ElMessage({
           message: '信息不足',
@@ -374,6 +348,7 @@ export default defineComponent({
           phone: ruleForm.phone,
           password: ruleForm.password,
         }
+
         newpostadduser(company, station, userdata).then(() => {
           ElMessage({
             message: '添加用户成功',
@@ -384,9 +359,10 @@ export default defineComponent({
         })
       }
     }
-
     // 分公司管理员
     const submitForm1 = () => {
+      let company = store.state.company
+      console.log(company);
       if (ruleForm.id === '' || ruleForm.password === '' || ruleForm.password.length <= 8 || ruleForm.name === '') {
         ElMessage({
           message: '信息不足',
@@ -394,12 +370,12 @@ export default defineComponent({
         })
       } else {
         ruleForm.role === "companyadmin"
-         
         var userdata = {
           id: ruleForm.id,
           name: ruleForm.name,
           phone: ruleForm.phone,
           password: ruleForm.password,
+          role: 'companyadmin'
         }
         newpostadduser(company, "any", userdata).then(() => {
           ElMessage({
@@ -407,36 +383,6 @@ export default defineComponent({
             type: 'success',
           })
           newgetusers()
-          dialogTableVisible2.value = false
-        })
-      }
-    }
-
-    const superadminsubmitForm = () => {
-      if (ruleForm.id === '' || ruleForm.password === '' || ruleForm.password.length <= 8 || ruleForm.companyname === '' || ruleForm.companyid === '') {
-        ElMessage({
-          message: '信息不足',
-          type: 'error',
-        })
-      } else {
-        ruleForm.role = 'admin';
-        var userdata = {
-          id: ruleForm.id,
-          name: ruleForm.name,
-          phone: ruleForm.phone,
-          password: ruleForm.password,
-          company_id: ruleForm.companyid,
-          role: 'admin',
-        }
-        var companydata = {
-          name: ruleForm.companyname,
-          id: ruleForm.companyid,
-        }
-        postnewuser(userdata).then(() => {
-          postsuperaddcompany(companydata).then((res) => {
-            postcopytask(companydata.id)
-          })
-          getsuperadminalluser()
           dialogTableVisible2.value = false
         })
       }
@@ -465,54 +411,9 @@ export default defineComponent({
 
 
     }
-    const resetForm = (formEl) => {
-      formEl.resetFields()
-    }
-    const Deleteadminuser = (prop) => {
-      ElMessageBox.confirm(
-        '是否删除该用户',
-        'Warning',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-
-        }
-      ).then(() => {
-        deleteuser(prop.id).then((res) => {
-          getsuperadminalluser()
-          ElMessage({
-            type: 'success',
-            message: '删除成功',
-          })
-        })
-      }).catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '取消删除',
-        })
-      })
-    }
-    // const deleteCompany = () => {
-    //   ElMessageBox.prompt('请输入需要删除的分公司id', '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //   }).then(({ value }) => {
-    //     deletecompany(value).then((res) => {
-    //       if (res) {
-    //         ElMessage({
-    //           message: '删除成功',
-    //           type: 'success',
-    //         })
-    //       }
-    //     })
-    //   }).catch(() => {
-    //     ElMessage({
-    //       type: 'info',
-    //       message: '取消删除'
-    //     });
-    //   });
-    // }
+    const resetForm = () => {
+      ruleFormRef.value.resetFields();
+    };
     const xiugai = (prop) => {
       changepeople.value = prop
       dialogTableVisible1.value = true
@@ -541,39 +442,6 @@ export default defineComponent({
         // }
       })
     }
-    // const Changepassword = (prop) => {
-    //   ElMessageBox.prompt('请输入新密码', '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     inputPattern: /^(?=.*\d)[\s\S]{9,16}$/,
-    //     inputErrorMessage: '密码长度需大于8位',
-    //   }).then(({ value }) => {
-    //     let body = {
-    //       password: value
-    //     }
-    //     if (store.state.role === 'admin') {
-    //       adminchangepassword(prop.id, body).then((res) => {
-    //         ElMessage({
-    //           type: 'success',
-    //           message: '修改成功'
-    //         })
-    //       })
-    //     } else {
-    //       changepassword(prop.id, body).then((res) => {
-    //         ElMessage({
-    //           type: 'success',
-    //           message: '修改成功'
-    //         })
-    //       })
-    //     }
-    //   }).catch(() => {
-    //     ElMessage({
-    //       type: 'info',
-    //       message: '取消修改'
-    //     });
-    //   });
-    // }
-
     const Changepassword = (prop) => {
       ElMessageBox.prompt('请输入新密码', '提示', {
         confirmButtonText: '确定',
@@ -618,16 +486,6 @@ export default defineComponent({
     }
     onMounted(() => {
       newgetusers()
-
-      // current_role.value = store.state.user.role
-      // current_id.value = store.state.user.id
-      // if (store.state.user.role === 'admin') {
-      //   getadminalluser()
-      // } else if (store.state.user.role === 'superadmin') {
-      //   getsuperadminalluser()
-      // } else {
-      //   getappuser()
-      // }
     })
 
     return {
@@ -636,27 +494,21 @@ export default defineComponent({
       dialogTableVisible1,
       dialogTableVisible3,
       id,
-      ruleForm,
-      ruleFormRef,
       rules1,
       rules,
       form,
       current_role,
       current_id,
       changepeople,
-
-      getadminalluser,
-      getsuperadminalluser,
       adduser,
-      adduser1,
       submitForm,
       submitForm1,
-      superadminsubmitForm,
       resetForm,
+      ruleForm,
+      ruleFormRef,
       gousers,
       gousers1,
       Deleteuser,
-      Deleteadminuser,
       xiugai,
       adminupdate,
       Changepassword,
