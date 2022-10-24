@@ -6,11 +6,13 @@
         <q-toolbar-title>倒闸操作风险预控卡</q-toolbar-title>
 
         <div class="selectgroup">
-          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" @change="getstationList" v-if="current_userinfo.role === 'superadmin'">
+          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" @change="getstationList"
+            v-if="current_userinfo.role === 'superadmin'">
             <el-option v-for="(item, index) in companylist" :key="index" :label="item" :value="item" />
           </el-select>
-          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" disabled @change="getstationList" v-else>
-            <el-option v-for="(item, index) in companylist" :key="index" :label="item" :value="item"/>
+          <el-select v-model="current_company" class="choosecomp m-2" placeholder="请选择公司" disabled
+            @change="getstationList" v-else>
+            <el-option v-for="(item, index) in companylist" :key="index" :label="item" :value="item" />
           </el-select>
 
           <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable placeholder="请选择站点"
@@ -39,7 +41,7 @@
 
     <q-drawer class="asidemenu" v-model="leftDrawerOpen" bordered>
       <q-list>
-        <menu-link v-for="link in essentialLinks" :key="link.title" v-bind="link" @click="test" />
+        <menu-link v-for="link in linksList" :key="link.title" v-bind="link" @click="test" />
       </q-list>
     </q-drawer>
 
@@ -57,56 +59,52 @@
 <script>
 import MenuLink from "../components/MenuLink.vue";
 import { newgetstation, newgetcategorylist } from "../api/getComponents";
-const linksList = [
-  {
-    title: "任务派发",
-    icon: "manage_search",
-    link: "/newsearch",
-  },
-  {
-    title: "用户中心",
-    icon: "people",
-    link: "/user",
-  },
-  {
-    title: "已发布任务列表",
-    icon: "apps",
-    link: "/published",
-  },
-  {
-    title: "风险库中心",
-    icon: "store",
-    link: "/tasks",
-  }
-];
 
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, defineComponent } from "vue";
 import { useStore, mapState } from "vuex";
-import { useRouter } from "vue-router";
-
-export default {
+export default defineComponent({
   name: "MainLayout",
-
-  methods: {
-    test() {
-      store.commit("clearnewadddata");
-    }
+  components:{
+    MenuLink
   },
 
   setup() {
     const store = useStore();
-    const router = useRouter();
     const user = ref('')
     const current_company = ref('')
     const current_station = ref('')
+    const linksList = ref([
+      {
+        title: "任务派发",
+        icon: "manage_search",
+        link: "/newsearch",
+      },
+      {
+        title: "用户中心",
+        icon: "people",
+        link: "/user",
+      },
+      {
+        title: "已发布任务列表",
+        icon: "apps",
+        link: "/published",
+      },
+      {
+        title: "风险库中心",
+        icon: "store",
+        link: "/tasks",
+      }
+    ])
 
-    const storeStateFns = mapState(["companylist", "stationlist", "company", "station","current_userinfo"])
+    const storeStateFns = mapState(["companylist", "stationlist", "company", "station", "current_userinfo"])
     const storeState = {};
     Object.keys(storeStateFns).forEach((fnKey) => {
       const fn = storeStateFns[fnKey].bind({ $store: store });
       storeState[fnKey] = computed(fn);
     })
-
+    const test = () => {
+      store.commit("clearnewadddata");
+    }
     const signout = () => {
       sessionStorage.clear();
       store.dispatch("logout");
@@ -167,7 +165,7 @@ export default {
     })
 
     return {
-      essentialLinks: linksList,
+      linksList,
       leftDrawerOpen: ref(true),
       user,
       current_company,
@@ -177,12 +175,12 @@ export default {
       querySearch,
       createFilter,
       handleSelect,
+      test,
 
-      MenuLink,
       ...storeState,
     };
   },
-};
+});
 </script>
 
 <style lang="scss">
