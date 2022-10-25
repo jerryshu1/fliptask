@@ -415,7 +415,6 @@ export default defineComponent({
       }
     }
     const adminupdate = () => {
-      // console.log(changepeople.id);
       let params = {
         id: changepeople.value.id,
         name: form.name,

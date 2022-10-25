@@ -7,14 +7,12 @@
       <p>已发布任务列表</p>
     </div>
 
-    <div class="search" style="width:85%; margin-left: 7%;margin-top: 1%">
+    <!-- <div class="search" style="width:85%; margin-left: 7%;margin-top: 1%">
       <el-select v-model="select1" placeholder="Select" class="selectpublish">
         <el-option label="任务名称" value="任务名称" />
         <el-option label="任务状态" value="任务状态" />
       </el-select>
-      <!-- <el-input v-model="input" placeholder="请输入搜索内容" @change="enter" /> -->
-
-    </div>
+    </div> -->
 
 
     <el-table border ref="multipleTableRef" :data="publishedData" style="width:85%; margin-left: 7%;margin-top: 2%"
@@ -53,16 +51,17 @@
         <button class="homebutton" @click="godoubleprint">复合打印</button>
       </div>
 
+      <!-- 复合打印 -->
       <el-dialog v-model="dialogTableVisible2" title="通用措施风险预控选择" width="95%" center>
-        <div v-for="(data, index) in names" :key="index">
+        <div v-for="(data, index) in commonnames" :key="index">
           <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
           <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
-          <div v-for="(riskprevention, index) in this.generalmeasures.risks[index]" :key="index">
+          <div v-for="(riskprevention, index1) in this.generalmeasures.risks[index]" :key="index1">
             <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
               border />
           </div>
           <div style="height: 20px; font-size: 16px;">预控措施</div>
-          <div v-for="(measureprevention, index) in this.generalmeasures.measures[index]" :key="index">
+          <div v-for="(measureprevention, index2) in this.generalmeasures.measures[index]" :key="index2">
             <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
               checked border />
           </div>
@@ -70,6 +69,7 @@
         <el-input v-model="input2" placeholder="请输入工单任务名称" />
         <el-button @click="compositeprint" style="margin-top: 10px;margin-left: 50%">打印</el-button>
       </el-dialog>
+      <!-- 预览 -->
       <el-dialog v-model="dialogTableVisible" title="详细信息">
         <div v-for="(data, index) in testdata" :key="index">
           <div style="font-size: 24px">{{ data.task_name }}</div>
@@ -100,23 +100,20 @@
             </div>
           </div>
         </div>
-        <el-input v-model="input1" placeholder="请输入工单任务名称" v-if="current_userinfo.role === 'admin'" />
-        <el-select v-model="assigner" placeholder="请选择任务委派人" v-if="current_userinfo.role === 'admin'">
-          <el-option v-for="(names, index) in this.allusers" :label=names.name :value=names.name :key="index">
-          </el-option>
-        </el-select>
-        <el-button @click="republished(testdata)" v-if="current_userinfo.role === 'admin'">重新发布</el-button>
+        <el-input v-model="input1" placeholder="请输入工单任务名称" />
+        <el-button @click="republished">重新发布</el-button>
       </el-dialog>
+      <!-- 单步打印 -->
       <el-dialog v-model="dialogTableVisible1" title="通用措施风险预控选择" width="95%" center>
         <div v-for="(data, index) in commonnames" :key="index">
           <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
           <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
-          <div v-for="(riskprevention, index1) in this.generalmeasures.risks[index]" :key="index">
+          <div v-for="(riskprevention, index1) in this.generalmeasures.risks[index]" :key="index1">
             <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
               border />
           </div>
           <div style="height: 20px; font-size: 16px;">预控措施</div>
-          <div v-for="(measureprevention, index2) in this.generalmeasures.measures[index]" :key="index">
+          <div v-for="(measureprevention, index2) in this.generalmeasures.measures[index]" :key="index2">
             <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
               checked border />
           </div>
@@ -129,7 +126,7 @@
 </template>
 
 <script>
-import { gettableData, postRiskData, newgettasklist, newdeletetask, newpostupdatetofinish } from "../api/getComponents";
+import { gettableData, postRiskData, newgettasklist, newdeletetask, newpostupdatetofinish, newposttask } from "../api/getComponents";
 import { List } from "@element-plus/icons";
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { useRouter } from 'vue-router'
@@ -141,12 +138,9 @@ export default defineComponent({
   name: "Published",
   data() {
     return {
-      testdata: [],
       selected: [],
       select1: '任务名称',
       input: '',
-      input1: '',
-      dialogTableVisible: false,
       hidePagination: true,
       task_name: '',
       assigner: '',
@@ -175,134 +169,17 @@ export default defineComponent({
       statuss: [],
     }
   },
-  methods: {
-    republished(data) {
-      var republishdata = {
-        task_name: this.input1,
-        task_details: data,
-        reviewer: store.state.user.name,
-        assigner: this.assigner
-      };
-      postRiskData(current_userinfo.company_id, republishdata, this.token).then((res) => {
-        this.$store.commit('fuheprint', res);
-        gettableData(current_userinfo.company_id, '', this.token).then((res1) => {
-          this.$store.commit('PUBLISHDATA', res1);
-          this.dialogTableVisible = false;
-        })
-      })
-      // store.dispatch('postData', republishdata);
-      // this.dialogTableVisible = false;
-      // store.dispatch('getPublishData')
-    },
-    test(prop) {
-      this.task_name = prop.task_name;
-      this.testdata = prop.task_details;
-      this.dialogTableVisible = true;
-    },
-    enter() {
-      if (this.select1 === '任务名称') {
-        if (this.input === '') {
-          this.$store.dispatch('getPublishData');
-        } else {
-          let params = {
-            task_name: this.input
-          }
-          this.$store.dispatch('getPublishData', params);
-        }
-      } else {
-        if (this.input === '已发布') {
-          let params = {
-            status: 'published'
-          }
-          this.$store.dispatch('getPublishData', params);
-        }
-        if (this.input === '已派发') {
-          let params = {
-            status: 'assigned',
-          }
-          this.$store.dispatch('getPublishData', params);
-        }
-        if (this.input === '已完成') {
-          let params = {
-            status: 'finished',
-          }
-          this.$store.dispatch('getPublishData', params);
-        }
-        if (this.input === '') {
-          this.$store.dispatch('getPublishData');
-        }
-      }
-    },
-    goPublished() {
-      let location = {
-        name: "published"
-      };
-      this.$router.push(location);
-    },
-    compositeprint() {
-      var task_detail = {
-        task_name: this.input2,
-        assigner: this.assigner1,
-        reviewer: store.state.user.name,
-        task_details: []
-      };
-      for (var t in this.selected) {
-        for (var s in this.selected[t].task_details) {
-          task_detail.task_details.push(this.selected[t].task_details[s])
-        }
-      }
-      store.dispatch('postData', task_detail);
-
-      for (var m in generaldata.value.risks) {
-        printdata.value.risks.push(generaldata.value.risks[m])
-      }
-      for (var n in generaldata.value.measures) {
-        printdata.value.measures.push(generaldata.value.measures[n])
-      }
-      for (var o in this.selected) {
-        for (var i in this.selected[o].task_details) {
-          for (var j in this.selected[o].task_details[i].details) {
-            for (var k in this.selected[o].task_details[i].details[j].risks) {
-              printdata.value.risks.push(this.selected[o].task_details[i].details[j].risks[k])
-            }
-            for (var l in this.selected[o].task_details[i].details[j].risks) {
-              printdata.value.measures.push(this.selected[o].task_details[i].details[j].measures[l])
-            }
-          }
-        }
-      }
-      var finaldata = {
-        risks: [],
-        measures: []
-      }
-      for (var r in printdata.value.risks) {
-        if (finaldata.risks.indexOf(printdata.value.risks[r]) === -1) {
-          finaldata.risks.push(printdata.value.risks[r])
-        }
-        if (finaldata.measures.indexOf(printdata.value.measures[r]) === -1) {
-          finaldata.measures.push(printdata.value.measures[r])
-        }
-      }
-      let data = {
-        'task_name': this.input2,
-        '_id': store.state.newtaskid,
-        'status': '已发布'
-      }
-      store.state.riskandmeasure = finaldata;
-      store.state.printData = data;
-      let location = {
-        name: "print"
-      };
-      this.$router.push(location);
-    }
-  },
   setup() {
     const publishedData = ref([])
     const multipleSelection = ref([])
     const signaldata = ref({})
+    const input1 =ref('')
     const input2 = ref('')
-    const dialogTableVisible1 = ref(false)
-    const dialogTableVisible2 = ref(false)
+    const task_name = ref('')
+    const testdata = ref([]) //预览数据
+    const dialogTableVisible1 = ref(false) //单步
+    const dialogTableVisible2 = ref(false) //复合
+    const dialogTableVisible = ref(false) //预览
     const commonnames = ref(['操作指令发布', '接收操作指令', '拟写、审核操作票', '人员安排', '安全工器具准备', '风险预控', '执行倒闸操作'])
     const generalmeasures = ref({
       risks: {
@@ -443,7 +320,6 @@ export default defineComponent({
       }
     }
     const goPrint = () => {
-      console.log(signaldata.value)
       for (var m in generaldata.value.risks) {
         printdata.value.risks.push(generaldata.value.risks[m])
       }
@@ -488,6 +364,81 @@ export default defineComponent({
     const godoubleprint = () => {
       dialogTableVisible2.value = true
     }
+    const compositeprint = () => {
+      var task_detail = {
+        task_name: input2.value,
+        task_details: []
+      }
+      for (var t in multipleSelection.value) {
+        for (var s in multipleSelection.value[t].task_details) {
+          task_detail.task_details.push(multipleSelection.value[t].task_details[s])
+        }
+      }
+      newposttask(store.state.company, store.state.station, task_detail).then((res) => {
+        if (res) {
+          store.commit('savenewtaskid', res.id)
+        }
+      })
+
+      for (var m in generaldata.value.risks) {
+        printdata.value.risks.push(generaldata.value.risks[m])
+      }
+      for (var n in generaldata.value.measures) {
+        printdata.value.measures.push(generaldata.value.measures[n])
+      }
+      for (var o in multipleSelection.value) {
+        for (var i in multipleSelection.value[o].task_details) {
+          for (var j in multipleSelection.value[o].task_details[i].details) {
+            for (var k in multipleSelection.value[o].task_details[i].details[j].risks) {
+              printdata.value.risks.push(multipleSelection.value[o].task_details[i].details[j].risks[k])
+            }
+            for (var l in multipleSelection.value[o].task_details[i].details[j].risks) {
+              printdata.value.measures.push(multipleSelection.value[o].task_details[i].details[j].measures[l])
+            }
+          }
+        }
+      }
+      var finaldata = {
+        risks: [],
+        measures: []
+      }
+      for (var r in printdata.value.risks) {
+        if (finaldata.risks.indexOf(printdata.value.risks[r]) === -1) {
+          finaldata.risks.push(printdata.value.risks[r])
+        }
+        if (finaldata.measures.indexOf(printdata.value.measures[r]) === -1) {
+          finaldata.measures.push(printdata.value.measures[r])
+        }
+      }
+      let data = {
+        'task_name': input2.value,
+        '_id': store.state.newtaskid,
+        'status': '已发布'
+      }
+      store.commit('saveriskandmeasure', finaldata)
+      store.commit('saveprintdata', data)
+      let location = {
+        name: "print"
+      };
+      router.push(location);
+    }
+    const test = (prop) => {
+      task_name.value = prop.task_name;
+      testdata.value = prop.task_details;
+      dialogTableVisible.value = true;
+    }
+    const republished = () => {
+      var republishdata = {
+        task_name: input1.value,
+        task_details: testdata.value,
+      }
+      newposttask(store.state.company, store.state.station, republishdata).then((res) => {
+        if (res) {
+          gettasklist()
+          dialogTableVisible.value = false
+        }
+      })
+    }
     onMounted(() => {
       gettasklist()
     })
@@ -495,6 +446,7 @@ export default defineComponent({
     return {
       publishedData,
       multipleSelection,
+      dialogTableVisible,
       dialogTableVisible1,
       dialogTableVisible2,
       signaldata,
@@ -503,6 +455,8 @@ export default defineComponent({
       generaldata,
       printdata,
       input2,
+      input1,
+      testdata,
 
       gettasklist,
       gofinish,
@@ -511,7 +465,9 @@ export default defineComponent({
       signalprint,
       goPrint,
       godoubleprint,
-
+      compositeprint,
+      test,
+      republished,
 
       List,
     }
