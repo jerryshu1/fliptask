@@ -34,21 +34,12 @@
     <!-- 修改用户信息 -->
     <el-dialog title="修改用户信息" v-model="dialogTableVisible1" width="30%">
       <el-form :model="form" label-position="right" label-width="auto" :rules="rules1">
-        <!-- <el-form-item label="工号" prop="id">
-          <el-input v-model="form.id"></el-input>
-        </el-form-item> -->
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="电话号码" prop="phone">
           <el-input v-model="form.phone"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="权限" prop="role">
-          <el-radio-group v-model="form.role">
-            <el-radio label="管理员"></el-radio>
-            <el-radio label="普通用户"></el-radio>
-          </el-radio-group>
-        </el-form-item> -->
       </el-form>
       <span class="btn">
         <el-button class="hmebutton" @click="dialogTableVisible1 = false">取 消</el-button>
@@ -245,7 +236,7 @@ export default defineComponent({
       } else if (current_userinfo.role === 'companyadmin') {
         let station_name = ''
         if (station === '') {
-          station_name = ''
+          station_name = 'any'
         } else {
           station_name = station
         }
@@ -347,6 +338,7 @@ export default defineComponent({
           name: ruleForm.name,
           phone: ruleForm.phone,
           password: ruleForm.password,
+          role: ruleForm.role
         }
 
         newpostadduser(company, station, userdata).then(() => {
@@ -415,8 +407,12 @@ export default defineComponent({
       ruleFormRef.value.resetFields();
     };
     const xiugai = (prop) => {
-      changepeople.value = prop
-      dialogTableVisible1.value = true
+      if (store.state.current_userinfo.role === 'appuser') {
+        ElMessage.error('权限不足')
+      } else {
+        changepeople.value = prop
+        dialogTableVisible1.value = true
+      }
     }
     const adminupdate = () => {
       // console.log(changepeople.id);

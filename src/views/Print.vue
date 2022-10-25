@@ -46,7 +46,7 @@
 <script>
 import {mapState} from "vuex";
 import store from "../store";
-import {updateuserStatus} from "../api/getComponents";
+import {updateuserStatus, newpostupdatetoassign} from "../api/getComponents";
 
 export default {
   name: "Print",
@@ -73,6 +73,12 @@ export default {
       usermessage: (state) => {
         return store.state.user
       },
+      company: (state) => {
+        return store.state.company
+      },
+      station: (state) => {
+        return store.state.station
+      }
     })
   },
   methods: {
@@ -110,13 +116,12 @@ export default {
       if (this.printdata._id === ''){
         let params = store.state.newtaskid;
         if (this.printdata.status === '已发布') {
-          updateuserStatus(this.usermessage.company_id, params, this.token);
+          newpostupdatetoassign(this.company, this.station, params)
         }
       } else {
         let params = this.printdata._id;
         if (this.printdata.status === '已发布') {
-          updateuserStatus(this.usermessage.company_id, params, this.token);
-
+          newpostupdatetoassign(this.company, this.station, params)
         }
       }
       setTimeout("window.location.replace('published')",1000)

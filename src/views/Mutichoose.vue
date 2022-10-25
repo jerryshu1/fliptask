@@ -119,12 +119,20 @@ export default defineComponent({
       for (var i in keys) {
         let opera = []
         for (var j in risk_and_measure.value[keys[i]]) {
+          let risk = []
+          for (var k in risk_and_measure.value[keys[i]][j][0]['risks']){
+            risk.push(risk_and_measure.value[keys[i]][j][0]['risks'][k])
+          }
+          let measure = []
+          for (var l in risk_and_measure.value[keys[i]][j][0]['measures']){
+            measure.push(risk_and_measure.value[keys[i]][j][0]['measures'][l])
+          }
           opera.push({
             device: risk_and_measure.value[keys[i]][j][0].device,
             device_type: risk_and_measure.value[keys[i]][j][0].device_type,
             operation: risk_and_measure.value[keys[i]][j][0].operation,
-            risks: risk_and_measure.value[keys[i]][j][0].device.risks,
-            measures: risk_and_measure.value[keys[i]][j][0].device.measures,
+            risks: risk,
+            measures: measure,
             measure_type: risk_and_measure.value[keys[i]][j][0].measure_type,
           })
         }

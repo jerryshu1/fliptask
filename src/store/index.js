@@ -58,6 +58,12 @@ export default createStore({
         categorylist: [], //某电站下的所有线路
     },
     mutations: {
+        saveriskandmeasure(state, data){
+            state.riskandmeasure = data
+        },
+        saveprintdata(state, data){
+            state.printData = data
+        },
         savecategorylist(state,data){
             state.categorylist = data
         },

@@ -41,7 +41,7 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
-import { newpostlogin, newgetallcompany, newgetstation } from "../api/getComponents";
+import { newpostlogin, newgetallcompany, newgetstation, newgetcategorylist } from "../api/getComponents";
 
 export default defineComponent({
   name: "PageLogin",
@@ -99,7 +99,22 @@ export default defineComponent({
               })
             }
             if (res.role === 'stationadmin' || res.role === 'appuser') {
-              store.commit('savestation', res.station)
+              let params = {
+                city: res.company,
+                station: res.station,
+              };
+              newgetcategorylist(params).then((res) => {
+                let categorylist = []
+                if (res) {
+                  for (var i in res.categories) {
+                    categorylist.push({
+                      value: res.categories[i],
+                    });
+                  }
+                  store.commit('savecategorylist', categorylist)
+                }
+              })
+              store.commit('savestation1', res.station)
               store.commit('savecompany', res.company)
             }
             router.push({ name: "newsearch" });

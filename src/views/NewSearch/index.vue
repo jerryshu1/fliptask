@@ -316,9 +316,14 @@ export default defineComponent({
                 }
                 for (var j in userchoose.value) {
                     let key = userchoose.value[j]['task_name']
-                    newgetrisks(userchoose.value[j]).then((res) => {
+                    let params = {
+                        device: userchoose.value[j].device,
+                        device_type: userchoose.value[j].device_type,
+                        operation: userchoose.value[j].operation
+                    }
+                    newgetrisks(params).then((res) => {
                         if (res) {
-                            risk_and_measure.value[key].push([res[0]])
+                            risk_and_measure.value[key].push(res)
                         }
                     })
                 }

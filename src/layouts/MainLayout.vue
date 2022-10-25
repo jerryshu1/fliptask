@@ -15,8 +15,10 @@
             <el-option v-for="(item, index) in companylist" :key="index" :label="item" :value="item" />
           </el-select>
 
+          <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable disabled placeholder="请选择站点"
+            @select="handleSelect" v-if="current_userinfo.role === 'stationadmin' || current_userinfo.role === 'appuser'" />
           <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable placeholder="请选择站点"
-            @select="handleSelect" />
+            @select="handleSelect" v-else />
         </div>
         <q-btn-dropdown outline rounded no-caps icon-right="manage_accounts">
           <template #label>

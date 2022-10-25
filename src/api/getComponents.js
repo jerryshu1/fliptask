@@ -368,3 +368,23 @@ export const newgetcommontask = (company, station, params) => newdatarequest({
         'Authorization': 'Bearer ' + window.localStorage.getItem('token')
     }
 })
+//删除任务
+export const newdeletetask = (company, station, id) => newdatarequest({
+    url: '/ft/api/flipTasks/' + company + '/' + station + '/' + id,
+    method: 'delete',
+    headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+//更新状态至已派发
+export const newpostupdatetoassign = (company, station, id) => newdatarequest({
+    url: '/ft/api/flipTasks/' + company + '/' + station + '/' + id+'/updateStatusToAssigned', method: 'post', headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
+//更新状态至已完成
+export const newpostupdatetofinish = (company, station, id) => newdatarequest({
+    url: '/ft/api/flipTasks/' + company + '/' + station + '/' + id+'/updateStatusToFinished', method: 'post', headers: {
+        'Authorization': 'Bearer ' + window.localStorage.getItem('token')
+    }
+})
