@@ -209,6 +209,8 @@ export default defineComponent({
   color: white;
 }
 
+
+
 .selectgroup {
   display: flex;
   align-items: center;
@@ -226,4 +228,12 @@ export default defineComponent({
   margin-left: 10px;
   margin-right: 20px;
 }
+
+
+.q-item.q-router-link--active{
+  color : rgb(230, 181, 20) !important;
+
+}
+
+
 </style>

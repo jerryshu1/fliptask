@@ -134,7 +134,7 @@ export default {
         name: "published"
       };
       this.$router.push(location);
-    }
+    },
   }
 }
 </script>

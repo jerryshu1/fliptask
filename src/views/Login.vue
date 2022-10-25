@@ -74,6 +74,7 @@ export default defineComponent({
           if (res) {
             console.log(res)
             localStorage.setItem('token', res.token)
+            localStorage.setItem('role', res.role)
             store.commit('saveuserinfo', res)
             if (res.role === 'superadmin') {
               newgetallcompany().then((res1) => {
