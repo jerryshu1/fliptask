@@ -81,11 +81,7 @@ export default defineComponent({
         icon: "manage_search",
         link: "/newsearch",
       },
-      {
-        title: "用户中心",
-        icon: "people",
-        link: "/user",
-      },
+      
       {
         title: "已发布任务列表",
         icon: "apps",
@@ -95,7 +91,12 @@ export default defineComponent({
         title: "风险库中心",
         icon: "store",
         link: "/tasks",
-      }
+      },
+      {
+        title: "用户中心",
+        icon: "people",
+        link: "/user",
+      },
     ])
 
     const storeStateFns = mapState(["companylist", "stationlist", "company", "station", "current_userinfo"])
@@ -215,14 +216,14 @@ export default defineComponent({
 
 .choosecomp {
   width: 130px;
-  margin-right: 2%;
+  margin-right: 20px;
 }
 
-.el-autocomplete {
+.el-input {
   width: 130px;
   margin-top: 1%;
   margin-bottom: 2%;
   margin-left: 10px;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 </style>

@@ -11,7 +11,7 @@
         <el-steps style="width: 85%; margin-left: 7%; margin-top: 1%" direction="vertical" :active="active">
             <el-step title="请输入线路名称以及选择间隔单元">
                 <template v-slot:description>
-                    <div>
+                    <div class="xianlu">
                         <el-autocomplete v-model="current_category" :fetch-suggestions="querySearch" clearable
                             placeholder="请选择站点" @select="changexianlu" v-if="station !== ''" />
                     </div>
@@ -495,7 +495,7 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style lang="less">
 .el-steps .el-step {
     flex-basis: auto !important;
 }
@@ -507,9 +507,15 @@ export default defineComponent({
 }
 
 .el-autocomplete {
-    width: 20%;
     margin-top: 1%;
     margin-bottom: 2%;
+}
+
+.xianlu{
+    .el-input{
+        width: 200px;
+    }
+    
 }
 
 .selectgroup {
@@ -547,4 +553,5 @@ export default defineComponent({
     margin-top: 2%;
     background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
+
 </style>
