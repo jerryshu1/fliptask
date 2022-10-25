@@ -114,7 +114,6 @@ import { defineComponent, onMounted, ref, reactive, computed } from "vue";
 import { useStore, mapState } from "vuex";
 import { List } from "@element-plus/icons";
 import {
-  getoneusers,
   newgetusersinfo,
   newgetoneuserinfo,
   newpostuserreset,
@@ -276,14 +275,6 @@ export default defineComponent({
         })
 
       }
-    }
-    const getappuser = () => {
-      userinfos.value = []
-      getoneusers(store.state.user.id).then((res) => {
-        if (res) {
-          userinfos.value.push(res.user)
-        }
-      })
     }
     const adduser = () => {
       let current_userinfo = store.state.current_userinfo
@@ -507,7 +498,6 @@ export default defineComponent({
       xiugai,
       adminupdate,
       Changepassword,
-      getappuser,
       newgetusers,
       ...storeState,
       List,

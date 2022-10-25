@@ -1,13 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import Index from "../views/Index.vue";
 import Login from "../views/Login.vue";
 import User from "../views/User.vue";
-import Choose from "../views/Choose.vue";
 import Mutichoose from "../views/Mutichoose.vue";
 import Published from "../views/Published.vue";
 import Print from "../views/Print.vue";
-import Register from "../views/Register.vue";
 import Tasks from "../views/Tasks.vue";
 import NewSearch from "../views/NewSearch/index.vue"
 
@@ -32,22 +29,9 @@ const routes = [
         // },
       },
       {
-        path: "index",
-        name: "index",
-        component: Index,
-        meta: {
-          keepAlive: true,
-        },
-      },
-      {
         path: "user",
         name: "user",
         component: User,
-      },
-      {
-        path: "choose",
-        name: "choose",
-        component: Choose,
       },
       {
         path: "mutichoose",
@@ -70,11 +54,6 @@ const routes = [
     path: "/login",
     name: "login",
     component: Login,
-  },
-  {
-    path: "/register",
-    name: "register",
-    component: Register,
   },
   {
     path: "/print",

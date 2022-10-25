@@ -49,7 +49,7 @@
 <script>
 import {mapState} from "vuex";
 import store from "../store";
-import {updateuserStatus, newpostupdatetoassign} from "../api/getComponents";
+import { newpostupdatetoassign } from "../api/getComponents";
 
 export default {
   name: "Print",
@@ -127,7 +127,7 @@ export default {
           newpostupdatetoassign(this.company, this.station, params)
         }
       }
-      setTimeout("window.location.replace('published')",1000)
+      // setTimeout("window.location.replace('published')",1000)
     },
     goPublished() {
       let location = {

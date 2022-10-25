@@ -88,7 +88,7 @@
 <script>
 import { ref } from "vue";
 import { mapState, useStore } from "vuex";
-import { deletetask, newgetrisks } from "../api/getComponents";
+import { newgetrisks } from "../api/getComponents";
 import store from "../store";
 import { List } from "@element-plus/icons";
 

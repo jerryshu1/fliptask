@@ -78,8 +78,7 @@
 import { ref, defineComponent, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import SearchBar from "../components/search/SearchBar.vue";
-import SearchList from "../components/search/SearchList.vue";
+
 import { List } from "@element-plus/icons";
 import { newposttask } from '../api/getComponents'
 
@@ -183,9 +182,7 @@ export default defineComponent({
       goPublished,
       reload,
       adminupdate,
-
-      SearchBar,
-      SearchList,
+      
       List,
     };
   },

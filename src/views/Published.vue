@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import { gettableData, postRiskData, newgettasklist, newdeletetask, newpostupdatetofinish, newposttask } from "../api/getComponents";
+import { newgettasklist, newdeletetask, newpostupdatetofinish, newposttask } from "../api/getComponents";
 import { List } from "@element-plus/icons";
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { useRouter } from 'vue-router'
