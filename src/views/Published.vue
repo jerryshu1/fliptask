@@ -440,7 +440,9 @@ export default defineComponent({
       })
     }
     onMounted(() => {
+
       gettasklist()
+
     })
 
     return {

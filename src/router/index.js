@@ -1,15 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import store from "../store/index.js";
 
 import Index from "../views/Index.vue";
 import Login from "../views/Login.vue";
-import Search from "../views/Search.vue";
 import User from "../views/User.vue";
 import Choose from "../views/Choose.vue";
 import Mutichoose from "../views/Mutichoose.vue";
 import Published from "../views/Published.vue";
 import Print from "../views/Print.vue";
-import Mutisearch from "../views/Mutisearch.vue";
 import Register from "../views/Register.vue";
 import Tasks from "../views/Tasks.vue";
 import NewSearch from "../views/NewSearch/index.vue"
@@ -23,15 +20,7 @@ const routes = [
         path: "",
         name: "home",
         redirect: (to) => {
-          return { path: "/search", query: { q: to.params.searchText } };
-        },
-      },
-      {
-        path: "search",
-        name: "search",
-        component: Search,
-        meta: {
-          keepAlive: true,
+          return { path: "/login", query: { q: to.params.searchText } };
         },
       },
       {
@@ -41,14 +30,6 @@ const routes = [
         // meta: {
         //   keepAlive: true,
         // },
-      },
-      {
-        path: "mutisearch",
-        name: "mutisearch",
-        component: Mutisearch,
-        meta: {
-          keepAlive: true,
-        },
       },
       {
         path: "index",
@@ -123,7 +104,7 @@ const router = createRouter({
 //     isAuthenticated = store.state.jwtToken;
 //     isrole = store.state.user.role;
 //   }
-//   if (to.path === "/search" && isrole === "appuser"){
+//   if (to.path === "/newsearch" && isrole === "appuser"){
 //     this.$message({
 //       type: 'error',
 //       message: '权限不足'
@@ -134,10 +115,7 @@ const router = createRouter({
 //     alert('权限不足')
 //     next({path: "/published" });
 //   }
-//   if (to.path === "/search" && isrole === "superadmin"){
-//     next({path: "/user" });
-//   }
-//   if (to.path === "/mutisearch" && isrole === "superadmin"){
+//   if (to.path === "/newsearch" && isrole === "superadmin"){
 //     next({path: "/user" });
 //   }
 //   if (to.path === "/tasks" && isrole === "appuser"){
@@ -153,5 +131,13 @@ const router = createRouter({
 //     next();
 //   }
 // });
+
+// router.beforeEach((to, from, next) => {
+//   let isAuthenticated = !!localStorage.getItem('userInfo');
+//   if (to.path !== "/login" && isAuthenticated === '') {
+//     next({ path: "/login" });
+//   }
+// })
+
 
 export default router;
