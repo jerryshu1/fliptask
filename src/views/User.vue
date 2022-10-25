@@ -47,7 +47,7 @@
       </span>
     </el-dialog>
     <!-- 新增分公司管理员 -->
-    <el-dialog title="分公司创建新用户" v-model="dialogTableVisible2" width="40%">
+    <el-dialog title="分公司创建新用户" v-model="dialogTableVisible2" width="30%">
       <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="100px" class="demo-ruleForm">
         <el-form-item label="工号" prop="id">
           <el-input v-model="ruleForm.id" style="width: 300px" placeholder="请输入登录工号"></el-input>
@@ -75,20 +75,20 @@
     </el-dialog>
 
     <!-- 新建站点管理员 -->
-    <el-dialog title="站点创建新用户" v-model="dialogTableVisible3" width="40%">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="80px" class="demo-ruleForm">
+    <el-dialog title="站点创建新用户" v-model="dialogTableVisible3" width="30%">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="100px" class="demo-ruleForm">
         <el-form-item label="账户" prop="id">
-          <el-input v-model="ruleForm.id" placeholder="请输入登录工号"></el-input>
+          <el-input v-model="ruleForm.id" style="width: 300px"  placeholder="请输入登录工号"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="ruleForm.password" placeholder="请输入登录密码" type="password">
+          <el-input v-model="ruleForm.password" style="width: 300px"  placeholder="请输入登录密码" type="password">
           </el-input>
         </el-form-item>
         <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入员工姓名"></el-input>
+          <el-input v-model="ruleForm.name" style="width: 300px"  placeholder="请输入员工姓名"></el-input>
         </el-form-item>
         <el-form-item label="联系方式" prop="phone">
-          <el-input v-model="ruleForm.phone" placeholder="请输入员工联系电话"></el-input>
+          <el-input v-model="ruleForm.phone" style="width: 300px"  placeholder="请输入员工联系电话"></el-input>
         </el-form-item>
         <el-form-item label="员工权限" prop="role">
           <el-radio-group v-model="ruleForm.role">
@@ -547,4 +547,6 @@ export default defineComponent({
   color: #ffffff;
   background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
+
+
 </style>

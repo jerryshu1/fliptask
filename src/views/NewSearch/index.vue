@@ -501,7 +501,6 @@ export default defineComponent({
 }
 
 .el-select {
-    width: 20%;
     margin-top: 1%;
     margin-bottom: 2%;
 }
