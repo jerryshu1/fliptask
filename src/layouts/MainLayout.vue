@@ -115,6 +115,8 @@ export default defineComponent({
       window.location.replace("/login")
     };
     const getstationList = (value) => {
+      store.commit('clearstationlist')
+      current_station.value = ''
       newgetstation(value).then((res1) => {
         let stationlist = []
         if (res1) {

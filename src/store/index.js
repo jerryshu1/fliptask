@@ -16,6 +16,10 @@ export default createStore({
         newtaskid: '',
     },
     mutations: {
+        clearstationlist(state){
+            state.stationlist = []
+            state.station = ''
+        },
         savenewtaskid(state, data){
             state.newtaskid = data
         },
