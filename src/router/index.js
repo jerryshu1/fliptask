@@ -59,6 +59,13 @@ const routes = [
     path: "/print",
     name: "print",
     component: Print,
+    beforeEnter: function(to, from, next){
+			if(from!=='published'){
+
+      }else{
+        next()
+      }
+		}
   },
   // Always leave this as last one,
   // but you can also remove it
