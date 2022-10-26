@@ -99,6 +99,7 @@ const router = createRouter({
   routes,
 });
 
+
 // router.beforeEach((to, from, next) => {
 //   var isAuthenticated = '';
 //   var isrole = '';
@@ -137,12 +138,15 @@ const router = createRouter({
 //   }
 // });
 
-// router.beforeEach((to, from, next) => {
-//   let isAuthenticated = !!localStorage.getItem('userInfo');
-//   if (to.path !== "/login" && isAuthenticated === '') {
-//     next({ path: "/login" });
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  if(to.name === 'login'){
+    next()
+  } else if(sessionStorage.getItem('token')){
+    next()
+   } else {
+    next({name: 'login'})
+   }
+})
 
 
 export default router;

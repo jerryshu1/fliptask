@@ -77,8 +77,8 @@ export default defineComponent({
         };
         newpostlogin(creds).then((res) => {
           if (res) {
-            localStorage.setItem('token', res.token)
-            localStorage.setItem('role', res.role)
+            sessionStorage.setItem('token', res.token)
+            sessionStorage.setItem('role', res.role)
             store.commit('clearall')
             store.commit('saveuserinfo', res)
             
