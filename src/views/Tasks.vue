@@ -41,7 +41,7 @@
     <!--  <el-button v-if="this.usermessage.role === 'superadmin'" @click="addmutitask" style="margin-left: 350px">新增复合型任务</el-button>-->
     <!--  <el-button v-else-if="this.usermessage.role === 'admin'" @click="adminadd" style="margin-left: 350px">新增任务表任务</el-button>-->
     <!--  <el-button v-if="this.usermessage.role === 'superadmin'" @click="superadmindeletetask" style="margin-left: 350px">删除任务</el-button>-->
-    <el-button class="homtbutton" v-if="this.usermessage.role === 'admin'" @click="admindeletetask">删除任务
+    <el-button class="homtbutton" v-if="usermessage.role === 'admin'" @click="admindeletetask">删除任务
     </el-button>
     <el-dialog v-model="dialogTableVisible" title="新增单步任务" center>
       <div>
@@ -134,7 +134,7 @@ export default {
   computed: {
     ...mapState({
       usermessage: (state) => {
-        return state.user;
+        return state.current_userinfo;
       },
       supertasklist: (state) => {
         return state.supertasklist;

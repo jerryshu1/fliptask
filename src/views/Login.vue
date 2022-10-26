@@ -37,11 +37,11 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
-import { useStore } from "vuex";
+import { defineComponent, ref, computed } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
-import { newpostlogin, newgetallcompany, newgetstation, newgetcategorylist } from "../api/getComponents";
+import { newpostlogin, newgetallcompany, newgetstation, newgetcategorylist, newgetoneuserinfo } from "../api/getComponents";
+import { useStore, mapState } from "vuex";
 
 export default defineComponent({
   name: "PageLogin",
@@ -54,7 +54,12 @@ export default defineComponent({
     const id = ref("");
     const password = ref("");
     const submitting = ref(false);
-
+    const storeStateFns = mapState(["current_userinfo"])
+    const storeState = {};
+    Object.keys(storeStateFns).forEach((fnKey) => {
+      const fn = storeStateFns[fnKey].bind({ $store: store });
+      storeState[fnKey] = computed(fn);
+    })
     const onSubmit = () => {
       if (id.value == "" || password.value == "") {
         $q.notify({
@@ -72,11 +77,14 @@ export default defineComponent({
         };
         newpostlogin(creds).then((res) => {
           if (res) {
-            console.log(res)
             localStorage.setItem('token', res.token)
             localStorage.setItem('role', res.role)
             store.commit('saveuserinfo', res)
+            
             if (res.role === 'superadmin') {
+              newgetoneuserinfo('any', 'any', res.id).then((res333) => {
+                store.commit('saveuserinfo',res333.user)
+              })
               newgetallcompany().then((res1) => {
                 if (res1) {
                   store.commit('savecompanylist', res1.companies)
@@ -86,6 +94,9 @@ export default defineComponent({
             }
             if (res.role === 'companyadmin') {
               store.commit('savecompany', res.company)
+              newgetoneuserinfo(res.company, 'any', res.id).then((res333) => {
+                store.commit('saveuserinfo',res333.user)
+              })
               newgetstation(res.company).then((res1) => {
                 let stationlist = []
                 if (res1) {
@@ -100,6 +111,9 @@ export default defineComponent({
               })
             }
             if (res.role === 'stationadmin' || res.role === 'appuser') {
+              newgetoneuserinfo(res.company,res.station, res.id).then((res333) => {
+                store.commit('saveuserinfo',res333.user)
+              })
               let params = {
                 city: res.company,
                 station: res.station,

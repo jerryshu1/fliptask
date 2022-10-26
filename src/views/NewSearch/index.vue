@@ -514,7 +514,6 @@ export default defineComponent({
     .el-input{
         width: 200px;
     }
-    
 }
 
 .selectgroup {

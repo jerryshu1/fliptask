@@ -15,14 +15,15 @@
             <el-option v-for="(item, index) in companylist" :key="index" :label="item" :value="item" />
           </el-select>
 
-          <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable disabled placeholder="请选择站点"
-            @select="handleSelect" v-if="current_userinfo.role === 'stationadmin' || current_userinfo.role === 'appuser'" />
+          <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable disabled
+            placeholder="请选择站点" @select="handleSelect"
+            v-if="current_userinfo.role === 'stationadmin' || current_userinfo.role === 'appuser'" />
           <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable placeholder="请选择站点"
             @select="handleSelect" v-else />
         </div>
         <q-btn-dropdown outline rounded no-caps icon-right="manage_accounts">
           <template #label>
-            <div class="row items-center no-wrap">{{ user }}</div>
+            <div class="row items-center no-wrap">{{ current_userinfo.name }}</div>
           </template>
           <q-list>
             <q-item-label header>Account</q-item-label>
@@ -62,11 +63,11 @@
 import MenuLink from "../components/MenuLink.vue";
 import { newgetstation, newgetcategorylist } from "../api/getComponents";
 
-import { onMounted, ref, computed, defineComponent } from "vue";
-import { useStore, mapState } from "vuex";
+import { onMounted, ref, computed,defineComponent } from "vue";
+import { useStore,mapState} from "vuex";
 export default defineComponent({
   name: "MainLayout",
-  components:{
+  components: {
     MenuLink
   },
 
@@ -75,13 +76,14 @@ export default defineComponent({
     const user = ref('')
     const current_company = ref('')
     const current_station = ref('')
+    const userinfos=ref([])
     const linksList = ref([
       {
         title: "任务派发",
         icon: "manage_search",
         link: "/newsearch",
       },
-      
+
       {
         title: "已发布任务列表",
         icon: "apps",
@@ -99,12 +101,14 @@ export default defineComponent({
       },
     ])
 
-    const storeStateFns = mapState(["companylist", "stationlist", "company", "station", "current_userinfo"])
+    const storeStateFns = mapState([ "current_userinfo"])
     const storeState = {};
     Object.keys(storeStateFns).forEach((fnKey) => {
       const fn = storeStateFns[fnKey].bind({ $store: store });
       storeState[fnKey] = computed(fn);
     })
+
+  
     const test = () => {
       store.commit("clearnewadddata");
     }
@@ -168,6 +172,7 @@ export default defineComponent({
     onMounted(() => {
       current_company.value = store.state.company
       current_station.value = store.state.station
+      
     })
 
     return {
@@ -176,6 +181,7 @@ export default defineComponent({
       user,
       current_company,
       current_station,
+      userinfos,
       signout,
       getstationList,
       querySearch,
@@ -233,10 +239,8 @@ export default defineComponent({
 }
 
 
-.q-item.q-router-link--active{
-  color : rgb(230, 181, 20) !important;
+.q-item.q-router-link--active {
+  color: rgb(230, 181, 20) !important;
 
 }
-
-
 </style>
