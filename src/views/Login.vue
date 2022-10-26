@@ -133,7 +133,11 @@ export default defineComponent({
               store.commit('savestation1', res.station)
               store.commit('savecompany', res.company)
             }
-            router.push({ name: "newsearch" });
+            if (res.role === 'appuser') {
+              router.push({ name: "published" })
+            } else {
+              router.push({ name: "newsearch" })
+            }
           } else {
             $q.notify({
               position: "bottom-right",

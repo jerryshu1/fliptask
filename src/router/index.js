@@ -24,9 +24,13 @@ const routes = [
         path: "newsearch",
         name: "newsearch",
         component: NewSearch,
-        // meta: {
-        //   keepAlive: true,
-        // },
+        beforeEnter: function(to, from, next){
+          if(window.localStorage.getItem('role') === 'appuser'){
+            next({ name: from.name })
+          }else{
+            next()
+          }
+        }
       },
       {
         path: "user",
@@ -37,6 +41,14 @@ const routes = [
         path: "mutichoose",
         name: "mutichoose",
         component: Mutichoose,
+        beforeEnter: function(to, from, next){
+
+          if(from.fullPath !== '/newsearch'){
+            next({ name: from.name })
+          }else{
+            next()
+          }
+        }
       },
       {
         path: "published",
@@ -47,6 +59,13 @@ const routes = [
         path: "tasks",
         name: "tasks",
         component: Tasks,
+        beforeEnter: function(to, from, next){
+          if(window.localStorage.getItem('role') === 'appuser'){
+            next({ name: from.name })
+          }else{
+            next()
+          }
+        }
       }
     ],
   },
@@ -60,9 +79,8 @@ const routes = [
     name: "print",
     component: Print,
     beforeEnter: function(to, from, next){
-      console.log(from)
 			if(from.fullPath !== '/published'){
-        
+        next({ name: from.name })
       }else{
         next()
       }

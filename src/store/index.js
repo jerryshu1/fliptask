@@ -17,18 +17,18 @@ export default createStore({
     },
     mutations: {
         clearall(state){
-            state.printData = [],
-            state.riskandmeasure = {},
-            state.risk_and_measure = {},
-            state.lens = {},
-            state.companyinfo = {},
-            state.current_userinfo = {},
-            state.companylist = [],
-            state.stationlist = [],
-            state.station = '',
-            state.company = '',
-            state.categorylist = [], //某电站下的所有线路
-            state.newtaskid = '',
+            state.printData = []
+            state.riskandmeasure = {}
+            state.risk_and_measure = {}
+            state.lens = {}
+            state.companyinfo = {}
+            state.current_userinfo = {}
+            state.companylist = []
+            state.stationlist = []
+            state.station = ''
+            state.company = ''
+            state.categorylist = []
+            state.newtaskid = ''
         },
         clearstation(state){
             state.station = ''

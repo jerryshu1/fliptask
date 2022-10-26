@@ -14,7 +14,7 @@
       <el-table-column prop="company" label="所属公司" align="center" />
       <el-table-column prop="station" label="所属电站" align="center" />
       <el-table-column prop="role" label="角色" align='center' />
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" v-if="current_userinfo.role !== 'appuser'">
         <template #default="scope">
           <el-button @click="Deleteuser(scope.row)" type="text" size="small" v-if="scope.row.role !== '超级管理员'">
             删除用户
@@ -24,6 +24,15 @@
             修改密码
           </el-button>
           <el-button type="text" size="small" @click="xiugai(scope.row)" v-if="scope.row.role !== '超级管理员'">修改用户信息
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" v-else>
+        <template #default="scope">
+          <el-button @click="Changepassword(scope.row)" type="text" size="small">
+            修改密码
+          </el-button>
+          <el-button type="text" size="small" @click="xiugai(scope.row)">修改用户信息
           </el-button>
         </template>
       </el-table-column>

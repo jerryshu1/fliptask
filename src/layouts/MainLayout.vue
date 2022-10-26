@@ -44,6 +44,8 @@
 
     <q-drawer class="asidemenu" v-model="leftDrawerOpen" bordered>
       <q-list>
+        <menu-link v-for="links in linklist2" :key="links.title" v-bind="links" @click="test"
+          v-if="current_userinfo.role !== 'appuser'" />
         <menu-link v-for="link in linksList" :key="link.title" v-bind="link" @click="test" />
       </q-list>
     </q-drawer>
@@ -63,8 +65,8 @@
 import MenuLink from "../components/MenuLink.vue";
 import { newgetstation, newgetcategorylist } from "../api/getComponents";
 
-import { onMounted, ref, computed,defineComponent } from "vue";
-import { useStore,mapState} from "vuex";
+import { onMounted, ref, computed, defineComponent } from "vue";
+import { useStore, mapState } from "vuex";
 export default defineComponent({
   name: "MainLayout",
   components: {
@@ -76,23 +78,12 @@ export default defineComponent({
     const user = ref('')
     const current_company = ref('')
     const current_station = ref('')
-    const userinfos=ref([])
+    const userinfos = ref([])
     const linksList = ref([
-      {
-        title: "任务派发",
-        icon: "manage_search",
-        link: "/newsearch",
-      },
-
       {
         title: "已发布任务列表",
         icon: "apps",
         link: "/published",
-      },
-      {
-        title: "风险库中心",
-        icon: "store",
-        link: "/tasks",
       },
       {
         title: "用户中心",
@@ -100,15 +91,25 @@ export default defineComponent({
         link: "/user",
       },
     ])
+    const linklist2 = ref([
+      {
+        title: "任务派发",
+        icon: "manage_search",
+        link: "/newsearch",
+      }, {
+        title: "风险库中心",
+        icon: "store",
+        link: "/tasks",
+      }])
 
-    const storeStateFns = mapState([ "current_userinfo"])
+    const storeStateFns = mapState(["current_userinfo", "companylist", "stationlist"])
     const storeState = {};
     Object.keys(storeStateFns).forEach((fnKey) => {
       const fn = storeStateFns[fnKey].bind({ $store: store });
       storeState[fnKey] = computed(fn);
     })
 
-  
+
     const test = () => {
       store.commit("clearnewadddata");
     }
@@ -172,11 +173,12 @@ export default defineComponent({
     onMounted(() => {
       current_company.value = store.state.company
       current_station.value = store.state.station
-      
+
     })
 
     return {
       linksList,
+      linklist2,
       leftDrawerOpen: ref(true),
       user,
       current_company,
