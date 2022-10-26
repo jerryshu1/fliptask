@@ -79,6 +79,7 @@ export default defineComponent({
           if (res) {
             localStorage.setItem('token', res.token)
             localStorage.setItem('role', res.role)
+            store.commit('clearall')
             store.commit('saveuserinfo', res)
             
             if (res.role === 'superadmin') {

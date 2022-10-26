@@ -60,8 +60,9 @@ const routes = [
     name: "print",
     component: Print,
     beforeEnter: function(to, from, next){
-			if(from!=='published'){
-
+      console.log(from)
+			if(from.fullPath !== '/published'){
+        
       }else{
         next()
       }
