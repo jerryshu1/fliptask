@@ -131,6 +131,7 @@ export default defineComponent({
       })
     };
     const querySearch = (queryString, cb) => {
+      store.commit('clearstation')
       let searchlist = store.state.stationlist
       const results = queryString
         ? searchlist.filter(createFilter(queryString))
