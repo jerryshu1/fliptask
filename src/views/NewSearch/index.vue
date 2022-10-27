@@ -57,6 +57,7 @@
             </el-step>
             <el-step title="请选择操作对象">
                 <template v-slot:description>
+                    <span>{{current_task_use[current_step]}}</span>
                     <div
                         v-if="this.current_tasks.length !== 0 || this.current_task !== null || this.end_status !== '' || this.showtabledata.length !== 0">
                         <el-table ref="multipleTableRef" :data="showtabledata[0]" :border="parentBorder"
