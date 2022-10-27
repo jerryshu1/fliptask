@@ -507,6 +507,12 @@ export default defineComponent({
 }
 
 .xuanzegroup{
+    .el-select{
+        width: 164px;
+    }
+    .el-input__wrapper{
+        width: 164px;
+    }
     .el-input__inner{
         width: 120px;
     }
