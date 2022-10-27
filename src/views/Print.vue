@@ -11,9 +11,9 @@
           {{ printdata.task_name }}
         </td>
         <th style="width: 130px;">执行人员</th>
-        <td width="130px" colspan="1" rowspan="1"></td>
+        <td width="130px" colspan="1" rowspan="1" contenteditable></td>
         <th style="width: 130px;">执行时间</th>
-        <td width="130px" colspan="1" rowspan="1"></td>
+        <td width="130px" colspan="1" rowspan="1" contenteditable></td>
         </tbody>
       </table>
       <table border="1" align="center" cellpadding="10" cellspacing="0" width="800px">

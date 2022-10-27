@@ -57,13 +57,13 @@
           <div style="height: 30px; font-size: 20px; color: #7cb342;font-weight:800;">{{ data }}</div>
           <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
           <div v-for="(riskprevention, index1) in this.generalmeasures.risks[index]" :key="index1">
-            <el-checkbox size="small" style="margin-top:10px" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
-              border />
+            <el-checkbox size="small" style="margin-top:10px" v-model="generaldata.risks" :label=riskprevention
+              :val="riskprevention" checked border />
           </div>
           <div style="height: 20px; font-size: 16px;">预控措施</div>
           <div v-for="(measureprevention, index2) in this.generalmeasures.measures[index]" :key="index2">
-            <el-checkbox size="small" style="margin-top:10px"  v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
-              checked border />
+            <el-checkbox size="small" style="margin-top:10px" v-model="generaldata.measures" :label=measureprevention
+              :val="measureprevention" checked border />
           </div>
         </div>
         <el-input v-model="input2" placeholder="请输入工单任务名称" />
@@ -109,13 +109,13 @@
           <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
           <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
           <div v-for="(riskprevention, index1) in this.generalmeasures.risks[index]" :key="index1">
-            <el-checkbox size="small" style="margin-top:10px"  v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
-              border />
+            <el-checkbox size="small" style="margin-top:10px" v-model="generaldata.risks" :label=riskprevention
+              :val="riskprevention" checked border />
           </div>
           <div style="height: 20px; font-size: 16px;">预控措施</div>
           <div v-for="(measureprevention, index2) in this.generalmeasures.measures[index]" :key="index2">
-            <el-checkbox size="small" style="margin-top:10px"  v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
-              checked border />
+            <el-checkbox size="small" style="margin-top:10px" v-model="generaldata.measures" :label=measureprevention
+              :val="measureprevention" checked border />
           </div>
         </div>
         <el-button @click="goPrint" style="margin-top: 10px;margin-left: 50%">打印</el-button>
@@ -128,7 +128,7 @@
 <script>
 import { newgettasklist, newdeletetask, newpostupdatetofinish, newposttask } from "../api/getComponents";
 import { List } from "@element-plus/icons";
-import { defineComponent, ref, computed, onMounted } from "vue";
+import { defineComponent, ref, computed, onMounted, watch } from "vue";
 import { useRouter } from 'vue-router'
 import { useStore, mapState } from "vuex";
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -173,7 +173,7 @@ export default defineComponent({
     const publishedData = ref([])
     const multipleSelection = ref([])
     const signaldata = ref({})
-    const input1 =ref('')
+    const input1 = ref('')
     const input2 = ref('')
     const task_name = ref('')
     const testdata = ref([]) //预览数据
@@ -281,6 +281,8 @@ export default defineComponent({
             }
           }
           publishedData.value = publishedData.value.reverse();
+        } else {
+          publishedData.value = []
         }
       })
     }
@@ -437,8 +439,17 @@ export default defineComponent({
         }
       })
     }
+
+    watch(() => store.state.station, (val, old) => {
+      if (val) {
+        gettasklist()
+      } else {
+        publishedData.value = []
+      }
+    })
+
     onMounted(() => {
-      if (store.state.company === '' || store.state.station === ''){
+      if (store.state.company === '' || store.state.station === '') {
         ElMessage.info('请先选择需要查看的分公司以及站点')
         window.history.go(-1)
       } else {

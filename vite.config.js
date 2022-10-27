@@ -5,7 +5,7 @@ import { quasar, transformAssetUrls } from "@quasar/vite-plugin";
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    port: 8080,
+    port: 3000,
     // proxy:{
     //   '/api': 'http://192.168.1.48:4080'
     // }
@@ -21,7 +21,7 @@ export default defineConfig({
     }),
     
   ],
-  // server: {
-  //   host: '0.0.0.0'
-  // },
+  server: {
+    host: '0.0.0.0'
+  },
 });

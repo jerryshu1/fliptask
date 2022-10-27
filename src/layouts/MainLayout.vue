@@ -67,6 +67,8 @@ import { newgetstation, newgetcategorylist } from "../api/getComponents";
 
 import { onMounted, ref, computed, defineComponent } from "vue";
 import { useStore, mapState } from "vuex";
+import { ElMessage } from "element-plus";
+import { useRoute } from "vue-router";
 export default defineComponent({
   name: "MainLayout",
   components: {
@@ -109,9 +111,10 @@ export default defineComponent({
       storeState[fnKey] = computed(fn);
     })
 
+    const route = useRoute()
 
     const test = () => {
-      
+
     }
     const signout = () => {
       sessionStorage.clear();
@@ -160,13 +163,18 @@ export default defineComponent({
       newgetcategorylist(params).then((res) => {
         let categorylist = []
         if (res) {
-          for (var i in res.categories) {
-            categorylist.push({
-              value: res.categories[i],
-            });
+          if (res.categories === null) {
+            ElMessage.info('请求错误，请重新选择')
+            current_station.value = ''
+          } else {
+            for (var i in res.categories) {
+              categorylist.push({
+                value: res.categories[i],
+              });
+            }
+            store.commit('savecategorylist', categorylist)
+            store.commit('savestation1', value.value)
           }
-          store.commit('savecategorylist', categorylist)
-          store.commit('savestation1', value.value)
         }
       })
     }
