@@ -61,7 +61,7 @@
     <button class="hobutton1" @click="goPublished">确认发布</button>
     <button class="hobutton1" @click="reload">取消任务发布</button>
   </div>
-  <el-dialog title="请选择任务派遣人" v-model="dialogVisible" width="30%">
+  <el-dialog title="请填写任务名" v-model="dialogVisible" width="30%">
     <el-form ref="form" :model="form" label-position="right" label-width="auto">
       <el-form-item label="请输入工单任务名" prop="id">
         <el-input v-model="input1" style="width: 65%;"></el-input>

@@ -550,13 +550,27 @@ export default defineComponent({
   margin-left: 3%;
 }
 
+
 .hmebutton {
   width: 100px;
   height: 40px;
   font-size: calc(100vw * 16 / 1920);
   margin-top: 20px;
+  margin-left: 15%;
   color: #ffffff;
   background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
+}
+
+.el-message-box .el-input__inner{
+  width: 250px;
+}
+
+.el-dialog{
+  width: 500px;
+}
+
+.el-dialog .el-input__inner{
+  width: 250px;
 }
 
 

@@ -54,15 +54,15 @@
       <!-- 复合打印 -->
       <el-dialog v-model="dialogTableVisible2" title="通用措施风险预控选择" width="95%" center>
         <div v-for="(data, index) in commonnames" :key="index">
-          <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
+          <div style="height: 30px; font-size: 20px; color: #7cb342;font-weight:800;">{{ data }}</div>
           <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
           <div v-for="(riskprevention, index1) in this.generalmeasures.risks[index]" :key="index1">
-            <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
+            <el-checkbox size="small" style="margin-top:10px" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
               border />
           </div>
           <div style="height: 20px; font-size: 16px;">预控措施</div>
           <div v-for="(measureprevention, index2) in this.generalmeasures.measures[index]" :key="index2">
-            <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
+            <el-checkbox size="small" style="margin-top:10px"  v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
               checked border />
           </div>
         </div>
@@ -109,12 +109,12 @@
           <div style="height: 30px; font-size: 20px; color: #7cb342">{{ data }}</div>
           <div style="height: 20px; font-size: 16px;">存在的主要风险</div>
           <div v-for="(riskprevention, index1) in this.generalmeasures.risks[index]" :key="index1">
-            <el-checkbox size="small" v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
+            <el-checkbox size="small" style="margin-top:10px"  v-model="generaldata.risks" :label=riskprevention :val="riskprevention" checked
               border />
           </div>
           <div style="height: 20px; font-size: 16px;">预控措施</div>
           <div v-for="(measureprevention, index2) in this.generalmeasures.measures[index]" :key="index2">
-            <el-checkbox size="small" v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
+            <el-checkbox size="small" style="margin-top:10px"  v-model="generaldata.measures" :label=measureprevention :val="measureprevention"
               checked border />
           </div>
         </div>
