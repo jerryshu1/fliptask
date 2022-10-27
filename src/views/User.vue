@@ -354,7 +354,7 @@ export default defineComponent({
     // 分公司管理员
     const submitForm1 = () => {
       let company = store.state.company
-      console.log(company);
+
       if (ruleForm.id === '' || ruleForm.password === '' || ruleForm.password.length <= 8 || ruleForm.name === '') {
         ElMessage({
           message: '信息不足',

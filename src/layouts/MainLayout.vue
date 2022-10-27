@@ -111,7 +111,7 @@ export default defineComponent({
 
 
     const test = () => {
-      store.commit("clearnewadddata");
+      
     }
     const signout = () => {
       sessionStorage.clear();

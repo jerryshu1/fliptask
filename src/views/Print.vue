@@ -119,15 +119,22 @@ export default {
       if (this.printdata._id === ''){
         let params = store.state.newtaskid;
         if (this.printdata.status === '已发布') {
-          newpostupdatetoassign(this.company, this.station, params)
+          newpostupdatetoassign(this.company, this.station, params).then((res) => {
+            setTimeout("window.location.replace('published')",500)
+          })
+        } else {
+          setTimeout("window.location.replace('published')",500)
         }
       } else {
         let params = this.printdata._id;
         if (this.printdata.status === '已发布') {
-          newpostupdatetoassign(this.company, this.station, params)
+          newpostupdatetoassign(this.company, this.station, params).then((res) => {
+            setTimeout("window.location.replace('published')",500)
+          })
+        } else {
+          setTimeout("window.location.replace('published')",500)
         }
       }
-      // setTimeout("window.location.replace('published')",1000)
     },
     goPublished() {
       let location = {

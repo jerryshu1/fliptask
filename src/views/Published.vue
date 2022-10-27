@@ -343,8 +343,6 @@ export default defineComponent({
       for (var r in printdata.value.risks) {
         if (finaldata.risks.indexOf(printdata.value.risks[r]) === -1) {
           finaldata.risks.push(printdata.value.risks[r])
-        }
-        if (finaldata.measures.indexOf(printdata.value.measures[r]) === -1) {
           finaldata.measures.push(printdata.value.measures[r])
         }
       }
@@ -440,7 +438,10 @@ export default defineComponent({
       })
     }
     onMounted(() => {
-
+      if (store.state.company === '' || store.state.station === ''){
+        ElMessage.info('请先选择需要查看的分公司以及站点')
+        window.history.go(-1)
+      }
       gettasklist()
 
     })
