@@ -473,6 +473,7 @@ export default defineComponent({
       republished,
 
       List,
+      ...storeState,
     }
   },
 })
