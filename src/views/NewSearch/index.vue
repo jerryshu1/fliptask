@@ -9,11 +9,11 @@
             <p>任务派发</p>
         </div>
         <el-steps style="width: 85%; margin-left: 7%; margin-top: 1%" direction="vertical" :active="active">
-            <el-step title="请输入线路名称以及选择间隔单元">
+            <el-step title="请选择线路名称以及选择间隔单元">
                 <template v-slot:description>
                     <div class="xianlu">
                         <el-autocomplete v-model="current_category" :fetch-suggestions="querySearch" clearable
-                            placeholder="请选择站点" @select="changexianlu" v-if="station !== ''" />
+                            placeholder="请选择线路名称" @select="changexianlu" v-if="station !== ''" />
                     </div>
                     <div>
                         <el-radio-group v-model="looptype" @change="changelooptype" v-if="station !== ''">
