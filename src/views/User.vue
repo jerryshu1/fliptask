@@ -32,8 +32,6 @@
           <el-button @click="Changepassword(scope.row)" type="text" size="small">
             修改密码
           </el-button>
-          <el-button type="text" size="small" @click="xiugai(scope.row)">修改用户信息
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -58,7 +56,7 @@
     <!-- 新增分公司管理员 -->
     <el-dialog title="分公司创建新用户" v-model="dialogTableVisible2" width="30%">
       <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="工号" prop="id">
+        <el-form-item label="账号" prop="id">
           <el-input v-model="ruleForm.id" style="width: 300px" placeholder="请输入登录工号"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
@@ -86,7 +84,7 @@
     <!-- 新建站点管理员 -->
     <el-dialog title="站点创建新用户" v-model="dialogTableVisible3" width="30%">
       <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="账户" prop="id">
+        <el-form-item label="账号" prop="id">
           <el-input v-model="ruleForm.id" style="width: 300px"  placeholder="请输入登录工号"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
@@ -313,9 +311,11 @@ export default defineComponent({
 
     }
     const gousers = () => {
+      resetForm()
       dialogTableVisible3.value = false
     }
     const gousers1 = () => {
+      resetForm()
       dialogTableVisible2.value = false
     }
     // 站点管理员
@@ -347,6 +347,7 @@ export default defineComponent({
             type: 'success',
           })
           newgetusers()
+          resetForm()
           dialogTableVisible3.value = false
         })
       }
@@ -361,7 +362,7 @@ export default defineComponent({
           type: 'error',
         })
       } else {
-        ruleForm.role === "companyadmin"
+        ruleForm.value.role === "companyadmin"
         var userdata = {
           id: ruleForm.id,
           name: ruleForm.name,
@@ -375,6 +376,7 @@ export default defineComponent({
             type: 'success',
           })
           newgetusers()
+          resetForm()
           dialogTableVisible2.value = false
         })
       }

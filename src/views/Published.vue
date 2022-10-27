@@ -39,7 +39,7 @@
         <template #default="scope">
           <el-button type="text" @click="signalprint(scope.row)">打印</el-button>
           <el-button type="text" @click="test(scope.row)">预览</el-button>
-          <el-button type="text" @click="gofinish(scope.row)">确认完成
+          <el-button type="text" @click="gofinish(scope.row)" v-if="current_userinfo.role !== 'appuser'">确认完成
           </el-button>
         </template>
       </el-table-column>
@@ -47,8 +47,8 @@
 
     <div>
       <div class="btngroup">
-        <button class="homebutton" @click="goDelete">删除</button>
-        <button class="homebutton" @click="godoubleprint">复合打印</button>
+        <button class="homebutton" @click="goDelete" v-if="current_userinfo.role !== 'appuser'">删除</button>
+        <button class="homebutton" @click="godoubleprint" v-if="current_userinfo.role !== 'appuser'">复合打印</button>
       </div>
 
       <!-- 复合打印 -->
@@ -100,8 +100,8 @@
             </div>
           </div>
         </div>
-        <el-input v-model="input1" placeholder="请输入工单任务名称" />
-        <el-button @click="republished">重新发布</el-button>
+        <el-input v-model="input1" placeholder="请输入工单任务名称" v-if="current_userinfo.role !== 'appuser'" />
+        <el-button @click="republished" v-if="current_userinfo.role !== 'appuser'">重新发布</el-button>
       </el-dialog>
       <!-- 单步打印 -->
       <el-dialog v-model="dialogTableVisible1" title="通用措施风险预控选择" width="95%" center>

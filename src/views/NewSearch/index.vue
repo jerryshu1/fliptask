@@ -29,25 +29,25 @@
                     </div>
                 </template>
             </el-step>
-            <el-step title="请选择调度令">
+            <el-step title="请选择调度令" class="xuanzegroup">
                 <template v-slot:description>
                     <div v-if="searchtype === 0">
-                        <el-select v-model="start_status" class="m-2" placeholder="请选择开始状态" size="mini"
+                        <el-select v-model="start_status"  placeholder="请选择开始状态"
                             @change="changestartstatus" v-if="this.looptype !== ''">
                             <el-option v-for="(item, index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
-                        <el-select v-model="end_status" class="ends m-2" placeholder="请选择结束状态" size="mini"
+                        <el-select v-model="end_status" class="ends m-2" placeholder="请选择结束状态"
                             @change="getcommonlist">
                             <el-option v-for="(item, index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
 
-                        <el-select v-model="current_tasks" class="ends m-2" placeholder="请选择任务" size="mini" v-if="paths"
+                        <el-select v-model="current_tasks" class="m-2" placeholder="请选择任务" v-if="paths"
                             @change="gettask">
                             <el-option v-for="(item, index) in pathlist" :key="index" :label="item" :value="item" />
                         </el-select>
                     </div>
                     <div v-if="searchtype === 1">
-                        <el-select v-model="current_task" class="m-2" placeholder="请选择任务" size="mini"
+                        <el-select v-model="current_task" class="m-2" placeholder="请选择任务"
                             @change="getcurrentothertask">
                             <el-option v-for="(item, index) in othertasklist" :key="index" :label="item.task_name"
                                 :value="index" />
@@ -57,7 +57,7 @@
             </el-step>
             <el-step title="请选择操作对象">
                 <template v-slot:description>
-                    <span>{{current_task_use[current_step]}}</span>
+                    <span class="littletitle">{{current_task_use[current_step]}}</span>
                     <div
                         v-if="this.current_tasks.length !== 0 || this.current_task !== null || this.end_status !== '' || this.showtabledata.length !== 0">
                         <el-table ref="multipleTableRef" :data="showtabledata[0]" :border="parentBorder"
@@ -506,6 +506,13 @@ export default defineComponent({
     margin-bottom: 2%;
 }
 
+.xuanzegroup{
+    .el-input__inner{
+        width: 120px;
+    }
+}
+
+
 .el-autocomplete {
     margin-top: 1%;
     margin-bottom: 2%;
@@ -531,6 +538,7 @@ export default defineComponent({
 }
 
 .ends {
+    width: 190px;
     margin-left: 2%;
 }
 
@@ -551,6 +559,13 @@ export default defineComponent({
     margin-left: 25%;
     margin-top: 2%;
     background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
+}
+
+.littletitle{
+    margin-left: 35%;
+    font-size: calc(100vw * 16 / 1920);
+    font-weight: 800;
+    color: black;
 }
 
 </style>
