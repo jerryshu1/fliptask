@@ -21,7 +21,7 @@
           <el-autocomplete v-model="current_station" :fetch-suggestions="querySearch" clearable placeholder="请选择站点"
             @select="handleSelect" v-else />
         </div>
-        <q-btn-dropdown outline rounded no-caps icon-right="manage_accounts">
+        <q-btn-dropdown outline rounded no-caps>
           <template #label>
             <div class="row items-center no-wrap">{{ current_userinfo.name }}</div>
           </template>
