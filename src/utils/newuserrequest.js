@@ -8,8 +8,7 @@ import 'nprogress/nprogress.css';
 const requests = axios.create({
     //配置对象
     //基础路径
-    baseURL:"http://192.168.1.26:8080",
-    // baseURL:"http://localhost:8080",
+    baseURL:"http://47.96.164.104:18080",
     //请求超时的时间为5s
     timeout:40000,
 });
