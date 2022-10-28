@@ -83,9 +83,9 @@ export default defineComponent({
     const userinfos = ref([])
     const linksList = ref([
       {
-        title: "已发布任务列表",
-        icon: "apps",
-        link: "/published",
+        title: "风险库中心",
+        icon: "store",
+        link: "/tasks",
       },
       {
         title: "用户中心",
@@ -99,9 +99,9 @@ export default defineComponent({
         icon: "manage_search",
         link: "/newsearch",
       }, {
-        title: "风险库中心",
-        icon: "store",
-        link: "/tasks",
+        title: "已发布任务列表",
+        icon: "apps",
+        link: "/published",
       }])
 
     const storeStateFns = mapState(["current_userinfo", "companylist", "stationlist"])

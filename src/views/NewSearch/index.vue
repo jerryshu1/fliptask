@@ -29,15 +29,17 @@
                     </div>
                 </template>
             </el-step>
-            <el-step title="请选择调度令" class="xuanzegroup">
+            <el-step title="请选择调度令">
                 <template v-slot:description>
-                    <div v-if="searchtype === 0">
-                        <el-select v-model="start_status"  placeholder="请选择开始状态"
-                            @change="changestartstatus" v-if="this.looptype !== ''">
+                    <div v-if="searchtype === 0" class="xuanzegroup">
+                        <el-select v-model="start_status" placeholder="请选择开始状态" @change="changestartstatus"
+                            v-if="this.looptype !== ''">
                             <el-option v-for="(item, index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
-                        <el-select v-model="end_status" class="ends m-2" placeholder="请选择结束状态"
-                            @change="getcommonlist">
+                        <el-icon :size="26" style="margin-left:20px">
+                            <component :is="Right"></component>
+                        </el-icon>
+                        <el-select v-model="end_status" class="ends m-2" placeholder="请选择结束状态" @change="getcommonlist">
                             <el-option v-for="(item, index) in statuslist" :key="index" :label="item" :value="item" />
                         </el-select>
 
@@ -47,8 +49,7 @@
                         </el-select>
                     </div>
                     <div v-if="searchtype === 1">
-                        <el-select v-model="current_task" class="m-2" placeholder="请选择任务"
-                            @change="getcurrentothertask">
+                        <el-select v-model="current_task" class="m-2" placeholder="请选择任务" @change="getcurrentothertask">
                             <el-option v-for="(item, index) in othertasklist" :key="index" :label="item.task_name"
                                 :value="index" />
                         </el-select>
@@ -57,7 +58,7 @@
             </el-step>
             <el-step title="请选择操作对象">
                 <template v-slot:description>
-                    <span class="littletitle">{{current_task_use[current_step]}}</span>
+                    <span class="littletitle">{{ current_task_use[current_step] }}</span>
                     <div
                         v-if="this.current_tasks.length !== 0 || this.current_task !== null || this.end_status !== '' || this.showtabledata.length !== 0">
                         <el-table ref="multipleTableRef" :data="showtabledata[0]" :border="parentBorder"
@@ -67,8 +68,8 @@
                             <el-table-column label="设备类型" prop="device_type" />
                             <el-table-column label="操作方式" prop="operation" />
                         </el-table>
-                        <el-button class="hobutton2" @click="prestep">上一步</el-button>
-                        <el-button class="hobutton2" @click="nextstep">下一步</el-button>
+                        <button class="hobutton2" @click="prestep">上一步</button>
+                        <button class="hobutton2" @click="nextstep">下一步</button>
                     </div>
 
                 </template>
@@ -79,7 +80,7 @@
 
 <script>
 import { defineComponent, ref, computed } from "vue";
-import { List } from "@element-plus/icons";
+import { List, Right } from "@element-plus/icons";
 import { useRouter } from 'vue-router'
 import { useStore, mapState } from "vuex";
 import { ElMessage } from "element-plus";
@@ -351,6 +352,9 @@ export default defineComponent({
             } else if (start_status.value === "") {
                 ElMessage.error("起始状态未选择");
             } else {
+                if (multipleTableRef.value) {
+                    multipleTableRef.value.clearSelection()
+                }
                 let start = ''
                 let end = ''
                 if (start_status.value === statuslist.value[4]) {
@@ -490,6 +494,7 @@ export default defineComponent({
             getcurrentothertask,
             handleSelectionChange,
             List,
+            Right,
             ...storeState,
         };
     },
@@ -506,17 +511,40 @@ export default defineComponent({
     margin-bottom: 2%;
 }
 
-.xuanzegroup{
-    .el-select{
+.xuanzegroup {
+
+    //     display: flex;
+    // align-items: center;
+    .el-input {
+        width: 150px;
+    }
+
+    .el-select {
         width: 164px;
     }
-    .el-input__wrapper{
+
+    .el-input__wrapper {
         width: 164px;
     }
-    .el-input__inner{
-        width: 120px;
+
+    .el-input__inner {
+        width: 150px;
     }
 }
+
+// .xuanzegroup {
+//     display: flex;
+// align-items: center;
+
+//     .el-input__wrapper {
+//         width: 164px;
+//     }
+
+//     .el-input__inner {
+//         width: 150px;
+//     }
+// }
+
 
 
 .el-autocomplete {
@@ -524,8 +552,8 @@ export default defineComponent({
     margin-bottom: 2%;
 }
 
-.xianlu{
-    .el-input{
+.xianlu {
+    .el-input {
         width: 200px;
     }
 }
@@ -562,16 +590,15 @@ export default defineComponent({
     height: 40px;
     font-size: calc(100vw * 16 / 1920);
     color: #ffffff;
-    margin-left: 25%;
+    margin-left: 20%;
     margin-top: 2%;
     background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
 
-.littletitle{
+.littletitle {
     margin-left: 35%;
     font-size: calc(100vw * 16 / 1920);
     font-weight: 800;
     color: black;
 }
-
 </style>

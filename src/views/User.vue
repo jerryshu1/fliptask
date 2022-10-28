@@ -39,7 +39,7 @@
 
 
     <!-- 修改用户信息 -->
-    <el-dialog title="修改用户信息" v-model="dialogTableVisible1" width="30%">
+    <el-dialog title="修改用户信息" v-model="dialogTableVisible1" width="20%">
       <el-form :model="form" label-position="right" label-width="auto" :rules="rules1">
         <el-form-item label="姓名" prop="name">
           <el-input v-model="form.name"></el-input>
@@ -565,13 +565,13 @@ export default defineComponent({
   width: 250px;
 }
 
-.el-dialog{
+/* .el-dialog{
   width: 500px;
-}
-
+} */
+/* 
 .el-dialog .el-input__inner{
   width: 250px;
-}
+} */
 
 
 </style>
