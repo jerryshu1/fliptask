@@ -58,7 +58,7 @@
             </el-step>
             <el-step title="请选择操作对象">
                 <template v-slot:description>
-                    <span class="littletitle">{{ current_task_use[current_step] }}</span>
+                    <span class="littletitle" v-if="this.current_tasks.length !== 0 || this.current_task !== null || this.end_status !== '' || this.showtabledata.length !== 0">{{ current_task_use[current_step] }}</span>
                     <div
                         v-if="this.current_tasks.length !== 0 || this.current_task !== null || this.end_status !== '' || this.showtabledata.length !== 0">
                         <el-table ref="multipleTableRef" :data="showtabledata[0]" :border="parentBorder"
@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import { List, Right } from "@element-plus/icons";
 import { useRouter } from 'vue-router'
 import { useStore, mapState } from "vuex";
@@ -453,6 +453,20 @@ export default defineComponent({
             active.value = 3
 
         }
+        watch(() => store.state.station, (val, old) => {
+            if (multipleTableRef.value) {
+                multipleTableRef.value.clearSelection()
+            }
+            paths.value = false
+            current_tasks.value = []
+            current_task.value = null
+            end_status.value = ''
+            showtabledata.value = []
+            searchtype.value = null
+            current_category.value = ''
+            looptype.value = ''
+            active.value = 0
+        })
 
         return {
             active,

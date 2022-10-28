@@ -449,12 +449,13 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      if (store.state.company === '' || store.state.station === '') {
-        ElMessage.info('请先选择需要查看的分公司以及站点')
-        window.history.go(-1)
-      } else {
-        gettasklist()
-      }
+      // if (store.state.company === '' || store.state.station === '') {
+      //   ElMessage.info('请先选择需要查看的分公司以及站点')
+      //   window.history.go(-1)
+      // } else {
+      //   gettasklist()
+      // }
+      gettasklist()
     })
 
     return {
