@@ -92,12 +92,12 @@ export default {
       if (this.printdata._id === ''){
         let params = store.state.newtaskid;
         if (this.printdata.status === '已发布') {
-          updateuserStatus(this.usermessage.company_id, params, this.token);
+          newpostupdatetoassign(this.company, this.station, params)
         }
       } else {
         let params = this.printdata._id;
         if (this.printdata.status === '已发布') {
-          updateuserStatus(this.usermessage.company_id, params, this.token);
+          newpostupdatetoassign(this.company, this.station, params)
         }
       }
       import('./useExportExcel').then((excel) => {

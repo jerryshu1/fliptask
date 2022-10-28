@@ -85,17 +85,17 @@
     <el-dialog title="站点创建新用户" v-model="dialogTableVisible3" width="30%">
       <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="100px" class="demo-ruleForm">
         <el-form-item label="账号" prop="id">
-          <el-input v-model="ruleForm.id" style="width: 300px"  placeholder="请输入登录工号"></el-input>
+          <el-input v-model="ruleForm.id" style="width: 300px" placeholder="请输入登录工号"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="ruleForm.password" style="width: 300px"  placeholder="请输入登录密码" type="password">
+          <el-input v-model="ruleForm.password" style="width: 300px" placeholder="请输入登录密码" type="password">
           </el-input>
         </el-form-item>
         <el-form-item label="姓名" prop="name">
-          <el-input v-model="ruleForm.name" style="width: 300px"  placeholder="请输入员工姓名"></el-input>
+          <el-input v-model="ruleForm.name" style="width: 300px" placeholder="请输入员工姓名"></el-input>
         </el-form-item>
         <el-form-item label="联系方式" prop="phone">
-          <el-input v-model="ruleForm.phone" style="width: 300px"  placeholder="请输入员工联系电话"></el-input>
+          <el-input v-model="ruleForm.phone" style="width: 300px" placeholder="请输入员工联系电话"></el-input>
         </el-form-item>
         <el-form-item label="员工权限" prop="role">
           <el-radio-group v-model="ruleForm.role">
@@ -341,14 +341,19 @@ export default defineComponent({
           role: ruleForm.role
         }
 
-        newpostadduser(company, station, userdata).then(() => {
-          ElMessage({
-            message: '添加用户成功',
-            type: 'success',
-          })
-          newgetusers()
-          resetForm()
-          dialogTableVisible3.value = false
+        newpostadduser(company, station, userdata).then((res) => {
+          if (res) {
+            ElMessage({
+              message: '添加用户成功',
+              type: 'success',
+            })
+            newgetusers()
+            resetForm()
+            dialogTableVisible3.value = false
+          } else {
+            resetForm()
+            dialogTableVisible3.value = false
+          }
         })
       }
     }
@@ -370,14 +375,19 @@ export default defineComponent({
           password: ruleForm.password,
           role: 'companyadmin'
         }
-        newpostadduser(company, "any", userdata).then(() => {
-          ElMessage({
-            message: '添加用户成功',
-            type: 'success',
-          })
-          newgetusers()
-          resetForm()
-          dialogTableVisible2.value = false
+        newpostadduser(company, 'any', userdata).then(() => {
+          if (res) {
+            ElMessage({
+              message: '添加用户成功',
+              type: 'success',
+            })
+            newgetusers()
+            resetForm()
+            dialogTableVisible3.value = false
+          } else {
+            resetForm()
+            dialogTableVisible3.value = false
+          }
         })
       }
     }
@@ -561,7 +571,7 @@ export default defineComponent({
   background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }
 
-.el-message-box .el-input__inner{
+.el-message-box .el-input__inner {
   width: 250px;
 }
 
@@ -572,6 +582,4 @@ export default defineComponent({
 .el-dialog .el-input__inner{
   width: 250px;
 } */
-
-
 </style>

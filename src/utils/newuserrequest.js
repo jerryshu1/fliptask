@@ -2,6 +2,7 @@ import axios from "axios";
 //引入进度条
 import nprogress from 'nprogress';
 //start done
+import { ElMessage } from "element-plus";
 
 import 'nprogress/nprogress.css';
 //request就是axios，只不过稍微配置一些
@@ -25,7 +26,15 @@ requests.interceptors.response.use((res)=>{
     //响应成功的回调函数：服务器响应数据回来以后，响应拦截器可以检测到，可以做一些使其
     nprogress.done();
     return res.data;
-});
+}, (error) => {
+    if (error.response.data.error.indexOf('duplicate') !== -1){
+        ElMessage.error('该用户名已存在')
+    } else if (error.response.data.error === 'invalid credential') {
+        ElMessage.error('用户名或密码错误')
+    } else {
+        ElMessage.error('请求错误')
+    }
+})
 
 
 //对外暴露

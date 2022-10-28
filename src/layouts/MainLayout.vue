@@ -90,7 +90,7 @@ export default defineComponent({
       {
         title: "用户中心",
         icon: "people",
-        link: "/user",
+        link: "/user"
       },
     ])
     const linklist2 = ref([

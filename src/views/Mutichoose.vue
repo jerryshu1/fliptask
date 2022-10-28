@@ -68,8 +68,8 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button class="hobutton1" @click="dialogVisible = false">取 消</el-button>
-      <el-button class="hobutton1" @click="adminupdate">确 定</el-button>
+      <el-button class="hom2button1" @click="dialogVisible = false">取 消</el-button>
+      <el-button class="hom2button1" @click="adminupdate">确 定</el-button>
     </span>
   </el-dialog>
 </template>
@@ -196,6 +196,16 @@ export default defineComponent({
   font-size: calc(100vw * 16 / 1920);
   color: #ffffff;
   margin-left: 15%;
+  margin-top: 2%;
+  background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
+}
+
+.hom2button1{
+  width: 120px;
+  height: 40px;
+  font-size: calc(100vw * 16 / 1920);
+  color: #ffffff;
+  margin-left: 10%;
   margin-top: 2%;
   background-image: linear-gradient(100deg, rgb(10, 38, 69), rgb(55, 81, 186));
 }

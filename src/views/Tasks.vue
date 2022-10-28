@@ -155,15 +155,12 @@ export default {
   methods: {
     addsignaltask() {
       this.dialogTableVisible = true;
-      console.log("超级管理员");
     },
     addmutitask() {
       this.dialogTableVisible1 = true;
-      console.log("超级管理员");
     },
     adminadd() {
       this.dialogTableVisible2 = true;
-      console.log("分公司管理员");
     },
     getAdd() {
       let obj = { id: id++, name: "", type: "", operation: "" };
@@ -180,16 +177,13 @@ export default {
       this.addCalculation1.splice(index, 1);
     },
     superadminaddtask() {
-      console.log("新增成功");
       this.dialogTableVisible = false;
       this.dialogTableVisible1 = false;
     },
     adminaddtask() {
-      console.log("新增成功");
       this.dialogTableVisible2 = false;
     },
     superadmindeletetask() {
-      console.log("删除成功");
     },
     admindeletetask() {
       for (var i in this.selected) {
